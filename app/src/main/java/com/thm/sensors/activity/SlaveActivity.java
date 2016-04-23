@@ -83,7 +83,7 @@ public final class SlaveActivity extends Activity {
     @Override
     public boolean onTouchEvent(MotionEvent me) {
         if (sensor.equals("Heartbeat")) {
-            System.out.println("touch");
+            me.getPressure();
         }
         return true;
     }
