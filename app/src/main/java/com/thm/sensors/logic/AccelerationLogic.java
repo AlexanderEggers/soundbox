@@ -7,14 +7,22 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
+import android.widget.TextView;
+
+import com.thm.sensors.R;
+
+import java.text.MessageFormat;
 
 public final class AccelerationLogic implements SensorEventListener, SlaveLogic {
 
     private SensorManager mSensorManager;
     private Sensor mSensor;
     private Float[] gravity = {0f, 0f, 0f}, linear_acceleration = new Float[3];
+    private Activity context;
 
     public void startLogic(Activity context) {
+        this.context = context;
+        ((TextView) context.findViewById(R.id.textView)).setText("Acceleration Value: ");
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         if (mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
             mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -36,7 +44,9 @@ public final class AccelerationLogic implements SensorEventListener, SlaveLogic 
             linear_acceleration[1] = event.values[1] - gravity[1];
             linear_acceleration[2] = event.values[2] - gravity[2];
 
-            Log.i(AccelerationLogic.class.getName(), "New Acceleration Value: " + linear_acceleration[2]);
+            String text = MessageFormat.format("Acceleration Value: {0}", linear_acceleration[2]);
+            ((TextView) context.findViewById(R.id.textView)).setText(text);
+            Log.i(AccelerationLogic.class.getName(), text);
         }
     }
 

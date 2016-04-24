@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
 import android.view.ViewStub;
-import android.widget.Toolbar;
 
 import com.thm.sensors.R;
 import com.thm.sensors.logic.AccelerationLogic;
@@ -34,12 +33,6 @@ public final class SlaveActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.slave_activity);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setActionBar(toolbar);
-
-        if (getActionBar() != null) {
-            getActionBar().setDisplayHomeAsUpEnabled(true);
-        }
 
         String sensor = getIntent().getStringExtra("sensor");
         ViewStub stub = (ViewStub) findViewById(R.id.stub);

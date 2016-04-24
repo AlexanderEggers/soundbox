@@ -13,7 +13,7 @@ public final class MenuActivity extends Activity implements View.OnClickListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_activity);
+        setContentView(R.layout.menu_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setActionBar(toolbar);
     }

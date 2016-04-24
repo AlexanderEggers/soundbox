@@ -85,6 +85,8 @@ public final class BluetoothLogic {
         }
 
         public void run() {
+            //TODO: Differ between String (Identifier) and value
+
             byte[] buffer = new byte[1024];  // buffer store for the stream
             int bytes; // bytes returned from read()
 

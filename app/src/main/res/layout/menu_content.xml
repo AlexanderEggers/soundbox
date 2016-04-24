@@ -8,7 +8,7 @@
     android:weightSum="1"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".activity.MenuActivity"
-    tools:showIn="@layout/main_activity">
+    tools:showIn="@layout/menu_activity">
 
     <Button
         android:id="@+id/button"

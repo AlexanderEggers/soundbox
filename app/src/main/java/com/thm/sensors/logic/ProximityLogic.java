@@ -7,13 +7,21 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
+import android.widget.TextView;
+
+import com.thm.sensors.R;
+
+import java.text.MessageFormat;
 
 public final class ProximityLogic implements SensorEventListener, SlaveLogic {
 
     private SensorManager mSensorManager;
     private Sensor mSensor;
+    private Activity context;
 
     public void startLogic(Activity context) {
+        this.context = context;
+        ((TextView) context.findViewById(R.id.textView2)).setText("Proximity Value: ");
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         if (mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY) != null) {
             mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
@@ -22,11 +30,9 @@ public final class ProximityLogic implements SensorEventListener, SlaveLogic {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        float distance = event.values[0];
-
-        if (distance == 0) {
-            Log.i(ProximityLogic.class.getName(), "Found proximity event!");
-        }
+        String text = MessageFormat.format("Proximity Value: {0}", event.values[0]);
+        ((TextView) context.findViewById(R.id.textView2)).setText(text);
+        Log.i(ProximityLogic.class.getName(), text);
     }
 
     @Override
