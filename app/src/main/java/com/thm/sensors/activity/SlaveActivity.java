@@ -2,21 +2,24 @@ package com.thm.sensors.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.ViewStub;
 import android.widget.Toolbar;
 
 import com.thm.sensors.R;
 import com.thm.sensors.logic.AccelerationLogic;
+import com.thm.sensors.logic.BluetoothLogic;
 import com.thm.sensors.logic.HeartbeatLogic;
 import com.thm.sensors.logic.ProximityLogic;
 import com.thm.sensors.logic.SlaveLogic;
 
+import java.nio.ByteBuffer;
+
 public final class SlaveActivity extends Activity {
 
-    private String sensor;
     private SlaveLogic logic;
+    private BluetoothLogic.ConnectedThread thread;
 
     @Override
     protected void onResume() {
@@ -38,25 +41,36 @@ public final class SlaveActivity extends Activity {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        sensor = getIntent().getStringExtra("sensor");
+        String sensor = getIntent().getStringExtra("sensor");
         ViewStub stub = (ViewStub) findViewById(R.id.stub);
         switch (sensor) {
             case "Proximity":
+                stub.setLayoutResource(R.layout.slave_proximity_content);
+                stub.inflate();
                 logic = new ProximityLogic();
                 logic.startLogic(this);
-                stub.setLayoutResource(R.layout.slave_proximity_content);
                 break;
             case "Heartbeat":
-                logic = new HeartbeatLogic();
                 stub.setLayoutResource(R.layout.slave_heartbeat_content);
+                stub.inflate();
+                logic = new HeartbeatLogic();
+                logic.startLogic(this);
                 break;
             case "Acceleration":
+                stub.setLayoutResource(R.layout.slave_acceleration_content);
+                stub.inflate();
                 logic = new AccelerationLogic();
                 logic.startLogic(this);
-                stub.setLayoutResource(R.layout.slave_acceleration_content);
                 break;
         }
-        stub.inflate();
+
+        BluetoothLogic bluetooth = new BluetoothLogic(this, new Handler());
+        thread = bluetooth.getMaster();
+    }
+
+    public void writeData(int data) {
+        byte[] bytes = ByteBuffer.allocate(1024).putInt(data).array();
+        thread.write(bytes);
     }
 
     @Override
@@ -81,10 +95,11 @@ public final class SlaveActivity extends Activity {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent me) {
-        if (sensor.equals("Heartbeat")) {
-            me.getPressure();
+    protected void onStop() {
+        super.onStop();
+
+        if (thread != null) {
+            thread.cancel();
         }
-        return true;
     }
 }

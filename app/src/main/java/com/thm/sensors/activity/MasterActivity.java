@@ -3,14 +3,19 @@ package com.thm.sensors.activity;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toolbar;
 
 import com.thm.sensors.R;
 import com.thm.sensors.logic.BluetoothLogic;
 
-public final class MasterActivity extends Activity implements View.OnClickListener {
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+
+public final class MasterActivity extends Activity {
+
+    private ArrayList<BluetoothLogic.ConnectedThread> threads;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,9 +28,8 @@ public final class MasterActivity extends Activity implements View.OnClickListen
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        BluetoothLogic logic = new BluetoothLogic(new Handler());
-        logic.initBluetooth(this);
-        logic.enableDiscoverable(this);
+        BluetoothLogic logic = new BluetoothLogic(this, new IncomingHandler(this));
+        threads = logic.getSlaves();
     }
 
     @Override
@@ -40,8 +44,34 @@ public final class MasterActivity extends Activity implements View.OnClickListen
         }
     }
 
-    @Override
-    public void onClick(View v) {
+    public void handleMessage(Message msg) {
+        System.out.println(msg);
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (threads != null) {
+            for (BluetoothLogic.ConnectedThread thread : threads) {
+                thread.cancel();
+            }
+        }
+    }
+
+    private static class IncomingHandler extends Handler {
+        private final WeakReference<MasterActivity> mActivity;
+
+        IncomingHandler(MasterActivity activity) {
+            mActivity = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            MasterActivity activity = mActivity.get();
+            if (activity != null) {
+                activity.handleMessage(msg);
+            }
+        }
     }
 }

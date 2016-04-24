@@ -6,17 +6,19 @@ import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public final class BluetoothLogic {
 
-    private final int MESSAGE_READ = 1;
-    public BluetoothManager mBluetoothManager;
-    private Handler mHandler;
+    private final BluetoothManager mBluetoothManager;
+    private final Handler mHandler;
+    private final UUID uuid = UUID.fromString("0000110E-0000-1000-8000-00805F9B34FB"); //TODO: get UUID of device
 
     public BluetoothLogic(Activity context, Handler mHandler) {
         this.mHandler = mHandler;
@@ -24,15 +26,43 @@ public final class BluetoothLogic {
     }
 
     public ConnectedThread getMaster() {
-        BluetoothDevice device = mBluetoothManager.getConnectedDevices(BluetoothProfile.GATT).get(0);
-        return device.getBluetoothClass().;
+        if (mBluetoothManager.getConnectedDevices(BluetoothProfile.GATT).size() > 0) {
+            BluetoothDevice device = mBluetoothManager.getConnectedDevices(BluetoothProfile.GATT).get(0);
+            BluetoothSocket socket = null;
+            try {
+                socket = device.createRfcommSocketToServiceRecord(uuid);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return new ConnectedThread(socket);
+        } else {
+            Log.d(BluetoothLogic.class.getName(), "No connected devices");
+            return null;
+        }
     }
 
     public ArrayList<ConnectedThread> getSlaves() {
-        return null;
+        if (mBluetoothManager.getConnectedDevices(BluetoothProfile.GATT).size() > 0) {
+            ArrayList<ConnectedThread> threads = new ArrayList<>();
+
+            for (BluetoothDevice device : mBluetoothManager.getConnectedDevices(BluetoothProfile.GATT)) {
+                BluetoothSocket socket = null;
+                try {
+                    socket = device.createRfcommSocketToServiceRecord(uuid);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                threads.add(new ConnectedThread(socket));
+            }
+            return threads;
+        } else {
+            Log.d(BluetoothLogic.class.getName(), "No connected devices");
+            return null;
+        }
     }
 
-    private class ConnectedThread extends Thread {
+    public class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
@@ -47,7 +77,8 @@ public final class BluetoothLogic {
             try {
                 tmpIn = socket.getInputStream();
                 tmpOut = socket.getOutputStream();
-            } catch (IOException e) { }
+            } catch (IOException e) {
+            }
 
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
@@ -63,7 +94,7 @@ public final class BluetoothLogic {
                     // Read from the InputStream
                     bytes = mmInStream.read(buffer);
                     // Send the obtained bytes to the UI activity
-                    mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+                    mHandler.obtainMessage(0, bytes, -1, buffer).sendToTarget();
                 } catch (IOException e) {
                     break;
                 }
@@ -74,14 +105,16 @@ public final class BluetoothLogic {
         public void write(byte[] bytes) {
             try {
                 mmOutStream.write(bytes);
-            } catch (IOException e) { }
+            } catch (IOException e) {
+            }
         }
 
         /* Call this from the main activity to shutdown the connection */
         public void cancel() {
             try {
                 mmSocket.close();
-            } catch (IOException e) { }
+            } catch (IOException e) {
+            }
         }
     }
 }
