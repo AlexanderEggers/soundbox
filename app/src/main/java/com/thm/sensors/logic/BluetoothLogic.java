@@ -25,6 +25,8 @@ public final class BluetoothLogic {
         mBluetoothManager = (BluetoothManager) context.getSystemService(Activity.BLUETOOTH_SERVICE);
     }
 
+    //TODO: the getter-methods needs to be bind to a thread and the socket needs to be connected (not tested whether this needs to be done)
+
     public ConnectedThread getMaster() {
         if (mBluetoothManager.getConnectedDevices(BluetoothProfile.GATT).size() > 0) {
             BluetoothDevice device = mBluetoothManager.getConnectedDevices(BluetoothProfile.GATT).get(0);
@@ -86,8 +88,8 @@ public final class BluetoothLogic {
 
         public void run() {
             /*
-            first 12 bytes are reversed by data name (like Heartbeat)
-            last 4 bytes are for the data value (like 1.25)
+            first 12 bytes are reversed for the data name (like 'Heartbeat')
+            last 4 bytes are for the data value (like '1.25')
             */
 
             byte[] buffer = new byte[16];  // buffer store for the stream
