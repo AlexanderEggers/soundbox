@@ -85,14 +85,16 @@ public final class SlaveActivity extends Activity {
     }
 
     public void sendData() {
-        byte[] streamD = new byte[dataArray.size()];
+        if(thread != null) {
+            byte[] streamD = new byte[dataArray.size()];
 
-        for (int i = 0; i < dataArray.size(); i++) {
-            streamD[i] = dataArray.get(i);
+            for (int i = 0; i < dataArray.size(); i++) {
+                streamD[i] = dataArray.get(i);
+            }
+
+            thread.write(streamD);
+            dataArray.clear();
         }
-
-        thread.write(streamD);
-        dataArray.clear();
     }
 
     @Override
