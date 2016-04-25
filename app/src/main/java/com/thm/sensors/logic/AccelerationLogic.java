@@ -49,6 +49,7 @@ public final class AccelerationLogic implements SensorEventListener, SlaveLogic 
             ((TextView) context.findViewById(R.id.textView)).setText(text);
             ((SlaveActivity) context).writeData("Acceleration");
             ((SlaveActivity) context).writeData(linear_acceleration[2]);
+            ((SlaveActivity) context).sendData();
             Log.i(AccelerationLogic.class.getName(), text);
         }
     }

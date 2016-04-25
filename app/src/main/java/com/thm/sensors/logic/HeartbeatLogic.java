@@ -29,6 +29,7 @@ public final class HeartbeatLogic implements SlaveLogic {
         ((TextView) context.findViewById(R.id.textView6)).setText(text);
         ((SlaveActivity) context).writeData("Heartbeat   ");
         ((SlaveActivity) context).writeData(event.getPressure());
+        ((SlaveActivity) context).sendData();
         Log.d(HeartbeatLogic.class.getName(), text);
     }
 

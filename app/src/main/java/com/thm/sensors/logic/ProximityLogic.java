@@ -35,6 +35,7 @@ public final class ProximityLogic implements SensorEventListener, SlaveLogic {
         ((TextView) context.findViewById(R.id.textView2)).setText(text);
         ((SlaveActivity) context).writeData("Proximity   ");
         ((SlaveActivity) context).writeData(event.values[0]);
+        ((SlaveActivity) context).sendData();
         Log.i(ProximityLogic.class.getName(), text);
     }
 
