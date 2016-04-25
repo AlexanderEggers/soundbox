@@ -12,6 +12,7 @@ import com.thm.sensors.R;
 import com.thm.sensors.logic.BluetoothLogic;
 
 import java.lang.ref.WeakReference;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 public final class MasterActivity extends Activity {
@@ -49,8 +50,37 @@ public final class MasterActivity extends Activity {
         }
     }
 
-    public void handleMessage(Message msg) {
-        System.out.println(msg);
+    public void handleData(Message msg) {
+        byte[] name = new byte[12];
+        System.arraycopy(((byte[]) msg.obj), 0, name, 0, 12);
+
+        byte[] data1 = new byte[4];
+        System.arraycopy(((byte[]) msg.obj), 12, data1, 12, 4);
+
+        byte[] data2 = new byte[4];
+        System.arraycopy(((byte[]) msg.obj), 16, data2, 16, 4);
+
+        String identifier = new String(name).replace(" ", "");
+
+        ByteBuffer wrapped = ByteBuffer.wrap(data1);
+        float first = wrapped.getInt();
+
+        wrapped = ByteBuffer.wrap(data2);
+        float last = wrapped.getInt();
+
+        float data = first + (last / 100f);
+
+        switch (identifier) {
+            case "Proximity":
+                ((TextView) findViewById(R.id.textView3)).setText("Proximity: " + data);
+                break;
+            case "Heartbeat":
+                ((TextView) findViewById(R.id.textView4)).setText("Heartbeat: " + data);
+                break;
+            case "Acceleration":
+                ((TextView) findViewById(R.id.textView4)).setText("Heartbeat: " + data);
+                break;
+        }
     }
 
     @Override
@@ -75,7 +105,7 @@ public final class MasterActivity extends Activity {
         public void handleMessage(Message msg) {
             MasterActivity activity = mActivity.get();
             if (activity != null) {
-                activity.handleMessage(msg);
+                activity.handleData(msg);
             }
         }
     }

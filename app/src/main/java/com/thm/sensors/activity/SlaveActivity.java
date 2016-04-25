@@ -14,11 +14,14 @@ import com.thm.sensors.logic.ProximityLogic;
 import com.thm.sensors.logic.SlaveLogic;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 public final class SlaveActivity extends Activity {
 
     private SlaveLogic logic;
     private BluetoothLogic.ConnectedThread thread;
+    private ArrayList<Byte> dataArray = new ArrayList<>();
 
     @Override
     protected void onResume() {
@@ -62,8 +65,34 @@ public final class SlaveActivity extends Activity {
     }
 
     public void writeData(int data) {
-        byte[] bytes = ByteBuffer.allocate(1024).putInt(data).array();
-        thread.write(bytes);
+        if(thread != null) {
+            byte[] bytes = ByteBuffer.allocate(4).putInt(data).array();
+
+            for (byte b : bytes) {
+                dataArray.add(b);
+            }
+        }
+    }
+
+    public void writeData(String identifier) {
+        if(thread != null) {
+            byte[] bytes = identifier.getBytes(StandardCharsets.UTF_8);
+
+            for (byte b : bytes) {
+                dataArray.add(b);
+            }
+        }
+    }
+
+    public void sendData() {
+        byte[] streamD = new byte[dataArray.size()];
+
+        for (int i = 0; i < dataArray.size(); i++) {
+            streamD[i] = dataArray.get(i);
+        }
+
+        thread.write(streamD);
+        dataArray.clear();
     }
 
     @Override

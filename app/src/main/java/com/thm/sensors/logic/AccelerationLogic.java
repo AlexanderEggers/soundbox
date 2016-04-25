@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.thm.sensors.R;
+import com.thm.sensors.activity.SlaveActivity;
 
 import java.text.MessageFormat;
 
@@ -17,7 +18,7 @@ public final class AccelerationLogic implements SensorEventListener, SlaveLogic 
 
     private SensorManager mSensorManager;
     private Sensor mSensor;
-    private Float[] gravity = {0f, 0f, 0f}, linear_acceleration = new Float[3];
+    private float[] gravity = {0f, 0f, 0f}, linear_acceleration = new float[3];
     private Activity context;
 
     public void startLogic(Activity context) {
@@ -46,6 +47,9 @@ public final class AccelerationLogic implements SensorEventListener, SlaveLogic 
 
             String text = MessageFormat.format("Acceleration Value: {0}", linear_acceleration[2]);
             ((TextView) context.findViewById(R.id.textView)).setText(text);
+            ((SlaveActivity) context).writeData("Acceleration");
+            ((SlaveActivity) context).writeData((int) linear_acceleration[2]);
+            ((SlaveActivity) context).writeData((int)((linear_acceleration[2] - (int) linear_acceleration[2]) * 100));
             Log.i(AccelerationLogic.class.getName(), text);
         }
     }

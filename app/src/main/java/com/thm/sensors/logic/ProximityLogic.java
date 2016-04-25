@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.thm.sensors.R;
+import com.thm.sensors.activity.SlaveActivity;
 
 import java.text.MessageFormat;
 
@@ -32,6 +33,9 @@ public final class ProximityLogic implements SensorEventListener, SlaveLogic {
     public void onSensorChanged(SensorEvent event) {
         String text = MessageFormat.format("Proximity Value: {0}", event.values[0]);
         ((TextView) context.findViewById(R.id.textView2)).setText(text);
+        ((SlaveActivity) context).writeData("Proximity   ");
+        ((SlaveActivity) context).writeData((int) event.values[0]);
+        ((SlaveActivity) context).writeData((int)((event.values[0] - (int) event.values[0]) * 100));
         Log.i(ProximityLogic.class.getName(), text);
     }
 
