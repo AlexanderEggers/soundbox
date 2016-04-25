@@ -28,8 +28,7 @@ public final class HeartbeatLogic implements SlaveLogic {
         String text = MessageFormat.format("Heartbeat Value: {0}", event.getPressure());
         ((TextView) context.findViewById(R.id.textView6)).setText(text);
         ((SlaveActivity) context).writeData("Heartbeat   ");
-        ((SlaveActivity) context).writeData((int) event.getPressure());
-        ((SlaveActivity) context).writeData((int)((event.getPressure() - (int) event.getPressure()) * 100));
+        ((SlaveActivity) context).writeData(event.getPressure());
         Log.d(HeartbeatLogic.class.getName(), text);
     }
 

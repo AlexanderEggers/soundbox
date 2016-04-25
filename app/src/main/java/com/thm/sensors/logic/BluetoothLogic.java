@@ -85,7 +85,12 @@ public final class BluetoothLogic {
         }
 
         public void run() {
-            byte[] buffer = new byte[20];  // buffer store for the stream
+            /*
+            first 12 bytes are reversed by data name (like Heartbeat)
+            last 4 bytes are for the data value (like 1.25)
+            */
+
+            byte[] buffer = new byte[16];  // buffer store for the stream
             int bytes; // bytes returned from read()
 
             // Keep listening to the InputStream until an exception occurs

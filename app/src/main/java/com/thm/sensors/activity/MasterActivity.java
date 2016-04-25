@@ -54,21 +54,13 @@ public final class MasterActivity extends Activity {
         byte[] name = new byte[12];
         System.arraycopy(((byte[]) msg.obj), 0, name, 0, 12);
 
-        byte[] data1 = new byte[4];
-        System.arraycopy(((byte[]) msg.obj), 12, data1, 12, 4);
-
-        byte[] data2 = new byte[4];
-        System.arraycopy(((byte[]) msg.obj), 16, data2, 16, 4);
+        byte[] dataArray = new byte[4];
+        System.arraycopy(((byte[]) msg.obj), 12, dataArray, 12, 4);
 
         String identifier = new String(name).replace(" ", "");
 
-        ByteBuffer wrapped = ByteBuffer.wrap(data1);
-        float first = wrapped.getInt();
-
-        wrapped = ByteBuffer.wrap(data2);
-        float last = wrapped.getInt();
-
-        float data = first + (last / 100f);
+        ByteBuffer wrapped = ByteBuffer.wrap(dataArray);
+        float data = wrapped.getFloat();
 
         switch (identifier) {
             case "Proximity":

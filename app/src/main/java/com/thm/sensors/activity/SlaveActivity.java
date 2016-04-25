@@ -64,9 +64,9 @@ public final class SlaveActivity extends Activity {
         thread = bluetooth.getMaster();
     }
 
-    public void writeData(int data) {
+    public void writeData(float data) {
         if(thread != null) {
-            byte[] bytes = ByteBuffer.allocate(4).putInt(data).array();
+            byte[] bytes = ByteBuffer.allocate(4).putFloat(data).array();
 
             for (byte b : bytes) {
                 dataArray.add(b);
