@@ -88,9 +88,9 @@ public final class BluetoothLogic {
 
         public void run() {
             /*
-            first 12 bytes are reversed for the data name (like 'Heartbeat')
-            next 4 bytes are reversed for the beacon id (like '1')
-            last 4 bytes are for the data value (like '1.25')
+            first 12 bytes are reserved for the data name (like 'Heartbeat')
+            next 4 bytes are reserved for the beacon id (like '1')
+            last 4 bytes are reserved for the data value (like '1.25')
             */
 
             byte[] buffer = new byte[20];  // buffer store for the stream

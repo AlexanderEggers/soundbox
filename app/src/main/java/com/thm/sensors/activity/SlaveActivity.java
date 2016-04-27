@@ -72,7 +72,7 @@ public final class SlaveActivity extends Activity {
     }
 
     private void writeData(float value) {
-        if(mThread != null) {
+        if (mThread != null) {
             byte[] bytes = ByteBuffer.allocate(4).putFloat(value).array();
 
             for (byte b : bytes) {
@@ -82,7 +82,7 @@ public final class SlaveActivity extends Activity {
     }
 
     private void writeData(int beaconID) {
-        if(mThread != null) {
+        if (mThread != null) {
             byte[] bytes = ByteBuffer.allocate(4).putInt(beaconID).array();
 
             for (byte b : bytes) {
@@ -92,7 +92,7 @@ public final class SlaveActivity extends Activity {
     }
 
     private void writeData(String identifier) {
-        if(mThread != null) {
+        if (mThread != null) {
             byte[] bytes = identifier.getBytes(StandardCharsets.UTF_8);
 
             for (byte b : bytes) {
@@ -102,7 +102,7 @@ public final class SlaveActivity extends Activity {
     }
 
     private void sendData() {
-        if(mThread != null) {
+        if (mThread != null) {
             byte[] streamD = new byte[mDataArray.size()];
 
             for (int i = 0; i < mDataArray.size(); i++) {

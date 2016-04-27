@@ -93,15 +93,15 @@ public final class MasterActivity extends Activity {
     }
 
     private static class IncomingHandler extends Handler {
-        private final WeakReference<MasterActivity> mActivity;
+        private final WeakReference<MasterActivity> mmActivity;
 
         IncomingHandler(MasterActivity activity) {
-            mActivity = new WeakReference<>(activity);
+            mmActivity = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(Message msg) {
-            MasterActivity activity = mActivity.get();
+            MasterActivity activity = mmActivity.get();
             if (activity != null) {
                 activity.handleData(msg);
             }

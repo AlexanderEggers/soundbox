@@ -43,34 +43,34 @@ public final class HeartbeatLogic implements SlaveLogic {
 
     private class HeartbeatButton implements View.OnTouchListener {
 
-        private Handler mHandler;
-        private MotionEvent mEvent;
+        private Handler mmHandler;
+        private MotionEvent mmEvent;
+
+        private Runnable mmAction = new Runnable() {
+            @Override
+            public void run() {
+                executeHeartbeat(mmEvent);
+                mmHandler.postDelayed(this, 500);
+            }
+        };
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    if (mHandler != null) return true;
-                    mEvent = event;
-                    mHandler = new Handler();
-                    mHandler.postDelayed(mAction, 500);
+                    if (mmHandler != null) return true;
+                    mmEvent = event;
+                    mmHandler = new Handler();
+                    mmHandler.postDelayed(mmAction, 500);
                     break;
                 case MotionEvent.ACTION_UP:
-                    if (mHandler == null) return true;
-                    mEvent = null;
-                    mHandler.removeCallbacks(mAction);
-                    mHandler = null;
+                    if (mmHandler == null) return true;
+                    mmEvent = null;
+                    mmHandler.removeCallbacks(mmAction);
+                    mmHandler = null;
                     break;
             }
             return false;
         }
-
-        Runnable mAction = new Runnable() {
-            @Override
-            public void run() {
-                executeHeartbeat(mEvent);
-                mHandler.postDelayed(this, 500);
-            }
-        };
     }
 }
