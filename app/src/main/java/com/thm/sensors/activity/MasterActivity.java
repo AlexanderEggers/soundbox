@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public final class MasterActivity extends Activity {
 
-    private ArrayList<BluetoothLogic.ConnectedThread> threads;
+    private ArrayList<BluetoothLogic.ConnectedThread> mThreads;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +31,7 @@ public final class MasterActivity extends Activity {
         }
 
         BluetoothLogic logic = new BluetoothLogic(this, new IncomingHandler(this));
-        threads = logic.getSlaves();
+        mThreads = logic.getSlaves();
 
         ((TextView) findViewById(R.id.textView3)).setText("Proximity: n/a");
         ((TextView) findViewById(R.id.textView4)).setText("Heartbeat: n/a");
@@ -50,27 +50,33 @@ public final class MasterActivity extends Activity {
         }
     }
 
-    public void handleData(Message msg) {
-        byte[] name = new byte[12];
-        System.arraycopy(((byte[]) msg.obj), 0, name, 0, 12);
+    private void handleData(Message msg) {
+        byte[] aIdentifier = new byte[12];
+        System.arraycopy(((byte[]) msg.obj), 0, aIdentifier, 0, 12);
 
-        byte[] dataArray = new byte[4];
-        System.arraycopy(((byte[]) msg.obj), 12, dataArray, 12, 4);
+        byte[] aBeaconID = new byte[4];
+        System.arraycopy(((byte[]) msg.obj), 12, aBeaconID, 16, 4);
 
-        String identifier = new String(name).replace(" ", "");
+        byte[] aValue = new byte[4];
+        System.arraycopy(((byte[]) msg.obj), 16, aValue, 20, 4);
 
-        ByteBuffer wrapped = ByteBuffer.wrap(dataArray);
-        float data = wrapped.getFloat();
+        String identifier = new String(aIdentifier).replace(" ", "");
+
+        ByteBuffer wrapped = ByteBuffer.wrap(aBeaconID);
+        float beaconID = wrapped.getFloat();
+
+        wrapped = ByteBuffer.wrap(aValue);
+        float value = wrapped.getFloat();
 
         switch (identifier) {
             case "Proximity":
-                ((TextView) findViewById(R.id.textView3)).setText("Proximity: " + data);
+                ((TextView) findViewById(R.id.textView3)).setText("Proximity: " + value + " Beacon-ID: " + beaconID);
                 break;
             case "Heartbeat":
-                ((TextView) findViewById(R.id.textView4)).setText("Heartbeat: " + data);
+                ((TextView) findViewById(R.id.textView4)).setText("Heartbeat: " + value + " Beacon-ID: " + beaconID);
                 break;
             case "Acceleration":
-                ((TextView) findViewById(R.id.textView4)).setText("Heartbeat: " + data);
+                ((TextView) findViewById(R.id.textView4)).setText("Heartbeat: " + value + " Beacon-ID: " + beaconID);
                 break;
         }
     }
@@ -79,8 +85,8 @@ public final class MasterActivity extends Activity {
     protected void onStop() {
         super.onStop();
 
-        if (threads != null) {
-            for (BluetoothLogic.ConnectedThread thread : threads) {
+        if (mThreads != null) {
+            for (BluetoothLogic.ConnectedThread thread : mThreads) {
                 thread.cancel();
             }
         }

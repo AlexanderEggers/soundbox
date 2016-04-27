@@ -19,16 +19,16 @@ import java.util.ArrayList;
 
 public final class SlaveActivity extends Activity {
 
-    private SlaveLogic logic;
-    private BluetoothLogic.ConnectedThread thread;
-    private ArrayList<Byte> dataArray = new ArrayList<>();
+    private SlaveLogic mLogic;
+    private BluetoothLogic.ConnectedThread mThread;
+    private ArrayList<Byte> mDataArray = new ArrayList<>();
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        if (logic != null) {
-            logic.onResume();
+        if (mLogic != null) {
+            mLogic.onResume();
         }
     }
 
@@ -43,57 +43,74 @@ public final class SlaveActivity extends Activity {
             case "Proximity":
                 stub.setLayoutResource(R.layout.slave_proximity_content);
                 stub.inflate();
-                logic = new ProximityLogic();
-                logic.startLogic(this);
+                mLogic = new ProximityLogic();
+                mLogic.startLogic(this);
                 break;
             case "Heartbeat":
                 stub.setLayoutResource(R.layout.slave_heartbeat_content);
                 stub.inflate();
-                logic = new HeartbeatLogic();
-                logic.startLogic(this);
+                mLogic = new HeartbeatLogic();
+                mLogic.startLogic(this);
                 break;
             case "Acceleration":
                 stub.setLayoutResource(R.layout.slave_acceleration_content);
                 stub.inflate();
-                logic = new AccelerationLogic();
-                logic.startLogic(this);
+                mLogic = new AccelerationLogic();
+                mLogic.startLogic(this);
                 break;
         }
 
         BluetoothLogic bluetooth = new BluetoothLogic(this, new Handler());
-        thread = bluetooth.getMaster();
+        mThread = bluetooth.getMaster();
     }
 
-    public void writeData(float data) {
-        if(thread != null) {
-            byte[] bytes = ByteBuffer.allocate(4).putFloat(data).array();
+    public void sendSensorData(String identifier, int beaconID, float value) {
+        writeData(identifier);
+        writeData(beaconID);
+        writeData(value);
+        sendData();
+    }
+
+    private void writeData(float value) {
+        if(mThread != null) {
+            byte[] bytes = ByteBuffer.allocate(4).putFloat(value).array();
 
             for (byte b : bytes) {
-                dataArray.add(b);
+                mDataArray.add(b);
             }
         }
     }
 
-    public void writeData(String identifier) {
-        if(thread != null) {
+    private void writeData(int beaconID) {
+        if(mThread != null) {
+            byte[] bytes = ByteBuffer.allocate(4).putInt(beaconID).array();
+
+            for (byte b : bytes) {
+                mDataArray.add(b);
+            }
+        }
+    }
+
+    private void writeData(String identifier) {
+        if(mThread != null) {
             byte[] bytes = identifier.getBytes(StandardCharsets.UTF_8);
 
             for (byte b : bytes) {
-                dataArray.add(b);
+                mDataArray.add(b);
             }
         }
     }
 
-    public void sendData() {
-        if(thread != null) {
-            byte[] streamD = new byte[dataArray.size()];
+    private void sendData() {
+        if(mThread != null) {
+            byte[] streamD = new byte[mDataArray.size()];
 
-            for (int i = 0; i < dataArray.size(); i++) {
-                streamD[i] = dataArray.get(i);
+            for (int i = 0; i < mDataArray.size(); i++) {
+                streamD[i] = mDataArray.get(i);
             }
 
-            thread.write(streamD);
-            dataArray.clear();
+            mThread.write(streamD);
+            mDataArray.clear();
         }
     }
 
@@ -113,8 +130,8 @@ public final class SlaveActivity extends Activity {
     protected void onPause() {
         super.onPause();
 
-        if (logic != null) {
-            logic.onPause();
+        if (mLogic != null) {
+            mLogic.onPause();
         }
     }
 
@@ -122,8 +139,8 @@ public final class SlaveActivity extends Activity {
     protected void onStop() {
         super.onStop();
 
-        if (thread != null) {
-            thread.cancel();
+        if (mThread != null) {
+            mThread.cancel();
         }
     }
 }

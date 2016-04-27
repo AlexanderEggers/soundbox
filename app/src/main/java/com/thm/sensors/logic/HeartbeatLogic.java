@@ -15,10 +15,10 @@ import java.text.MessageFormat;
 
 public final class HeartbeatLogic implements SlaveLogic {
 
-    private Activity context;
+    private Activity mContext;
 
     public void startLogic(Activity context) {
-        this.context = context;
+        mContext = context;
         ((TextView) context.findViewById(R.id.textView6)).setText("Heartbeat Value: ");
         Button button = (Button) context.findViewById(R.id.button5);
         button.setOnTouchListener(new HeartbeatButton());
@@ -26,10 +26,8 @@ public final class HeartbeatLogic implements SlaveLogic {
 
     private void executeHeartbeat(MotionEvent event) {
         String text = MessageFormat.format("Heartbeat Value: {0}", event.getPressure());
-        ((TextView) context.findViewById(R.id.textView6)).setText(text);
-        ((SlaveActivity) context).writeData("Heartbeat   ");
-        ((SlaveActivity) context).writeData(event.getPressure());
-        ((SlaveActivity) context).sendData();
+        ((TextView) mContext.findViewById(R.id.textView6)).setText(text);
+        ((SlaveActivity) mContext).sendSensorData("Heartbeat   ", 1, event.getPressure());
         Log.d(HeartbeatLogic.class.getName(), text);
     }
 

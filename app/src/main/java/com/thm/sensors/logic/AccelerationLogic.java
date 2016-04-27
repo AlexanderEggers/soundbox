@@ -18,11 +18,11 @@ public final class AccelerationLogic implements SensorEventListener, SlaveLogic 
 
     private SensorManager mSensorManager;
     private Sensor mSensor;
-    private float[] gravity = {0f, 0f, 0f}, linear_acceleration = new float[3];
-    private Activity context;
+    private float[] mGravity = {0f, 0f, 0f}, mLinearAcceleration = new float[3];
+    private Activity mContext;
 
     public void startLogic(Activity context) {
-        this.context = context;
+        mContext = context;
         ((TextView) context.findViewById(R.id.textView)).setText("Acceleration Value: ");
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         if (mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
@@ -35,21 +35,19 @@ public final class AccelerationLogic implements SensorEventListener, SlaveLogic 
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             final float alpha = 0.8f;
 
-            // Isolate the force of gravity with the low-pass filter.
-            gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
-            gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
-            gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
+            // Isolate the force of mGravity with the low-pass filter.
+            mGravity[0] = alpha * mGravity[0] + (1 - alpha) * event.values[0];
+            mGravity[1] = alpha * mGravity[1] + (1 - alpha) * event.values[1];
+            mGravity[2] = alpha * mGravity[2] + (1 - alpha) * event.values[2];
 
-            // Remove the gravity contribution with the high-pass filter.
-            linear_acceleration[0] = event.values[0] - gravity[0];
-            linear_acceleration[1] = event.values[1] - gravity[1];
-            linear_acceleration[2] = event.values[2] - gravity[2];
+            // Remove the mGravity contribution with the high-pass filter.
+            mLinearAcceleration[0] = event.values[0] - mGravity[0];
+            mLinearAcceleration[1] = event.values[1] - mGravity[1];
+            mLinearAcceleration[2] = event.values[2] - mGravity[2];
 
-            String text = MessageFormat.format("Acceleration Value: {0}", linear_acceleration[2]);
-            ((TextView) context.findViewById(R.id.textView)).setText(text);
-            ((SlaveActivity) context).writeData("Acceleration");
-            ((SlaveActivity) context).writeData(linear_acceleration[2]);
-            ((SlaveActivity) context).sendData();
+            String text = MessageFormat.format("Acceleration Value: {0}", mLinearAcceleration[2]);
+            ((TextView) mContext.findViewById(R.id.textView)).setText(text);
+            ((SlaveActivity) mContext).sendSensorData("Acceleration", 1, mLinearAcceleration[2]);
             Log.i(AccelerationLogic.class.getName(), text);
         }
     }

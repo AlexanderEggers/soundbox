@@ -18,10 +18,10 @@ public final class ProximityLogic implements SensorEventListener, SlaveLogic {
 
     private SensorManager mSensorManager;
     private Sensor mSensor;
-    private Activity context;
+    private Activity mContext;
 
     public void startLogic(Activity context) {
-        this.context = context;
+        mContext = context;
         ((TextView) context.findViewById(R.id.textView2)).setText("Proximity Value: ");
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         if (mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY) != null) {
@@ -32,10 +32,8 @@ public final class ProximityLogic implements SensorEventListener, SlaveLogic {
     @Override
     public void onSensorChanged(SensorEvent event) {
         String text = MessageFormat.format("Proximity Value: {0}", event.values[0]);
-        ((TextView) context.findViewById(R.id.textView2)).setText(text);
-        ((SlaveActivity) context).writeData("Proximity   ");
-        ((SlaveActivity) context).writeData(event.values[0]);
-        ((SlaveActivity) context).sendData();
+        ((TextView) mContext.findViewById(R.id.textView2)).setText(text);
+        ((SlaveActivity) mContext).sendSensorData("Proximity   ", 1, event.values[0]);
         Log.i(ProximityLogic.class.getName(), text);
     }
 
