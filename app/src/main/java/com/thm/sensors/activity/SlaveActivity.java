@@ -1,8 +1,10 @@
 package com.thm.sensors.activity;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.MenuItem;
 import android.view.ViewStub;
 
@@ -60,8 +62,19 @@ public final class SlaveActivity extends Activity {
                 break;
         }
 
-        BluetoothLogic bluetooth = new BluetoothLogic(this, new Handler());
-        mThread = bluetooth.getMaster();
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                Looper.prepare();
+                BluetoothLogic bluetooth = new BluetoothLogic(new Handler());
+                mThread = bluetooth.getMaster();
+
+                if(mThread != null) {
+                    mThread.run();
+                }
+                return null;
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public void sendSensorData(String identifier, int beaconID, float value) {

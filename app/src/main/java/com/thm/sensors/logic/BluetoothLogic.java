@@ -1,63 +1,88 @@
 package com.thm.sensors.logic;
 
-import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
-import android.bluetooth.BluetoothProfile;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.UUID;
 
 public final class BluetoothLogic {
 
-    private final BluetoothManager mBluetoothManager;
     private final Handler mHandler;
-    private final UUID mUUID = UUID.fromString("0000110E-0000-1000-8000-00805F9B34FB"); //TODO: get UUID of device
 
-    public BluetoothLogic(Activity context, Handler handler) {
+    public BluetoothLogic(Handler handler) {
         mHandler = handler;
-        mBluetoothManager = (BluetoothManager) context.getSystemService(Activity.BLUETOOTH_SERVICE);
     }
 
-    //TODO: the getter-methods needs to be bind to a thread and the socket needs to be connected (not tested whether this needs to be done)
-
+    @Nullable
     public ConnectedThread getMaster() {
-        if (mBluetoothManager != null && mBluetoothManager.getConnectedDevices(BluetoothProfile.GATT).size() > 0) {
-            BluetoothDevice device = mBluetoothManager.getConnectedDevices(BluetoothProfile.GATT).get(0);
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        bluetoothAdapter.cancelDiscovery();
+        ArrayList<BluetoothDevice> pairedDevices = new ArrayList<>(bluetoothAdapter.getBondedDevices());
+
+        if (pairedDevices.size() > 0) {
+            BluetoothDevice device = pairedDevices.get(0);
             BluetoothSocket socket = null;
             try {
-                socket = device.createRfcommSocketToServiceRecord(mUUID);
+                socket = device.createRfcommSocketToServiceRecord(device.getUuids()[0].getUuid());
+                socket.connect();
+                return new ConnectedThread(socket);
             } catch (IOException e) {
                 e.printStackTrace();
-            }
 
-            return new ConnectedThread(socket);
+                try {
+                    if(socket != null) {
+                        socket.close();
+                    }
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+            return null;
         } else {
             Log.d(BluetoothLogic.class.getName(), "No connected devices");
             return null;
         }
     }
 
+    @Nullable
     public ArrayList<ConnectedThread> getSlaves() {
-        if (mBluetoothManager != null && mBluetoothManager.getConnectedDevices(BluetoothProfile.GATT).size() > 0) {
-            ArrayList<ConnectedThread> threads = new ArrayList<>();
+        ArrayList<ConnectedThread> threads = new ArrayList<>();
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        bluetoothAdapter.cancelDiscovery();
+        ArrayList<BluetoothDevice> pairedDevices = new ArrayList<>(bluetoothAdapter.getBondedDevices());
 
-            for (BluetoothDevice device : mBluetoothManager.getConnectedDevices(BluetoothProfile.GATT)) {
+        if (pairedDevices.size() > 0) {
+            for (BluetoothDevice device : pairedDevices) {
                 BluetoothSocket socket = null;
                 try {
-                    socket = device.createRfcommSocketToServiceRecord(mUUID);
+                    socket = device.createRfcommSocketToServiceRecord(device.getUuids()[0].getUuid());
+                    socket.connect();
+                    threads.add(new ConnectedThread(socket));
                 } catch (IOException e) {
                     e.printStackTrace();
+
+                    try {
+                        if(socket != null) {
+                            socket.close();
+                        }
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
                 }
-                threads.add(new ConnectedThread(socket));
             }
-            return threads;
+
+            if(!threads.isEmpty()) {
+                return threads;
+            } else {
+                return null;
+            }
         } else {
             Log.d(BluetoothLogic.class.getName(), "No connected devices");
             return null;
@@ -74,12 +99,11 @@ public final class BluetoothLogic {
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
 
-            // Get the input and output streams, using temp objects because
-            // member streams are final
             try {
-                tmpIn = socket.getInputStream();
-                tmpOut = socket.getOutputStream();
+                tmpIn = mmSocket.getInputStream();
+                tmpOut = mmSocket.getOutputStream();
             } catch (IOException e) {
+                e.printStackTrace();
             }
 
             mmInStream = tmpIn;
@@ -87,6 +111,8 @@ public final class BluetoothLogic {
         }
 
         public void run() {
+            System.out.println("TEST");
+
             /*
             first 12 bytes are reserved for the data name (like 'Heartbeat')
             next 4 bytes are reserved for the beacon id (like '1')
@@ -104,6 +130,7 @@ public final class BluetoothLogic {
                     // Send the obtained bytes to the UI activity
                     mHandler.obtainMessage(0, bytes, -1, buffer).sendToTarget();
                 } catch (IOException e) {
+                    e.printStackTrace();
                     break;
                 }
             }

@@ -1,8 +1,10 @@
 package com.thm.sensors.activity;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -30,8 +32,20 @@ public final class MasterActivity extends Activity {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        BluetoothLogic logic = new BluetoothLogic(this, new IncomingHandler(this));
-        mThreads = logic.getSlaves();
+        final MasterActivity context = this;
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                Looper.prepare();
+                BluetoothLogic bluetooth = new BluetoothLogic(new IncomingHandler(context));
+                mThreads = bluetooth.getSlaves();
+
+                for(BluetoothLogic.ConnectedThread thread : mThreads) {
+                    thread.run();
+                }
+                return null;
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         ((TextView) findViewById(R.id.textView3)).setText("Proximity: n/a");
         ((TextView) findViewById(R.id.textView4)).setText("Heartbeat: n/a");

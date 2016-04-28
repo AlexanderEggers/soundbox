@@ -8,6 +8,7 @@
         android:name="android.hardware.sensor.accelerometer"
         android:required="true" />
 
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
