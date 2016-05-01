@@ -40,9 +40,6 @@ public final class BluetoothLogic {
                 mConnectThread = new ConnectThread(new ArrayList<>(mBluetoothAdapter.getBondedDevices()).get(0));
                 mConnectThread.run();
                 break;
-            case "Beacon":
-                //TODO: Needs to be implemented
-                break;
         }
     }
 

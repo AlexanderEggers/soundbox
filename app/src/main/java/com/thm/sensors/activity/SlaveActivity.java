@@ -5,15 +5,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.view.MenuItem;
 import android.view.ViewStub;
 
 import com.thm.sensors.R;
 import com.thm.sensors.logic.AccelerationLogic;
+import com.thm.sensors.logic.BeaconLogic;
 import com.thm.sensors.logic.BluetoothLogic;
 import com.thm.sensors.logic.HeartbeatLogic;
-import com.thm.sensors.logic.ProximityLogic;
 import com.thm.sensors.logic.SlaveLogic;
 
 import java.nio.ByteBuffer;
@@ -25,7 +24,6 @@ public final class SlaveActivity extends Activity {
     private SlaveLogic mLogic;
     private BluetoothLogic mBluetoothLogic;
     private ArrayList<Byte> mDataArray = new ArrayList<>();
-    private Handler mHandler;
 
     @Override
     protected void onResume() {
@@ -47,7 +45,7 @@ public final class SlaveActivity extends Activity {
             case "Proximity":
                 stub.setLayoutResource(R.layout.slave_proximity_content);
                 stub.inflate();
-                mLogic = new ProximityLogic();
+                mLogic = new BeaconLogic();
                 mLogic.startLogic(this);
                 break;
             case "Heartbeat":
@@ -64,25 +62,15 @@ public final class SlaveActivity extends Activity {
                 break;
         }
 
-        mHandler = new Handler() {
-            public void handleMessage(Message msg) {
-                handleData(msg);
-            }
-        };
-
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 Looper.prepare();
-                mBluetoothLogic = new BluetoothLogic(mHandler);
+                mBluetoothLogic = new BluetoothLogic(new Handler());
                 mBluetoothLogic.startConnection("Slave");
                 return null;
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
-
-    private void handleData(Message msg) {
-        //TODO get data from beacon
     }
 
     public void sendSensorData(String identifier, int beaconID, float value) {

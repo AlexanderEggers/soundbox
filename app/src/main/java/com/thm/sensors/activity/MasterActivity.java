@@ -84,6 +84,8 @@ public final class MasterActivity extends Activity {
         wrapped = ByteBuffer.wrap(aValue);
         float value = wrapped.getFloat();
 
+        //
+
         switch (identifier) {
             case "Proximity":
                 ((TextView) findViewById(R.id.textView3)).setText(MessageFormat.format("Proximity: {0}", value));
