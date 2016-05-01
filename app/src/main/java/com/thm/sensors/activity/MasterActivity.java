@@ -15,11 +15,10 @@ import com.thm.sensors.logic.BluetoothLogic;
 
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 
 public final class MasterActivity extends Activity {
 
-    private ArrayList<BluetoothLogic.ConnectedThread> mThreads;
+    private BluetoothLogic mBluetoothLogic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,12 +36,8 @@ public final class MasterActivity extends Activity {
             @Override
             protected Void doInBackground(Void... params) {
                 Looper.prepare();
-                BluetoothLogic bluetooth = new BluetoothLogic(new IncomingHandler(context));
-                mThreads = bluetooth.getSlaves();
-
-                for(BluetoothLogic.ConnectedThread thread : mThreads) {
-                    thread.run();
-                }
+                mBluetoothLogic = new BluetoothLogic(new IncomingHandler(context));
+                mBluetoothLogic.startConnection("Master");
                 return null;
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -98,12 +93,7 @@ public final class MasterActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-
-        if (mThreads != null) {
-            for (BluetoothLogic.ConnectedThread thread : mThreads) {
-                thread.cancel();
-            }
-        }
+        mBluetoothLogic.closeConnections();
     }
 
     private static class IncomingHandler extends Handler {

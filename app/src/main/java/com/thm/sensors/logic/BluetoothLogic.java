@@ -2,90 +2,40 @@ package com.thm.sensors.logic;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
-import android.support.annotation.Nullable;
-import android.util.Log;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public final class BluetoothLogic {
 
+    private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
     private final Handler mHandler;
+    private final BluetoothAdapter mBluetoothAdapter;
+    private ArrayList<ConnectedThread> mThreads;
+    private AcceptThread mAcceptThread;
+    private ConnectThread mConnectThread;
+    private boolean keepAcceptAlive = true;
 
     public BluetoothLogic(Handler handler) {
         mHandler = handler;
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        mThreads = new ArrayList<>();
     }
 
-    @Nullable
-    public ConnectedThread getMaster() {
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        bluetoothAdapter.cancelDiscovery();
-        ArrayList<BluetoothDevice> pairedDevices = new ArrayList<>(bluetoothAdapter.getBondedDevices());
-
-        if (pairedDevices.size() > 0) {
-            BluetoothDevice device = pairedDevices.get(0);
-            BluetoothSocket socket = null;
-            try {
-                socket = device.createRfcommSocketToServiceRecord(device.getUuids()[0].getUuid());
-                socket.connect();
-                return new ConnectedThread(socket);
-            } catch (IOException e) {
-                e.printStackTrace();
-
-                try {
-                    if(socket != null) {
-                        socket.close();
-                    }
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-            return null;
+    public void startConnection(String type) {
+        if (type.equals("Master")) {
+            mAcceptThread = new AcceptThread();
+            mAcceptThread.run();
         } else {
-            Log.d(BluetoothLogic.class.getName(), "No connected devices");
-            return null;
-        }
-    }
-
-    @Nullable
-    public ArrayList<ConnectedThread> getSlaves() {
-        ArrayList<ConnectedThread> threads = new ArrayList<>();
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        bluetoothAdapter.cancelDiscovery();
-        ArrayList<BluetoothDevice> pairedDevices = new ArrayList<>(bluetoothAdapter.getBondedDevices());
-
-        if (pairedDevices.size() > 0) {
-            for (BluetoothDevice device : pairedDevices) {
-                BluetoothSocket socket = null;
-                try {
-                    socket = device.createRfcommSocketToServiceRecord(device.getUuids()[0].getUuid());
-                    socket.connect();
-                    threads.add(new ConnectedThread(socket));
-                } catch (IOException e) {
-                    e.printStackTrace();
-
-                    try {
-                        if(socket != null) {
-                            socket.close();
-                        }
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-            }
-
-            if(!threads.isEmpty()) {
-                return threads;
-            } else {
-                return null;
-            }
-        } else {
-            Log.d(BluetoothLogic.class.getName(), "No connected devices");
-            return null;
+            mConnectThread = new ConnectThread(new ArrayList<>(mBluetoothAdapter.getBondedDevices()).get(0));
+            mConnectThread.run();
         }
     }
 
@@ -106,8 +56,13 @@ public final class BluetoothLogic {
                 e.printStackTrace();
             }
 
+            if (tmpOut != null) {
+                mmOutStream = new DataOutputStream(tmpOut);
+            } else {
+                mmOutStream = null;
+            }
+
             mmInStream = tmpIn;
-            mmOutStream = tmpOut;
         }
 
         public void run() {
@@ -151,5 +106,130 @@ public final class BluetoothLogic {
             } catch (IOException e) {
             }
         }
+    }
+
+    private class AcceptThread extends Thread {
+        private final BluetoothServerSocket mmServerSocket;
+
+        public AcceptThread() {
+            // Use a temporary object that is later assigned to mmServerSocket,
+            // because mmServerSocket is final
+            BluetoothServerSocket tmp = null;
+            try {
+                // MY_UUID is the app's UUID string, also used by the client code
+                tmp = mBluetoothAdapter.listenUsingRfcommWithServiceRecord("Bluetooth Service", MY_UUID);
+            } catch (IOException e) {
+            }
+            mmServerSocket = tmp;
+        }
+
+        public void run() {
+            BluetoothSocket socket;
+            // Keep listening until exception occurs or a socket is returned
+            while (keepAcceptAlive) {
+                socket = null;
+
+                try {
+                    socket = mmServerSocket.accept();
+                } catch (IOException e) {
+                }
+                // If a connection was accepted
+                if (socket != null) {
+                    // Do work to manage the connection (in a separate thread)
+                    if (socket.isConnected()) {
+                        ConnectedThread thread = new ConnectedThread(socket);
+                        thread.run();
+                        mThreads.add(thread);
+                    }
+                    try {
+                        mmServerSocket.close();
+                    } catch (IOException e) {
+                    }
+                }
+            }
+        }
+
+        /**
+         * Will cancel the listening socket, and cause the thread to finish
+         */
+        public void cancel() {
+            try {
+                mmServerSocket.close();
+            } catch (IOException e) {
+            }
+        }
+    }
+
+    private class ConnectThread extends Thread {
+        private final BluetoothSocket mmSocket;
+
+        public ConnectThread(BluetoothDevice device) {
+            // Use a temporary object that is later assigned to mmSocket,
+            // because mmSocket is final
+            BluetoothSocket tmp = null;
+
+            // Get a BluetoothSocket to connect with the given BluetoothDevice
+            try {
+                // MY_UUID is the app's UUID string, also used by the server code
+                tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
+            } catch (IOException e) {
+            }
+            mmSocket = tmp;
+        }
+
+        public void run() {
+            // Cancel discovery because it will slow down the connection
+            mBluetoothAdapter.cancelDiscovery();
+
+            try {
+                // Connect the device through the socket. This will block
+                // until it succeeds or throws an exception
+                mmSocket.connect();
+            } catch (IOException connectException) {
+                // Unable to connect; close the socket and get out
+                try {
+                    mmSocket.close();
+                } catch (IOException closeException) {
+                }
+                return;
+            }
+
+            // Do work to manage the connection (in a separate thread)
+            if (mmSocket.isConnected()) {
+                ConnectedThread thread = new ConnectedThread(mmSocket);
+                thread.run();
+                mThreads.add(thread);
+            }
+        }
+
+        /**
+         * Will cancel an in-progress connection, and close the socket
+         */
+        public void cancel() {
+            try {
+                mmSocket.close();
+            } catch (IOException e) {
+            }
+        }
+    }
+
+    public void closeConnections() {
+        keepAcceptAlive = false;
+
+        for (ConnectedThread thread : mThreads) {
+            thread.cancel();
+        }
+
+        if (mAcceptThread != null) {
+            mAcceptThread.cancel();
+        }
+
+        if (mConnectThread != null) {
+            mConnectThread.cancel();
+        }
+    }
+
+    public ConnectedThread getMasterConnectionThread() {
+        return mThreads.get(0);
     }
 }
