@@ -1,8 +1,6 @@
 # Sound of HAW
 
 ## Bluetooth
-
-###### Master/Slave
 You need two devices which will act as slave and master. The master device can be activated via the menu button "Master".
 The slave device can be activated via one of the other menu buttons. It's important that the master device is connected to the bluetooth
 system as soon as possible to prevent timeouts if a slave tries to connect to the master device.
