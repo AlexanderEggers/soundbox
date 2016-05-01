@@ -18,7 +18,7 @@ Each sensor has specific methods which are important to the whole sensor concept
 to check if this sensor is avaiable to prevent further problems!
 * onSensorChanged(SensorEvent event) - This method is the main part of the sensor logic and will be called every time the internal sensor
 is tracking a new value. Here we need to prepare the value which will send to the master device.
-  * sendSensorData(String identifier, int beaconID, float value) - This method should be used to send the values of the sensor to the master device. It's important that the identifier is correct!
+  * sendSensorData(int identifier, int beaconID, float value) - This method should be used to send the values of the sensor to the master device. It's important that the identifier is correct! The identifier ids are located in the ".Util" class.
 * onAccuracyChanged(Sensor sensor, int accuracy) - We are probably not going use this method but you need to add this method due to the SensorEventListener.
 * onResume() and onPause() - Both methods are responsible to register/unregister the event listener.
 
