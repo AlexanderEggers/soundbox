@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.ViewStub;
 
 import com.thm.sensors.R;
+import com.thm.sensors.Util;
 import com.thm.sensors.logic.AccelerationLogic;
 import com.thm.sensors.logic.BeaconLogic;
 import com.thm.sensors.logic.BluetoothLogic;
@@ -16,7 +17,6 @@ import com.thm.sensors.logic.HeartbeatLogic;
 import com.thm.sensors.logic.SlaveLogic;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public final class SlaveActivity extends Activity {
@@ -39,27 +39,30 @@ public final class SlaveActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.slave_activity);
 
-        String sensor = getIntent().getStringExtra("sensor");
+        int sensor = getIntent().getIntExtra("sensor", -1);
         ViewStub stub = (ViewStub) findViewById(R.id.stub);
         switch (sensor) {
-            case "Proximity":
+            case Util.PROXIMITY:
                 stub.setLayoutResource(R.layout.slave_proximity_content);
                 stub.inflate();
                 mLogic = new BeaconLogic();
                 mLogic.startLogic(this);
                 break;
-            case "Heartbeat":
+            case Util.HEARTBEAT:
                 stub.setLayoutResource(R.layout.slave_heartbeat_content);
                 stub.inflate();
                 mLogic = new HeartbeatLogic();
                 mLogic.startLogic(this);
                 break;
-            case "Acceleration":
+            case Util.ACCELERATION:
                 stub.setLayoutResource(R.layout.slave_acceleration_content);
                 stub.inflate();
                 mLogic = new AccelerationLogic();
                 mLogic.startLogic(this);
                 break;
+            default:
+                finish();
+                return;
         }
 
         new AsyncTask<Void, Void, Void>() {
@@ -67,35 +70,22 @@ public final class SlaveActivity extends Activity {
             protected Void doInBackground(Void... params) {
                 Looper.prepare();
                 mBluetoothLogic = new BluetoothLogic(new Handler());
-                mBluetoothLogic.startConnection("Slave");
+                mBluetoothLogic.startConnection(Util.SLAVE);
                 return null;
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    public void sendSensorData(String identifier, int beaconID, float value) {
+    public void sendSensorData(int identifier, int beaconID, float value) {
         writeData(identifier);
         writeData(beaconID);
         writeData(value);
         sendData();
     }
 
-    private void writeData(String identifier) {
+    private void writeData(int id) {
         if (mBluetoothLogic != null && mBluetoothLogic.isMasterConnectionAvailable()) {
-            while (identifier.length() < 12) {
-                identifier += " ";
-            }
-
-            byte[] bytes = identifier.getBytes(StandardCharsets.UTF_8);
-            for (byte b : bytes) {
-                mDataArray.add(b);
-            }
-        }
-    }
-
-    private void writeData(int beaconID) {
-        if (mBluetoothLogic != null && mBluetoothLogic.isMasterConnectionAvailable()) {
-            byte[] bytes = ByteBuffer.allocate(4).putInt(beaconID).array();
+            byte[] bytes = ByteBuffer.allocate(4).putInt(id).array();
 
             for (byte b : bytes) {
                 mDataArray.add(b);

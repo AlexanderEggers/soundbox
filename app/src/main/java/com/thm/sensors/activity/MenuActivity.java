@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Toolbar;
 
 import com.thm.sensors.R;
+import com.thm.sensors.Util;
 
 public final class MenuActivity extends Activity implements View.OnClickListener {
 
@@ -24,19 +25,19 @@ public final class MenuActivity extends Activity implements View.OnClickListener
             case R.id.button:
                 Intent intent = new Intent(this, SlaveActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                intent.putExtra("sensor", "Proximity");
+                intent.putExtra("sensor", Util.PROXIMITY);
                 startActivity(intent);
                 break;
             case R.id.button2:
                 intent = new Intent(this, SlaveActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                intent.putExtra("sensor", "Heartbeat");
+                intent.putExtra("sensor", Util.HEARTBEAT);
                 startActivity(intent);
                 break;
             case R.id.button3:
                 intent = new Intent(this, SlaveActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                intent.putExtra("sensor", "Acceleration");
+                intent.putExtra("sensor", Util.ACCELERATION);
                 startActivity(intent);
                 break;
             case R.id.button4:

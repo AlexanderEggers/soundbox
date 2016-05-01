@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toolbar;
 
 import com.thm.sensors.R;
+import com.thm.sensors.Util;
 import com.thm.sensors.logic.BluetoothLogic;
 
 import java.nio.ByteBuffer;
@@ -43,7 +44,7 @@ public final class MasterActivity extends Activity {
             protected Void doInBackground(Void... params) {
                 Looper.prepare();
                 mBluetoothLogic = new BluetoothLogic(mHandler);
-                mBluetoothLogic.startConnection("Master");
+                mBluetoothLogic.startConnection(Util.MASTER);
                 return null;
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -67,33 +68,34 @@ public final class MasterActivity extends Activity {
     }
 
     private void handleData(Message msg) {
-        byte[] aIdentifier = new byte[12];
-        System.arraycopy(((byte[]) msg.obj), 0, aIdentifier, 0, 12);
+        byte[] aIdentifier = new byte[4];
+        System.arraycopy(((byte[]) msg.obj), 0, aIdentifier, 0, 4);
 
         byte[] aBeaconID = new byte[4];
-        System.arraycopy(((byte[]) msg.obj), 12, aBeaconID, 0, 4);
+        System.arraycopy(((byte[]) msg.obj), 4, aBeaconID, 0, 4);
 
         byte[] aValue = new byte[4];
-        System.arraycopy(((byte[]) msg.obj), 16, aValue, 0, 4);
+        System.arraycopy(((byte[]) msg.obj), 8, aValue, 0, 4);
 
-        String identifier = new String(aIdentifier).replace(" ", "");
+        ByteBuffer wrapped = ByteBuffer.wrap(aIdentifier);
+        int identifier = wrapped.getInt();
 
-        ByteBuffer wrapped = ByteBuffer.wrap(aBeaconID);
-        float beaconID = wrapped.getFloat();
+        wrapped = ByteBuffer.wrap(aBeaconID);
+        float beaconID = wrapped.getInt();
 
         wrapped = ByteBuffer.wrap(aValue);
         float value = wrapped.getFloat();
 
-        //
+        //---Audio logic part could start here---
 
         switch (identifier) {
-            case "Proximity":
+            case Util.PROXIMITY:
                 ((TextView) findViewById(R.id.textView3)).setText(MessageFormat.format("Proximity: {0}", value));
                 break;
-            case "Heartbeat":
+            case Util.HEARTBEAT:
                 ((TextView) findViewById(R.id.textView4)).setText(MessageFormat.format("Heartbeat: {0}", value));
                 break;
-            case "Acceleration":
+            case Util.ACCELERATION:
                 ((TextView) findViewById(R.id.textView5)).setText(MessageFormat.format("Acceleration: {0}", value));
                 break;
         }

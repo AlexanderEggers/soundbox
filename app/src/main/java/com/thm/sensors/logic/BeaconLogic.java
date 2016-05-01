@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.thm.sensors.R;
+import com.thm.sensors.Util;
 import com.thm.sensors.activity.SlaveActivity;
 
 import org.altbeacon.beacon.Beacon;
@@ -20,7 +21,7 @@ import org.altbeacon.beacon.Region;
 import java.text.MessageFormat;
 import java.util.Collection;
 
-public class BeaconLogic implements BeaconConsumer, SlaveLogic {
+public final class BeaconLogic implements BeaconConsumer, SlaveLogic {
 
     private BeaconManager mBeaconManager;
     private Activity mContext;
@@ -40,9 +41,10 @@ public class BeaconLogic implements BeaconConsumer, SlaveLogic {
                 if (beacons.size() > 0) {
                     double distance = beacons.iterator().next().getDistance();
                     if (distance < 2d) {
+                        int beaconID = beacons.iterator().next().getId1().toInt();
                         String text = MessageFormat.format("Proximity Value: {0}", (float) distance);
                         ((TextView) mContext.findViewById(R.id.textView2)).setText(text);
-                        ((SlaveActivity) mContext).sendSensorData("Proximity", 1, (float) distance);
+                        ((SlaveActivity) mContext).sendSensorData(Util.PROXIMITY, beaconID, (float) distance);
                         Log.i(BeaconLogic.class.getName(), text);
                     }
                 }

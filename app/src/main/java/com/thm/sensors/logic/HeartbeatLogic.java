@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.thm.sensors.R;
+import com.thm.sensors.Util;
 import com.thm.sensors.activity.SlaveActivity;
 
 import java.text.MessageFormat;
@@ -27,7 +28,7 @@ public final class HeartbeatLogic implements SlaveLogic {
     private void executeHeartbeat(MotionEvent event) {
         String text = MessageFormat.format("Heartbeat Value: {0}", event.getPressure());
         ((TextView) mContext.findViewById(R.id.textView6)).setText(text);
-        ((SlaveActivity) mContext).sendSensorData("Heartbeat", 1, event.getPressure());
+        ((SlaveActivity) mContext).sendSensorData(Util.HEARTBEAT, 1, event.getPressure());
         Log.d(HeartbeatLogic.class.getName(), text);
     }
 

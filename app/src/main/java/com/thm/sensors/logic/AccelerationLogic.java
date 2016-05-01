@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.thm.sensors.R;
+import com.thm.sensors.Util;
 import com.thm.sensors.activity.SlaveActivity;
 
 import java.text.MessageFormat;
@@ -47,7 +48,7 @@ public final class AccelerationLogic implements SensorEventListener, SlaveLogic 
 
             String text = MessageFormat.format("Acceleration Value: {0}", mLinearAcceleration[2]);
             ((TextView) mContext.findViewById(R.id.textView)).setText(text);
-            ((SlaveActivity) mContext).sendSensorData("Acceleration", 1, mLinearAcceleration[2]);
+            ((SlaveActivity) mContext).sendSensorData(Util.ACCELERATION, 1, mLinearAcceleration[2]);
             Log.i(AccelerationLogic.class.getName(), text);
         }
     }

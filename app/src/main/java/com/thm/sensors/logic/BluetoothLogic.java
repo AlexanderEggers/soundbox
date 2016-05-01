@@ -6,6 +6,8 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 
+import com.thm.sensors.Util;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,13 +31,13 @@ public final class BluetoothLogic {
         mThreads = new ArrayList<>();
     }
 
-    public void startConnection(String type) {
+    public void startConnection(int type) {
         switch (type) {
-            case "Master":
+            case Util.MASTER:
                 mAcceptThread = new AcceptThread();
                 mAcceptThread.run();
                 break;
-            case "Slave":
+            case Util.SLAVE:
                 //TODO: Save name of master device as final and let this function search for it --> to make sure to get the right device
                 mConnectThread = new ConnectThread(new ArrayList<>(mBluetoothAdapter.getBondedDevices()).get(0));
                 mConnectThread.run();
@@ -71,7 +73,7 @@ public final class BluetoothLogic {
             last 4 bytes are reserved for the data value (like '1.25')
             */
 
-            byte[] buffer = new byte[20];  // buffer store for the stream
+            byte[] buffer = new byte[12];  // buffer store for the stream
             int bytes; // bytes returned from read()
 
             // Keep listening to the InputStream until an exception occurs
