@@ -6,7 +6,6 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -57,18 +56,11 @@ public final class BluetoothLogic {
                 e.printStackTrace();
             }
 
-            if (tmpOut != null) {
-                mmOutStream = new DataOutputStream(tmpOut);
-            } else {
-                mmOutStream = null;
-            }
-
+            mmOutStream = tmpOut;
             mmInStream = tmpIn;
         }
 
         public void run() {
-            System.out.println("TEST");
-
             /*
             first 12 bytes are reserved for the data name (like 'Heartbeat')
             next 4 bytes are reserved for the beacon id (like '1')
@@ -84,9 +76,9 @@ public final class BluetoothLogic {
                     // Read from the InputStream
                     bytes = mmInStream.read(buffer);
                     // Send the obtained bytes to the UI activity
-                    mHandler.obtainMessage(0, bytes, -1, buffer).sendToTarget();
+                    if (mHandler != null)
+                        mHandler.obtainMessage(0, bytes, -1, buffer).sendToTarget();
                 } catch (IOException e) {
-                    e.printStackTrace();
                     break;
                 }
             }
@@ -97,6 +89,7 @@ public final class BluetoothLogic {
             try {
                 mmOutStream.write(bytes);
             } catch (IOException e) {
+                e.getStackTrace();
             }
         }
 
@@ -133,19 +126,14 @@ public final class BluetoothLogic {
                 try {
                     socket = mmServerSocket.accept();
                 } catch (IOException e) {
+                    e.getStackTrace();
                 }
                 // If a connection was accepted
                 if (socket != null) {
                     // Do work to manage the connection (in a separate thread)
-                    if (socket.isConnected()) {
-                        ConnectedThread thread = new ConnectedThread(socket);
-                        thread.run();
-                        mThreads.add(thread);
-                    }
-                    try {
-                        mmServerSocket.close();
-                    } catch (IOException e) {
-                    }
+                    ConnectedThread thread = new ConnectedThread(socket);
+                    mThreads.add(thread);
+                    thread.run();
                 }
             }
         }
@@ -196,11 +184,9 @@ public final class BluetoothLogic {
             }
 
             // Do work to manage the connection (in a separate thread)
-            if (mmSocket.isConnected()) {
-                ConnectedThread thread = new ConnectedThread(mmSocket);
-                thread.run();
-                mThreads.add(thread);
-            }
+            ConnectedThread thread = new ConnectedThread(mmSocket);
+            mThreads.add(thread);
+            thread.run();
         }
 
         /**

@@ -13,12 +13,12 @@ import android.widget.Toolbar;
 import com.thm.sensors.R;
 import com.thm.sensors.logic.BluetoothLogic;
 
-import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 
 public final class MasterActivity extends Activity {
 
     private BluetoothLogic mBluetoothLogic;
+    private Handler mHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,12 +31,17 @@ public final class MasterActivity extends Activity {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        final MasterActivity context = this;
+        mHandler = new Handler() {
+            public void handleMessage(Message msg) {
+                handleData(msg);
+            }
+        };
+
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 Looper.prepare();
-                mBluetoothLogic = new BluetoothLogic(new IncomingHandler(context));
+                mBluetoothLogic = new BluetoothLogic(mHandler);
                 mBluetoothLogic.startConnection("Master");
                 return null;
             }
@@ -45,6 +50,8 @@ public final class MasterActivity extends Activity {
         ((TextView) findViewById(R.id.textView3)).setText("Proximity: n/a");
         ((TextView) findViewById(R.id.textView4)).setText("Heartbeat: n/a");
         ((TextView) findViewById(R.id.textView5)).setText("Acceleration: n/a");
+
+
     }
 
     @Override
@@ -64,10 +71,10 @@ public final class MasterActivity extends Activity {
         System.arraycopy(((byte[]) msg.obj), 0, aIdentifier, 0, 12);
 
         byte[] aBeaconID = new byte[4];
-        System.arraycopy(((byte[]) msg.obj), 12, aBeaconID, 16, 4);
+        System.arraycopy(((byte[]) msg.obj), 12, aBeaconID, 0, 4);
 
         byte[] aValue = new byte[4];
-        System.arraycopy(((byte[]) msg.obj), 16, aValue, 20, 4);
+        System.arraycopy(((byte[]) msg.obj), 16, aValue, 0, 4);
 
         String identifier = new String(aIdentifier).replace(" ", "");
 
@@ -79,13 +86,13 @@ public final class MasterActivity extends Activity {
 
         switch (identifier) {
             case "Proximity":
-                ((TextView) findViewById(R.id.textView3)).setText("Proximity: " + value + " Beacon-ID: " + beaconID);
+                ((TextView) findViewById(R.id.textView3)).setText("Proximity: " + value);
                 break;
             case "Heartbeat":
-                ((TextView) findViewById(R.id.textView4)).setText("Heartbeat: " + value + " Beacon-ID: " + beaconID);
+                ((TextView) findViewById(R.id.textView4)).setText("Heartbeat: " + value);
                 break;
             case "Acceleration":
-                ((TextView) findViewById(R.id.textView4)).setText("Heartbeat: " + value + " Beacon-ID: " + beaconID);
+                ((TextView) findViewById(R.id.textView5)).setText("Acceleration: " + value);
                 break;
         }
     }
@@ -94,21 +101,5 @@ public final class MasterActivity extends Activity {
     protected void onStop() {
         super.onStop();
         mBluetoothLogic.close();
-    }
-
-    private static class IncomingHandler extends Handler {
-        private final WeakReference<MasterActivity> mmActivity;
-
-        IncomingHandler(MasterActivity activity) {
-            mmActivity = new WeakReference<>(activity);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            MasterActivity activity = mmActivity.get();
-            if (activity != null) {
-                activity.handleData(msg);
-            }
-        }
     }
 }
