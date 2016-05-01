@@ -1,4 +1,5 @@
 # Sound of HAW
+Targeting specific sensors of Android (distant sensor via beacons, "heartbeat", moving phone) and executing events (sending a value via bluetooth) which will modify sound samples.
 
 ## Bluetooth
 You need two devices which will act as slave and master. The master device can be activated via the menu button "Master".
@@ -20,3 +21,11 @@ is tracking a new value. Here we need to prepare the value which will send to th
   * sendSensorData(String identifier, int beaconID, float value) - This method should be used to send the values of the sensor to the master device. It's important that the identifier is correct!
 * onAccuracyChanged(Sensor sensor, int accuracy) - We are probably not going use this method but you need to add this method due to the SensorEventListener.
 * onResume() and onPause() - Both methods are responsible to register/unregister the event listener.
+
+## Requirements
+To run this app the device needs to match certain requirements:
+* Bluetooth
+* Min SDK Level: 21 (Android 5.0 - Lollipop)
+* Sensors:
+  * Acceleration sensor
+  * TBD
