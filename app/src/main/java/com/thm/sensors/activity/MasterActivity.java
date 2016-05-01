@@ -93,7 +93,7 @@ public final class MasterActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-        mBluetoothLogic.closeConnections();
+        mBluetoothLogic.close();
     }
 
     private static class IncomingHandler extends Handler {

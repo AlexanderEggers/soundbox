@@ -16,6 +16,7 @@ import java.util.UUID;
 public final class BluetoothLogic {
 
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
+    private static final int MASTER_THREAD = 0;
     private final Handler mHandler;
     private final BluetoothAdapter mBluetoothAdapter;
     private ArrayList<ConnectedThread> mThreads;
@@ -39,7 +40,7 @@ public final class BluetoothLogic {
         }
     }
 
-    public class ConnectedThread extends Thread {
+    private class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
@@ -213,7 +214,15 @@ public final class BluetoothLogic {
         }
     }
 
-    public void closeConnections() {
+    public boolean isMasterConnectionAvailable() {
+        return !mThreads.isEmpty();
+    }
+
+    public void writeDataToMaster(byte[] data) {
+        mThreads.get(MASTER_THREAD).write(data);
+    }
+
+    public void close() {
         keepAcceptAlive = false;
 
         for (ConnectedThread thread : mThreads) {
@@ -227,9 +236,5 @@ public final class BluetoothLogic {
         if (mConnectThread != null) {
             mConnectThread.cancel();
         }
-    }
-
-    public ConnectedThread getMasterConnectionThread() {
-        return mThreads.get(0);
     }
 }

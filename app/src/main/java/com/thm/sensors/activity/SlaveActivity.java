@@ -81,7 +81,7 @@ public final class SlaveActivity extends Activity {
     }
 
     private void writeData(float value) {
-        if (mBluetoothLogic.getMasterConnectionThread() != null) {
+        if (mBluetoothLogic.isMasterConnectionAvailable()) {
             byte[] bytes = ByteBuffer.allocate(4).putFloat(value).array();
 
             for (byte b : bytes) {
@@ -91,7 +91,7 @@ public final class SlaveActivity extends Activity {
     }
 
     private void writeData(int beaconID) {
-        if (mBluetoothLogic.getMasterConnectionThread() != null) {
+        if (mBluetoothLogic.isMasterConnectionAvailable()) {
             byte[] bytes = ByteBuffer.allocate(4).putInt(beaconID).array();
 
             for (byte b : bytes) {
@@ -101,7 +101,7 @@ public final class SlaveActivity extends Activity {
     }
 
     private void writeData(String identifier) {
-        if (mBluetoothLogic.getMasterConnectionThread() != null) {
+        if (mBluetoothLogic.isMasterConnectionAvailable()) {
             byte[] bytes = identifier.getBytes(StandardCharsets.UTF_8);
 
             for (byte b : bytes) {
@@ -111,14 +111,14 @@ public final class SlaveActivity extends Activity {
     }
 
     private void sendData() {
-        if (mBluetoothLogic.getMasterConnectionThread() != null) {
+        if (mBluetoothLogic.isMasterConnectionAvailable()) {
             byte[] streamD = new byte[mDataArray.size()];
 
             for (int i = 0; i < mDataArray.size(); i++) {
                 streamD[i] = mDataArray.get(i);
             }
 
-            mBluetoothLogic.getMasterConnectionThread().write(streamD);
+            mBluetoothLogic.writeDataToMaster(streamD);
             mDataArray.clear();
         }
     }
@@ -147,6 +147,6 @@ public final class SlaveActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-        mBluetoothLogic.closeConnections();
+        mBluetoothLogic.close();
     }
 }
