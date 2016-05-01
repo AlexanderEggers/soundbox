@@ -14,6 +14,7 @@ import com.thm.sensors.R;
 import com.thm.sensors.logic.BluetoothLogic;
 
 import java.nio.ByteBuffer;
+import java.text.MessageFormat;
 
 public final class MasterActivity extends Activity {
 
@@ -50,8 +51,7 @@ public final class MasterActivity extends Activity {
         ((TextView) findViewById(R.id.textView3)).setText("Proximity: n/a");
         ((TextView) findViewById(R.id.textView4)).setText("Heartbeat: n/a");
         ((TextView) findViewById(R.id.textView5)).setText("Acceleration: n/a");
-
-
+        ((TextView) findViewById(R.id.textView6)).setText("Beacon-ID: n/a");
     }
 
     @Override
@@ -86,15 +86,17 @@ public final class MasterActivity extends Activity {
 
         switch (identifier) {
             case "Proximity":
-                ((TextView) findViewById(R.id.textView3)).setText("Proximity: " + value);
+                ((TextView) findViewById(R.id.textView3)).setText(MessageFormat.format("Proximity: {0}", value));
                 break;
             case "Heartbeat":
-                ((TextView) findViewById(R.id.textView4)).setText("Heartbeat: " + value);
+                ((TextView) findViewById(R.id.textView4)).setText(MessageFormat.format("Heartbeat: {0}", value));
                 break;
             case "Acceleration":
-                ((TextView) findViewById(R.id.textView5)).setText("Acceleration: " + value);
+                ((TextView) findViewById(R.id.textView5)).setText(MessageFormat.format("Acceleration: {0}", value));
                 break;
         }
+
+        ((TextView) findViewById(R.id.textView6)).setText(MessageFormat.format("Beacon-ID: {0}", beaconID));
     }
 
     @Override

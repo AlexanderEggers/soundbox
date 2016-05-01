@@ -3,7 +3,9 @@ package com.thm.sensors.activity;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.view.MenuItem;
 import android.view.ViewStub;
 
@@ -23,6 +25,7 @@ public final class SlaveActivity extends Activity {
     private SlaveLogic mLogic;
     private BluetoothLogic mBluetoothLogic;
     private ArrayList<Byte> mDataArray = new ArrayList<>();
+    private Handler mHandler;
 
     @Override
     protected void onResume() {
@@ -61,15 +64,25 @@ public final class SlaveActivity extends Activity {
                 break;
         }
 
+        mHandler = new Handler() {
+            public void handleMessage(Message msg) {
+                handleData(msg);
+            }
+        };
+
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 Looper.prepare();
-                mBluetoothLogic = new BluetoothLogic(null);
+                mBluetoothLogic = new BluetoothLogic(mHandler);
                 mBluetoothLogic.startConnection("Slave");
                 return null;
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    private void handleData(Message msg) {
+        //TODO get data from beacon
     }
 
     public void sendSensorData(String identifier, int beaconID, float value) {
@@ -79,10 +92,13 @@ public final class SlaveActivity extends Activity {
         sendData();
     }
 
-    private void writeData(float value) {
-        if (mBluetoothLogic.isMasterConnectionAvailable()) {
-            byte[] bytes = ByteBuffer.allocate(4).putFloat(value).array();
+    private void writeData(String identifier) {
+        if (mBluetoothLogic != null && mBluetoothLogic.isMasterConnectionAvailable()) {
+            while (identifier.length() < 12) {
+                identifier += " ";
+            }
 
+            byte[] bytes = identifier.getBytes(StandardCharsets.UTF_8);
             for (byte b : bytes) {
                 mDataArray.add(b);
             }
@@ -90,7 +106,7 @@ public final class SlaveActivity extends Activity {
     }
 
     private void writeData(int beaconID) {
-        if (mBluetoothLogic.isMasterConnectionAvailable()) {
+        if (mBluetoothLogic != null && mBluetoothLogic.isMasterConnectionAvailable()) {
             byte[] bytes = ByteBuffer.allocate(4).putInt(beaconID).array();
 
             for (byte b : bytes) {
@@ -99,9 +115,9 @@ public final class SlaveActivity extends Activity {
         }
     }
 
-    private void writeData(String identifier) {
-        if (mBluetoothLogic.isMasterConnectionAvailable()) {
-            byte[] bytes = identifier.getBytes(StandardCharsets.UTF_8);
+    private void writeData(float value) {
+        if (mBluetoothLogic != null && mBluetoothLogic.isMasterConnectionAvailable()) {
+            byte[] bytes = ByteBuffer.allocate(4).putFloat(value).array();
 
             for (byte b : bytes) {
                 mDataArray.add(b);

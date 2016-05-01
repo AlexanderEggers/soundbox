@@ -21,7 +21,7 @@ public final class BluetoothLogic {
     private ArrayList<ConnectedThread> mThreads;
     private AcceptThread mAcceptThread;
     private ConnectThread mConnectThread;
-    private boolean keepAcceptAlive = true;
+    private boolean mKeepAcceptAlive = true;
 
     public BluetoothLogic(Handler handler) {
         mHandler = handler;
@@ -30,12 +30,19 @@ public final class BluetoothLogic {
     }
 
     public void startConnection(String type) {
-        if (type.equals("Master")) {
-            mAcceptThread = new AcceptThread();
-            mAcceptThread.run();
-        } else {
-            mConnectThread = new ConnectThread(new ArrayList<>(mBluetoothAdapter.getBondedDevices()).get(0));
-            mConnectThread.run();
+        switch (type) {
+            case "Master":
+                mAcceptThread = new AcceptThread();
+                mAcceptThread.run();
+                break;
+            case "Slave":
+                //TODO: Save name of master device as final and let this function search for it --> to make sure to get the right device
+                mConnectThread = new ConnectThread(new ArrayList<>(mBluetoothAdapter.getBondedDevices()).get(0));
+                mConnectThread.run();
+                break;
+            case "Beacon":
+                //TODO: Needs to be implemented
+                break;
         }
     }
 
@@ -120,7 +127,7 @@ public final class BluetoothLogic {
         public void run() {
             BluetoothSocket socket;
             // Keep listening until exception occurs or a socket is returned
-            while (keepAcceptAlive) {
+            while (mKeepAcceptAlive) {
                 socket = null;
 
                 try {
@@ -204,12 +211,13 @@ public final class BluetoothLogic {
         return !mThreads.isEmpty();
     }
 
+    //TODO: Give each thread an id which will be searched by this function to get the correct master thread
     public void writeDataToMaster(byte[] data) {
         mThreads.get(MASTER_THREAD).write(data);
     }
 
     public void close() {
-        keepAcceptAlive = false;
+        mKeepAcceptAlive = false;
 
         for (ConnectedThread thread : mThreads) {
             thread.cancel();
