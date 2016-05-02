@@ -23,6 +23,7 @@ import java.util.Collection;
 
 public final class BeaconLogic implements BeaconConsumer, SlaveLogic {
 
+    private static final double MIN_RANGE_IN_METERS = 2;
     private BeaconManager mBeaconManager;
     private Activity mContext;
 
@@ -41,7 +42,7 @@ public final class BeaconLogic implements BeaconConsumer, SlaveLogic {
                 if (beacons.size() > 0) {
                     double distance = beacons.iterator().next().getDistance();
                     Log.d(BeaconLogic.class.getName(), distance + "");
-                    if (distance < 2d) {
+                    if (distance < MIN_RANGE_IN_METERS) {
                         int beaconID = beacons.iterator().next().getId1().toInt();
                         String text = MessageFormat.format("Proximity Value: {0}", (float) distance);
                         ((TextView) mContext.findViewById(R.id.textView2)).setText(text);
