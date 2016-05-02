@@ -28,6 +28,9 @@ public final class BluetoothLogic {
     public BluetoothLogic(Handler handler) {
         mHandler = handler;
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (!mBluetoothAdapter.isEnabled()) {
+            mBluetoothAdapter.enable();
+        }
         mThreads = new ArrayList<>();
     }
 
@@ -39,8 +42,11 @@ public final class BluetoothLogic {
                 break;
             case Util.SLAVE:
                 //TODO: Save name of master device as final and let this function search for it --> to make sure to get the right device
-                mConnectThread = new ConnectThread(new ArrayList<>(mBluetoothAdapter.getBondedDevices()).get(0));
-                mConnectThread.run();
+                ArrayList<BluetoothDevice> pairedDevices = new ArrayList<>(mBluetoothAdapter.getBondedDevices());
+                if (!pairedDevices.isEmpty() && pairedDevices.get(0) != null) {
+                    mConnectThread = new ConnectThread(pairedDevices.get(0));
+                    mConnectThread.run();
+                }
                 break;
         }
     }
@@ -68,7 +74,7 @@ public final class BluetoothLogic {
 
         public void run() {
             /*
-            first 12 bytes are reserved for the data name (like 'Heartbeat')
+            first 4 bytes are reserved for the data name (like 1 which stands for 'Heartbeat')
             next 4 bytes are reserved for the beacon id (like '1')
             last 4 bytes are reserved for the data value (like '1.25')
             */

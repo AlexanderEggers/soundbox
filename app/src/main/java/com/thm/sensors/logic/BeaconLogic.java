@@ -28,8 +28,8 @@ public final class BeaconLogic implements BeaconConsumer, SlaveLogic {
 
     public void startLogic(Activity context) {
         mContext = context;
-        ((TextView) context.findViewById(R.id.textView2)).setText("Proximity Value: ");
-        mBeaconManager = BeaconManager.getInstanceForApplication(context);
+        ((TextView) mContext.findViewById(R.id.textView2)).setText("Proximity Value: ");
+        mBeaconManager = BeaconManager.getInstanceForApplication(mContext);
         mBeaconManager.bind(this);
     }
 
@@ -40,6 +40,7 @@ public final class BeaconLogic implements BeaconConsumer, SlaveLogic {
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
                 if (beacons.size() > 0) {
                     double distance = beacons.iterator().next().getDistance();
+                    Log.d(BeaconLogic.class.getName(), distance + "");
                     if (distance < 2d) {
                         int beaconID = beacons.iterator().next().getId1().toInt();
                         String text = MessageFormat.format("Proximity Value: {0}", (float) distance);
@@ -59,16 +60,17 @@ public final class BeaconLogic implements BeaconConsumer, SlaveLogic {
 
     @Override
     public Context getApplicationContext() {
-        return mContext;
+        return mContext.getApplicationContext();
     }
 
     @Override
     public void unbindService(ServiceConnection serviceConnection) {
+        mContext.unbindService(serviceConnection);
     }
 
     @Override
     public boolean bindService(Intent intent, ServiceConnection serviceConnection, int i) {
-        return false;
+        return mContext.bindService(intent, serviceConnection, i);
     }
 
     @Override
