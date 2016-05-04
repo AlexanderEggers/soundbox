@@ -11,6 +11,7 @@ import com.thm.sensors.Util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -23,7 +24,7 @@ public final class BluetoothLogic {
     private ArrayList<ConnectedThread> mThreads;
     private AcceptThread mAcceptThread;
     private ConnectThread mConnectThread;
-    private boolean mKeepAcceptAlive = true;
+    private boolean mKeepAcceptAlive = true, mKeepConnectAlive = true, mClosing = false;
 
     public BluetoothLogic(Handler handler) {
         mHandler = handler;
@@ -41,10 +42,9 @@ public final class BluetoothLogic {
                 mAcceptThread.run();
                 break;
             case Util.SLAVE:
-                //TODO: Save name of master device as final and let this function search for it --> to make sure to get the right device
                 ArrayList<BluetoothDevice> pairedDevices = new ArrayList<>(mBluetoothAdapter.getBondedDevices());
-                if (!pairedDevices.isEmpty() && pairedDevices.get(0) != null) {
-                    mConnectThread = new ConnectThread(pairedDevices.get(0));
+                if (!pairedDevices.isEmpty() && pairedDevices.get(MASTER_THREAD) != null) {
+                    mConnectThread = new ConnectThread(pairedDevices.get(MASTER_THREAD));
                     mConnectThread.run();
                 }
                 break;
@@ -182,17 +182,13 @@ public final class BluetoothLogic {
             // Cancel discovery because it will slow down the connection
             mBluetoothAdapter.cancelDiscovery();
 
-            try {
-                // Connect the device through the socket. This will block
-                // until it succeeds or throws an exception
-                mmSocket.connect();
-            } catch (IOException connectException) {
-                // Unable to connect; close the socket and get out
+            while (mKeepConnectAlive) {
                 try {
-                    mmSocket.close();
-                } catch (IOException closeException) {
+                    mmSocket.connect();
+                    mKeepConnectAlive = false;
+                } catch (IOException connectException) {
+                    mKeepConnectAlive = true;
                 }
-                return;
             }
 
             // Do work to manage the connection (in a separate thread)
@@ -216,13 +212,44 @@ public final class BluetoothLogic {
         return !mThreads.isEmpty();
     }
 
-    //TODO: Give each thread an id which will be searched by this function to get the correct master thread
-    public void writeDataToMaster(byte[] data) {
-        mThreads.get(MASTER_THREAD).write(data);
+    public void prepareData(int identifier, int beaconID, float value) {
+        ArrayList<Byte> data = new ArrayList<>();
+        data = addDataList(data, getBytes(identifier));
+        data = addDataList(data, getBytes(beaconID));
+        data = addDataList(data, getBytes(value));
+        sendData(data);
+    }
+
+    private byte[] getBytes(int id) {
+        return ByteBuffer.allocate(4).putInt(id).array();
+    }
+
+    private byte[] getBytes(float value) {
+        return ByteBuffer.allocate(4).putFloat(value).array();
+    }
+
+    private ArrayList<Byte> addDataList(ArrayList<Byte> data, byte[] array) {
+        for (byte b : array) {
+            data.add(b);
+        }
+        return data;
+    }
+
+    private void sendData(ArrayList<Byte> data) {
+        byte[] streamD = new byte[data.size()];
+
+        for (int i = 0; i < data.size(); i++) {
+            streamD[i] = data.get(i);
+        }
+
+        if (!mClosing) {
+            mThreads.get(MASTER_THREAD).write(streamD);
+        }
     }
 
     public void close() {
         mKeepAcceptAlive = false;
+        mClosing = true;
 
         for (ConnectedThread thread : mThreads) {
             thread.cancel();

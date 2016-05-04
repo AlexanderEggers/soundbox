@@ -86,7 +86,7 @@ public final class MasterActivity extends Activity {
         wrapped = ByteBuffer.wrap(aValue);
         float value = wrapped.getFloat();
 
-        //---Audio logic part could start here---
+        /*---Audio logic part could start here---*/
 
         switch (identifier) {
             case Util.PROXIMITY:

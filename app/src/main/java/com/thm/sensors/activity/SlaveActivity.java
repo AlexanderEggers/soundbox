@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.ViewStub;
 
@@ -16,14 +17,10 @@ import com.thm.sensors.logic.BluetoothLogic;
 import com.thm.sensors.logic.HeartbeatLogic;
 import com.thm.sensors.logic.SlaveLogic;
 
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-
 public final class SlaveActivity extends Activity {
 
     private SlaveLogic mLogic;
     private BluetoothLogic mBluetoothLogic;
-    private ArrayList<Byte> mDataArray = new ArrayList<>();
 
     @Override
     protected void onResume() {
@@ -77,42 +74,15 @@ public final class SlaveActivity extends Activity {
     }
 
     public void sendSensorData(int identifier, int beaconID, float value) {
-        writeData(identifier);
-        writeData(beaconID);
-        writeData(value);
-        sendData();
-    }
-
-    private void writeData(int id) {
         if (mBluetoothLogic != null && mBluetoothLogic.isMasterConnectionAvailable()) {
-            byte[] bytes = ByteBuffer.allocate(4).putInt(id).array();
-
-            for (byte b : bytes) {
-                mDataArray.add(b);
+            mBluetoothLogic.prepareData(identifier, beaconID, value);
+        } else {
+            if (mBluetoothLogic == null) {
+                Log.w(SlaveActivity.class.getName(), "Senor data could not be sent. Logic = " + mBluetoothLogic);
+            } else {
+                Log.w(SlaveActivity.class.getName(), "Senor data could not be sent. " +
+                        "Master = " + mBluetoothLogic.isMasterConnectionAvailable());
             }
-        }
-    }
-
-    private void writeData(float value) {
-        if (mBluetoothLogic != null && mBluetoothLogic.isMasterConnectionAvailable()) {
-            byte[] bytes = ByteBuffer.allocate(4).putFloat(value).array();
-
-            for (byte b : bytes) {
-                mDataArray.add(b);
-            }
-        }
-    }
-
-    private void sendData() {
-        if (mBluetoothLogic.isMasterConnectionAvailable()) {
-            byte[] streamD = new byte[mDataArray.size()];
-
-            for (int i = 0; i < mDataArray.size(); i++) {
-                streamD[i] = mDataArray.get(i);
-            }
-
-            mBluetoothLogic.writeDataToMaster(streamD);
-            mDataArray.clear();
         }
     }
 
