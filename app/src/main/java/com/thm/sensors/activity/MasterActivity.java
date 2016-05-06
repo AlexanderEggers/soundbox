@@ -42,7 +42,6 @@ public final class MasterActivity extends Activity {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                Looper.prepare();
                 mBluetoothLogic = new BluetoothLogic(mHandler);
                 mBluetoothLogic.startConnection(Util.MASTER);
                 return null;

@@ -38,12 +38,14 @@ public final class BluetoothLogic {
     public void startConnection(int type) {
         switch (type) {
             case Util.MASTER:
-                mAcceptThread = new AcceptThread();
-                mAcceptThread.run();
+                if(mAcceptThread == null) {
+                    mAcceptThread = new AcceptThread();
+                    mAcceptThread.run();
+                }
                 break;
             case Util.SLAVE:
                 ArrayList<BluetoothDevice> pairedDevices = new ArrayList<>(mBluetoothAdapter.getBondedDevices());
-                if (!pairedDevices.isEmpty() && pairedDevices.get(MASTER_THREAD) != null) {
+                if (!pairedDevices.isEmpty() && pairedDevices.get(MASTER_THREAD) != null && mThreads.isEmpty()) {
                     mConnectThread = new ConnectThread(pairedDevices.get(MASTER_THREAD));
                     mConnectThread.run();
                 }

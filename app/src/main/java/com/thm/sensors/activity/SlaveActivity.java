@@ -3,8 +3,6 @@ package com.thm.sensors.activity;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.ViewStub;
@@ -65,8 +63,7 @@ public final class SlaveActivity extends Activity {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                Looper.prepare();
-                mBluetoothLogic = new BluetoothLogic(new Handler());
+                mBluetoothLogic = new BluetoothLogic(null);
                 mBluetoothLogic.startConnection(Util.SLAVE);
                 return null;
             }

@@ -15,6 +15,7 @@ import com.thm.sensors.activity.SlaveActivity;
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
+import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
@@ -31,6 +32,8 @@ public final class BeaconLogic implements BeaconConsumer, SlaveLogic {
         mContext = context;
         ((TextView) mContext.findViewById(R.id.textView2)).setText("Proximity Value: ");
         mBeaconManager = BeaconManager.getInstanceForApplication(mContext);
+        mBeaconManager.getBeaconParsers().add(new BeaconParser().
+                setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24")); //TODO: Layout probably wrong - Sensorberg
         mBeaconManager.bind(this);
     }
 
@@ -39,6 +42,8 @@ public final class BeaconLogic implements BeaconConsumer, SlaveLogic {
         mBeaconManager.setRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
+                System.out.println("BLA");
+
                 if (beacons.size() > 0) {
                     double distance = beacons.iterator().next().getDistance();
                     Log.d(BeaconLogic.class.getName(), distance + "");
@@ -56,6 +61,7 @@ public final class BeaconLogic implements BeaconConsumer, SlaveLogic {
         try {
             mBeaconManager.startRangingBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
         } catch (RemoteException e) {
+            e.getStackTrace();
         }
     }
 
