@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.RemoteException;
 import android.util.Log;
 import android.widget.TextView;
@@ -47,10 +49,16 @@ public final class BeaconLogic implements BeaconConsumer, SlaveLogic {
                     Log.d(BeaconLogic.class.getName(), distance + "");
                     if (distance < MIN_RANGE_IN_METERS) {
                         int beaconID = beacons.iterator().next().getServiceUuid();
-                        String text = MessageFormat.format("Proximity Value: {0} and ID: {1}", (float) distance, beaconID);
-                        ((TextView) mContext.findViewById(R.id.textView2)).setText(text);
+                        final String text = MessageFormat.format("Proximity Value: {0} and ID: {1}", (float) distance, beaconID);
                         ((SlaveActivity) mContext).sendSensorData(Util.PROXIMITY, beaconID, (float) distance);
                         Log.i(BeaconLogic.class.getName(), text);
+
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                ((TextView) mContext.findViewById(R.id.textView2)).setText(text);
+                            }
+                        });
                     }
                 }
             }
