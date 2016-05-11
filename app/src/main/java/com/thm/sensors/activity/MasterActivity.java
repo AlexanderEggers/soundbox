@@ -61,18 +61,12 @@ public final class MasterActivity extends Activity {
 
         mAudioLogic = new AudioLogic(this);
 
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                Looper.prepare();
-                try{
-                    mAudioLogic.loadPDPatch();
-                    mAudioLogic.initPD();
-                } catch (IOException e){
-                    finish();
-                }                return null;
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        try{
+            mAudioLogic.loadPDPatch();
+            mAudioLogic.initPD();
+        } catch (IOException e){
+            finish();
+        }
     }
 
     @Override

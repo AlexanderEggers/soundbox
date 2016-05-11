@@ -12,13 +12,9 @@ import org.puredata.android.utils.PdUiDispatcher;
 import org.puredata.core.PdBase;
 import org.puredata.core.utils.IoUtils;
 
-
-
 public final class AudioLogic {
 
     private Activity mContext;
-    private PdUiDispatcher dispatcher;
-
 
     public AudioLogic(Activity context) {
         mContext = context;
@@ -28,14 +24,12 @@ public final class AudioLogic {
         //send gyro value as well!!!
         //map this value!!!
         PdBase.sendFloat("toneHeight", 127.0f);
-
     }
-
 
     public void initPD() throws IOException {
         int sampleRate = AudioParameters.suggestSampleRate();
         PdAudio.initAudio(sampleRate, 0, 2, 8, true);
-        dispatcher = new PdUiDispatcher();
+        PdUiDispatcher dispatcher = new PdUiDispatcher();
         PdBase.setReceiver(dispatcher);
     }
 
@@ -45,6 +39,6 @@ public final class AudioLogic {
         File pdPatch = new File(dir, "simplepatch.pd");
         PdBase.openPatch(pdPatch.getAbsolutePath());
         PdAudio.startAudio(mContext);
+        PdBase.sendFloat("toneHeight", 127.0f);
     }
-
 }
