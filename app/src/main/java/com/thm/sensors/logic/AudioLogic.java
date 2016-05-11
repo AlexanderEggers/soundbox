@@ -23,7 +23,7 @@ public final class AudioLogic {
     public void processAudioProximity(float value) {
         //send gyro value as well!!!
         //map this value!!!
-        PdBase.sendFloat("toneHeight", 127.0f);
+        PdBase.sendFloat("toneHeight", value * 100f);
     }
 
     public void initPD() throws IOException {
