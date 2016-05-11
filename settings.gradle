@@ -1,1 +1,1 @@
-include ':app', ':android-beacon-library-2.8.1'
+include ':app', ':android-beacon-library-2.8.1', ':pd-core-1.0.1'

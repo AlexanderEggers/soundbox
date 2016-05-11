@@ -26,4 +26,6 @@ dependencies {
     compile 'com.android.support:design:23.3.0'
     compile 'com.android.support:percent:23.3.0'
     compile 'org.altbeacon:android-beacon-library:2.8.1'
+    compile 'org.puredata.android:pd-core:1.0.1'
+
 }
