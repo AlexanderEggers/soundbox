@@ -42,14 +42,12 @@ public final class BeaconLogic implements BeaconConsumer, SlaveLogic {
         mBeaconManager.setRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
-                System.out.println("BLA");
-
                 if (beacons.size() > 0) {
                     double distance = beacons.iterator().next().getDistance();
                     Log.d(BeaconLogic.class.getName(), distance + "");
                     if (distance < MIN_RANGE_IN_METERS) {
-                        int beaconID = beacons.iterator().next().getId1().toInt();
-                        String text = MessageFormat.format("Proximity Value: {0}", (float) distance);
+                        int beaconID = beacons.iterator().next().getServiceUuid();
+                        String text = MessageFormat.format("Proximity Value: {0} and ID: {1}", (float) distance, beaconID);
                         ((TextView) mContext.findViewById(R.id.textView2)).setText(text);
                         ((SlaveActivity) mContext).sendSensorData(Util.PROXIMITY, beaconID, (float) distance);
                         Log.i(BeaconLogic.class.getName(), text);
