@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -21,12 +20,17 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.text.MessageFormat;
 
-
 public final class MasterActivity extends Activity {
 
     private BluetoothLogic mBluetoothLogic;
     private Handler mHandler;
     private AudioLogic mAudioLogic;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        PdAudio.startAudio(this);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,10 +65,10 @@ public final class MasterActivity extends Activity {
 
         mAudioLogic = new AudioLogic(this);
 
-        try{
+        try {
             mAudioLogic.loadPDPatch();
             mAudioLogic.initPD();
-        } catch (IOException e){
+        } catch (IOException e) {
             finish();
         }
     }
@@ -101,16 +105,10 @@ public final class MasterActivity extends Activity {
         float value = wrapped.getFloat();
 
 
-
-
-
         switch (identifier) {
             case Util.PROXIMITY:
                 ((TextView) findViewById(R.id.textView3)).setText(MessageFormat.format("Proximity: {0}", value));
-
-                //AudioLogic handlen
                 mAudioLogic.processAudioProximity(value);
-
                 break;
             case Util.HEARTBEAT:
                 ((TextView) findViewById(R.id.textView4)).setText(MessageFormat.format("Heartbeat: {0}", value));
@@ -124,20 +122,14 @@ public final class MasterActivity extends Activity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        mBluetoothLogic.close();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        PdAudio.startAudio(this);
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
         PdAudio.stopAudio();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mBluetoothLogic.close();
     }
 }

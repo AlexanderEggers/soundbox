@@ -35,8 +35,9 @@ public final class BeaconLogic implements BeaconConsumer, SlaveLogic {
         ((TextView) mContext.findViewById(R.id.textView2)).setText("Proximity Value: ");
         mBeaconManager = BeaconManager.getInstanceForApplication(mContext);
         mBeaconManager.getBeaconParsers().add(new BeaconParser().
-                setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24")); //TODO: Layout probably wrong - Sensorberg
+                setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
         mBeaconManager.bind(this);
+        mBeaconManager.setForegroundScanPeriod(200L);
     }
 
     @Override
@@ -44,12 +45,21 @@ public final class BeaconLogic implements BeaconConsumer, SlaveLogic {
         mBeaconManager.setRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
-                if (beacons.size() > 0) {
-                    double distance = beacons.iterator().next().getDistance();
+                for (Beacon beacon : beacons) {
+                    double distance = beacon.getDistance();
                     Log.d(BeaconLogic.class.getName(), distance + "");
                     if (distance < MIN_RANGE_IN_METERS) {
-                        int beaconID = beacons.iterator().next().getServiceUuid();
-                        final String text = MessageFormat.format("Proximity Value: {0} and ID: {1}", (float) distance, beaconID);
+                        String bluetoothName = beacon.getBluetoothName();
+
+                        int beaconID;
+                        switch (bluetoothName) {
+                            default:
+                                beaconID = 0;
+                                break;
+                        }
+
+                        final String text = MessageFormat.format("Proximity Value: {0} and ID: {1}",
+                                (float) distance, beaconID);
                         ((SlaveActivity) mContext).sendSensorData(Util.PROXIMITY, beaconID, (float) distance);
                         Log.i(BeaconLogic.class.getName(), text);
 

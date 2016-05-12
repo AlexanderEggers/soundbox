@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import java.io.File;
 import java.io.IOException;
+
 import com.thm.sensors.R;
 
 import org.puredata.android.io.AudioParameters;
@@ -33,7 +34,7 @@ public final class AudioLogic {
         PdBase.setReceiver(dispatcher);
     }
 
-    public void loadPDPatch() throws IOException{
+    public void loadPDPatch() throws IOException {
         File dir = mContext.getFilesDir();
         IoUtils.extractZipResource(mContext.getResources().openRawResource(R.raw.simplepatch), dir, true);
         File pdPatch = new File(dir, "simplepatch.pd");
