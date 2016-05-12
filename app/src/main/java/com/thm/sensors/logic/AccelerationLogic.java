@@ -24,7 +24,9 @@ public final class AccelerationLogic implements SensorEventListener, SlaveLogic 
 
     public void startLogic(Activity context) {
         mContext = context;
-        ((TextView) context.findViewById(R.id.textView)).setText("Acceleration Value: ");
+        ((TextView) context.findViewById(R.id.textViewX)).setText("Acceleration Value X: ");
+        ((TextView) context.findViewById(R.id.textViewY)).setText("Acceleration Value Y: ");
+        ((TextView) context.findViewById(R.id.textViewZ)).setText("Acceleration Value Z: ");
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         if (mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
             mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -46,9 +48,9 @@ public final class AccelerationLogic implements SensorEventListener, SlaveLogic 
             mLinearAcceleration[1] = event.values[1] - mGravity[1];
             mLinearAcceleration[2] = event.values[2] - mGravity[2];
 
-            String textX = MessageFormat.format("Acceleration Value: {0}", mLinearAcceleration[0]);
-            String textY = MessageFormat.format("Acceleration Value: {0}", mLinearAcceleration[1]);
-            String textZ = MessageFormat.format("Acceleration Value: {0}", mLinearAcceleration[2]);
+            String textX = MessageFormat.format("Acceleration Value X: {0}", mLinearAcceleration[0]);
+            String textY = MessageFormat.format("Acceleration Value Y: {0}", mLinearAcceleration[1]);
+            String textZ = MessageFormat.format("Acceleration Value Z: {0}", mLinearAcceleration[2]);
 
             ((TextView) mContext.findViewById(R.id.textViewX)).setText(textX);
             ((TextView) mContext.findViewById(R.id.textViewY)).setText(textY);
