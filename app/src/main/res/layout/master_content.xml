@@ -44,6 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/textView5"
         android:layout_below="@+id/textView5"
+        android:layout_marginBottom="20dp"
         android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -51,8 +52,9 @@
         android:id="@+id/textView7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/textView5"
-        android:layout_below="@+id/textView5"
+        android:layout_alignStart="@+id/textView6"
+        android:layout_below="@+id/textView6"
+        android:layout_marginBottom="20dp"
         android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -60,8 +62,8 @@
         android:id="@+id/textView8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/textView5"
-        android:layout_below="@+id/textView5"
+        android:layout_alignStart="@+id/textView7"
+        android:layout_below="@+id/textView7"
         android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 </RelativeLayout>
