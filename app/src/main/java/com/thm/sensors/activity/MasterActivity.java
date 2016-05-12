@@ -89,21 +89,20 @@ public final class MasterActivity extends Activity {
         byte[] aIdentifier = new byte[4];
         System.arraycopy(((byte[]) msg.obj), 0, aIdentifier, 0, 4);
 
-        byte[] aBeaconID = new byte[4];
-        System.arraycopy(((byte[]) msg.obj), 4, aBeaconID, 0, 4);
+        byte[] aID = new byte[8];
+        System.arraycopy(((byte[]) msg.obj), 4, aID, 0, 8);
 
         byte[] aValue = new byte[4];
-        System.arraycopy(((byte[]) msg.obj), 8, aValue, 0, 4);
+        System.arraycopy(((byte[]) msg.obj), 12, aValue, 0, 4);
 
         ByteBuffer wrapped = ByteBuffer.wrap(aIdentifier);
         int identifier = wrapped.getInt();
 
-        wrapped = ByteBuffer.wrap(aBeaconID);
-        float beaconID = wrapped.getInt();
+        wrapped = ByteBuffer.wrap(aID);
+        long id = wrapped.getInt();
 
         wrapped = ByteBuffer.wrap(aValue);
         float value = wrapped.getFloat();
-
 
         switch (identifier) {
             case Util.PROXIMITY:
@@ -113,12 +112,14 @@ public final class MasterActivity extends Activity {
             case Util.HEARTBEAT:
                 ((TextView) findViewById(R.id.textView4)).setText(MessageFormat.format("Heartbeat: {0}", value));
                 break;
-            case Util.ACCELERATION:
-                ((TextView) findViewById(R.id.textView5)).setText(MessageFormat.format("Acceleration: {0}", value));
+            case Util.ACCELERATION_X:
+            case Util.ACCELERATION_Y:
+            case Util.ACCELERATION_Z:
+                mAudioLogic.processAudioAcceleration(identifier, value, id);
                 break;
         }
 
-        ((TextView) findViewById(R.id.textView6)).setText(MessageFormat.format("Beacon-ID: {0}", beaconID));
+        ((TextView) findViewById(R.id.textView8)).setText(MessageFormat.format("ID: {0}", id));
     }
 
     @Override

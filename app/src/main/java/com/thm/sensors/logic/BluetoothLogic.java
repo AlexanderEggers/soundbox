@@ -77,11 +77,11 @@ public final class BluetoothLogic {
         public void run() {
             /*
             first 4 bytes are reserved for the data name (like 1 which stands for 'Heartbeat')
-            next 4 bytes are reserved for the beacon id (like '1')
+            next 8 bytes are reserved for the id (like '1L')
             last 4 bytes are reserved for the data value (like '1.25')
             */
 
-            byte[] buffer = new byte[12];  // buffer store for the stream
+            byte[] buffer = new byte[16];  // buffer store for the stream
             int bytes; // bytes returned from read()
 
             // Keep listening to the InputStream until an exception occurs
@@ -214,16 +214,20 @@ public final class BluetoothLogic {
         return !mThreads.isEmpty();
     }
 
-    public void prepareData(int identifier, int beaconID, float value) {
+    public void prepareData(int identifier, long id, float value) {
         ArrayList<Byte> data = new ArrayList<>();
         data = addDataList(data, getBytes(identifier));
-        data = addDataList(data, getBytes(beaconID));
+        data = addDataList(data, getBytes(id));
         data = addDataList(data, getBytes(value));
         sendData(data);
     }
 
-    private byte[] getBytes(int id) {
-        return ByteBuffer.allocate(4).putInt(id).array();
+    private byte[] getBytes(int identifier) {
+        return ByteBuffer.allocate(4).putInt(identifier).array();
+    }
+
+    private byte[] getBytes(long id) {
+        return ByteBuffer.allocate(8).putLong(id).array();
     }
 
     private byte[] getBytes(float value) {

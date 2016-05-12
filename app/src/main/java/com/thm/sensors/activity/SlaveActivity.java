@@ -70,9 +70,9 @@ public final class SlaveActivity extends Activity {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    public void sendSensorData(int identifier, int beaconID, float value) {
+    public void sendSensorData(int identifier, long id, float value) {
         if (mBluetoothLogic != null && mBluetoothLogic.isMasterConnectionAvailable()) {
-            mBluetoothLogic.prepareData(identifier, beaconID, value);
+            mBluetoothLogic.prepareData(identifier, id, value);
         } else {
             if (mBluetoothLogic == null) {
                 Log.w(SlaveActivity.class.getName(), "Senor data could not be sent. Logic = " + mBluetoothLogic);

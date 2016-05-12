@@ -49,7 +49,7 @@ public final class BeaconLogic implements BeaconConsumer, SlaveLogic {
                     double distance = beacon.getDistance();
                     Log.d(BeaconLogic.class.getName(), distance + "");
                     if (distance < MIN_RANGE_IN_METERS) {
-                        String bluetoothName = beacon.getBluetoothName();
+                        String bluetoothName = "Platzhalter";
 
                         int beaconID;
                         switch (bluetoothName) {

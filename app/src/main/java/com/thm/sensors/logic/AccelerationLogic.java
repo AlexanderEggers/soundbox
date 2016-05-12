@@ -46,10 +46,24 @@ public final class AccelerationLogic implements SensorEventListener, SlaveLogic 
             mLinearAcceleration[1] = event.values[1] - mGravity[1];
             mLinearAcceleration[2] = event.values[2] - mGravity[2];
 
-            String text = MessageFormat.format("Acceleration Value: {0}", mLinearAcceleration[2]);
-            ((TextView) mContext.findViewById(R.id.textView)).setText(text);
-            ((SlaveActivity) mContext).sendSensorData(Util.ACCELERATION, 1, mLinearAcceleration[2]);
-            Log.i(AccelerationLogic.class.getName(), text);
+            String textX = MessageFormat.format("Acceleration Value: {0}", mLinearAcceleration[0]);
+            String textY = MessageFormat.format("Acceleration Value: {0}", mLinearAcceleration[1]);
+            String textZ = MessageFormat.format("Acceleration Value: {0}", mLinearAcceleration[2]);
+
+            ((TextView) mContext.findViewById(R.id.textViewX)).setText(textX);
+            ((TextView) mContext.findViewById(R.id.textViewY)).setText(textY);
+            ((TextView) mContext.findViewById(R.id.textViewZ)).setText(textZ);
+
+            ((SlaveActivity) mContext).sendSensorData(Util.ACCELERATION_X, System.currentTimeMillis(),
+                    mLinearAcceleration[0]);
+            ((SlaveActivity) mContext).sendSensorData(Util.ACCELERATION_Y, System.currentTimeMillis(),
+                    mLinearAcceleration[1]);
+            ((SlaveActivity) mContext).sendSensorData(Util.ACCELERATION_Z, System.currentTimeMillis(),
+                    mLinearAcceleration[2]);
+
+            Log.i(AccelerationLogic.class.getName(), textX);
+            Log.i(AccelerationLogic.class.getName(), textY);
+            Log.i(AccelerationLogic.class.getName(), textZ);
         }
     }
 
