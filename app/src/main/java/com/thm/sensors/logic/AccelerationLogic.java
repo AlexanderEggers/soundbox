@@ -56,11 +56,12 @@ public final class AccelerationLogic implements SensorEventListener, SlaveLogic 
             ((TextView) mContext.findViewById(R.id.textViewY)).setText(textY);
             ((TextView) mContext.findViewById(R.id.textViewZ)).setText(textZ);
 
-            ((SlaveActivity) mContext).sendSensorData(Util.ACCELERATION_X, System.currentTimeMillis(),
+            long valueID = System.currentTimeMillis();
+            ((SlaveActivity) mContext).sendSensorData(Util.ACCELERATION_X, valueID,
                     mLinearAcceleration[0]);
-            ((SlaveActivity) mContext).sendSensorData(Util.ACCELERATION_Y, System.currentTimeMillis(),
+            ((SlaveActivity) mContext).sendSensorData(Util.ACCELERATION_Y, valueID,
                     mLinearAcceleration[1]);
-            ((SlaveActivity) mContext).sendSensorData(Util.ACCELERATION_Z, System.currentTimeMillis(),
+            ((SlaveActivity) mContext).sendSensorData(Util.ACCELERATION_Z, valueID,
                     mLinearAcceleration[2]);
 
             Log.i(AccelerationLogic.class.getName(), textX);
