@@ -22,25 +22,12 @@ public final class MenuActivity extends Activity implements View.OnClickListener
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.button:
+            case R.id.button1:
                 Intent intent = new Intent(this, SlaveActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                intent.putExtra("sensor", Util.PROXIMITY);
                 startActivity(intent);
                 break;
             case R.id.button2:
-                intent = new Intent(this, SlaveActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                intent.putExtra("sensor", Util.HEARTBEAT);
-                startActivity(intent);
-                break;
-            case R.id.button3:
-                intent = new Intent(this, SlaveActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                intent.putExtra("sensor", Util.ACCELERATION);
-                startActivity(intent);
-                break;
-            case R.id.button4:
                 intent = new Intent(this, MasterActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);

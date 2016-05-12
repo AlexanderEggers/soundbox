@@ -1,6 +1,7 @@
 package com.thm.sensors.logic;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -10,7 +11,6 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.thm.sensors.R;
-import com.thm.sensors.Util;
 import com.thm.sensors.activity.SlaveActivity;
 
 import java.text.MessageFormat;
@@ -56,13 +56,10 @@ public final class AccelerationLogic implements SensorEventListener, SlaveLogic 
             ((TextView) mContext.findViewById(R.id.textViewY)).setText(textY);
             ((TextView) mContext.findViewById(R.id.textViewZ)).setText(textZ);
 
-            long valueID = System.currentTimeMillis();
-            ((SlaveActivity) mContext).sendSensorData(Util.ACCELERATION_X, valueID,
-                    mLinearAcceleration[0]);
-            ((SlaveActivity) mContext).sendSensorData(Util.ACCELERATION_Y, valueID,
-                    mLinearAcceleration[1]);
-            ((SlaveActivity) mContext).sendSensorData(Util.ACCELERATION_Z, valueID,
-                    mLinearAcceleration[2]);
+            String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
+            String data = deviceAddress + "%" + mLinearAcceleration[0] + ";"
+                    + mLinearAcceleration[1] + ";" +  mLinearAcceleration[2];
+            ((SlaveActivity) mContext).sendSensorData(data);
 
             Log.i(AccelerationLogic.class.getName(), textX);
             Log.i(AccelerationLogic.class.getName(), textY);

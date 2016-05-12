@@ -1,16 +1,13 @@
 package com.thm.sensors.logic;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.RemoteException;
 import android.util.Log;
-import android.widget.TextView;
 
-import com.thm.sensors.R;
 import com.thm.sensors.Util;
 import com.thm.sensors.activity.SlaveActivity;
 
@@ -21,7 +18,6 @@ import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
-import java.text.MessageFormat;
 import java.util.Collection;
 
 public final class BeaconLogic implements BeaconConsumer, SlaveLogic {
@@ -32,7 +28,6 @@ public final class BeaconLogic implements BeaconConsumer, SlaveLogic {
 
     public void startLogic(Activity context) {
         mContext = context;
-        ((TextView) mContext.findViewById(R.id.textView2)).setText("Proximity Value: ");
         mBeaconManager = BeaconManager.getInstanceForApplication(mContext);
         mBeaconManager.getBeaconParsers().add(new BeaconParser().
                 setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
@@ -45,30 +40,33 @@ public final class BeaconLogic implements BeaconConsumer, SlaveLogic {
         mBeaconManager.setRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
+                boolean foundBeacon = false;
+
                 for (Beacon beacon : beacons) {
                     double distance = beacon.getDistance();
                     Log.d(BeaconLogic.class.getName(), distance + "");
                     if (distance < MIN_RANGE_IN_METERS) {
-                        String bluetoothName = "Platzhalter";
-
-                        int beaconID;
-                        switch (bluetoothName) {
-                            default:
-                                beaconID = 0;
-                                break;
+                        if(beacon.getBluetoothAddress().equals(Util.connectedBeacon)) {
+                            foundBeacon = true;
+                            break;
+                        } else if(Util.connectedBeacon == null) {
+                            String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
+                            String loginData = "Login%" + beacon.getBluetoothAddress() + "%" + deviceAddress;
+                            ((SlaveActivity) mContext).sendSensorData(loginData);
+                            Util.connectedBeacon = beacon.getBluetoothAddress();
+                            foundBeacon = true;
+                            break;
                         }
+                    }
+                }
 
-                        final String text = MessageFormat.format("Proximity Value: {0} and ID: {1}",
-                                (float) distance, beaconID);
-                        ((SlaveActivity) mContext).sendSensorData(Util.PROXIMITY, beaconID, (float) distance);
-                        Log.i(BeaconLogic.class.getName(), text);
-
-                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                ((TextView) mContext.findViewById(R.id.textView2)).setText(text);
-                            }
-                        });
+                if(!foundBeacon) {
+                    if(Util.connectedBeacon != null) {
+                        String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
+                        String logoutData = "Logout%" + Util.connectedBeacon + "%" + deviceAddress;
+                        ((SlaveActivity) mContext).sendSensorData(logoutData);
+                        Util.connectedBeacon = null;
+                        Util.isLogin = false;
                     }
                 }
             }

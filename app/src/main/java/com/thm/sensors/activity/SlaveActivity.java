@@ -3,29 +3,34 @@ package com.thm.sensors.activity;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.ViewStub;
 
 import com.thm.sensors.R;
 import com.thm.sensors.Util;
 import com.thm.sensors.logic.AccelerationLogic;
 import com.thm.sensors.logic.BeaconLogic;
 import com.thm.sensors.logic.BluetoothLogic;
-import com.thm.sensors.logic.HeartbeatLogic;
 import com.thm.sensors.logic.SlaveLogic;
 
 public final class SlaveActivity extends Activity {
 
-    private SlaveLogic mLogic;
+    private SlaveLogic mAcceleration, mBeaconLogic;
     private BluetoothLogic mBluetoothLogic;
+    private Handler mHandler;
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        if (mLogic != null) {
-            mLogic.onResume();
+        if (mAcceleration != null) {
+            mAcceleration.onResume();
+        }
+
+        if(mBeaconLogic != null) {
+            mBeaconLogic.onResume();
         }
     }
 
@@ -34,51 +39,51 @@ public final class SlaveActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.slave_activity);
 
-        int sensor = getIntent().getIntExtra("sensor", -1);
-        ViewStub stub = (ViewStub) findViewById(R.id.stub);
-        switch (sensor) {
-            case Util.PROXIMITY:
-                stub.setLayoutResource(R.layout.slave_proximity_content);
-                stub.inflate();
-                mLogic = new BeaconLogic();
-                mLogic.startLogic(this);
-                break;
-            case Util.HEARTBEAT:
-                stub.setLayoutResource(R.layout.slave_heartbeat_content);
-                stub.inflate();
-                mLogic = new HeartbeatLogic();
-                mLogic.startLogic(this);
-                break;
-            case Util.ACCELERATION:
-                stub.setLayoutResource(R.layout.slave_acceleration_content);
-                stub.inflate();
-                mLogic = new AccelerationLogic();
-                mLogic.startLogic(this);
-                break;
-            default:
-                finish();
-                return;
-        }
+        mAcceleration = new AccelerationLogic();
+        mAcceleration.startLogic(this);
+
+        mBeaconLogic = new BeaconLogic();
+        mBeaconLogic.startLogic(this);
+
+        mHandler = new Handler() {
+            public void handleMessage(Message msg) {
+                handleData(msg);
+            }
+        };
 
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                mBluetoothLogic = new BluetoothLogic(null);
+                mBluetoothLogic = new BluetoothLogic(mHandler);
                 mBluetoothLogic.startConnection(Util.SLAVE);
                 return null;
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    public void sendSensorData(int identifier, long id, float value) {
-        if (mBluetoothLogic != null && mBluetoothLogic.isMasterConnectionAvailable()) {
-            mBluetoothLogic.prepareData(identifier, id, value);
+    private void handleData(Message msg) {
+        byte[] aData = (byte[]) msg.obj;
+        String data = new String(aData);
+
+        if(data.equals("ERROR")) {
+            Util.isLogin = false;
+            Util.connectedBeacon = null;
+        } else {
+            int color = Integer.parseInt(data);
+            findViewById(R.id.slave_parent_layout).setBackgroundColor(color);
+            Util.isLogin = true;
+        }
+    }
+
+    public void sendSensorData(String value) {
+        if (mBluetoothLogic != null && mBluetoothLogic.isConnectionAvailable() && Util.isLogin) {
+            mBluetoothLogic.sendDataToMaster(value);
         } else {
             if (mBluetoothLogic == null) {
                 Log.w(SlaveActivity.class.getName(), "Senor data could not be sent. Logic = " + mBluetoothLogic);
             } else {
                 Log.w(SlaveActivity.class.getName(), "Senor data could not be sent. " +
-                        "Master = " + mBluetoothLogic.isMasterConnectionAvailable());
+                        "Master = " + mBluetoothLogic.isConnectionAvailable());
             }
         }
     }
@@ -99,8 +104,12 @@ public final class SlaveActivity extends Activity {
     protected void onPause() {
         super.onPause();
 
-        if (mLogic != null) {
-            mLogic.onPause();
+        if(mAcceleration != null) {
+            mAcceleration.onPause();
+        }
+
+        if (mBeaconLogic != null) {
+            mBeaconLogic.onPause();
         }
     }
 

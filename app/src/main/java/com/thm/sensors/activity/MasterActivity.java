@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toolbar;
@@ -17,7 +18,6 @@ import com.thm.sensors.logic.BluetoothLogic;
 import org.puredata.android.io.PdAudio;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.text.MessageFormat;
 
 public final class MasterActivity extends Activity {
@@ -58,12 +58,10 @@ public final class MasterActivity extends Activity {
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-        ((TextView) findViewById(R.id.textView3)).setText("Proximity: n/a");
-        ((TextView) findViewById(R.id.textView4)).setText("Heartbeat: n/a");
-        ((TextView) findViewById(R.id.textView5)).setText("Acceleration X: n/a");
-        ((TextView) findViewById(R.id.textView6)).setText("Acceleration Y: n/a");
-        ((TextView) findViewById(R.id.textView7)).setText("Acceleration Z: n/a");
-        ((TextView) findViewById(R.id.textView8)).setText("Beacon-ID: n/a");
+        ((TextView) findViewById(R.id.textView3)).setText("Acceleration X: n/a");
+        ((TextView) findViewById(R.id.textView4)).setText("Acceleration Y: n/a");
+        ((TextView) findViewById(R.id.textView5)).setText("Acceleration Z: n/a");
+        ((TextView) findViewById(R.id.textView6)).setText("Beacon-ID: n/a");
 
         mAudioLogic = new AudioLogic(this);
 
@@ -88,40 +86,51 @@ public final class MasterActivity extends Activity {
     }
 
     private void handleData(Message msg) {
-        byte[] aIdentifier = new byte[4];
-        System.arraycopy(((byte[]) msg.obj), 0, aIdentifier, 0, 4);
+        byte[] aData = (byte[]) msg.obj;
+        String data = new String(aData);
+        String[] aSplitData = data.split("&");
 
-        byte[] aID = new byte[8];
-        System.arraycopy(((byte[]) msg.obj), 4, aID, 0, 8);
+        if(data.contains("Login")) {
+            String beacon = aSplitData[1];
+            String device = aSplitData[2];
+            String color = "0xD53B3B"; //only testing, later via Util.beaconColorMap!!
 
-        byte[] aValue = new byte[4];
-        System.arraycopy(((byte[]) msg.obj), 12, aValue, 0, 4);
+            if(Util.beaconDeviceMap.get(beacon).equals("")) {
+                Util.beaconDeviceMap.put(beacon, device);
+                mBluetoothLogic.sendDataToSlave(device, color);
+            } else {
+                mBluetoothLogic.sendDataToSlave(device, "ERROR");
+            }
+        } else if(data.contains("Logout")) {
+            String beacon = aSplitData[1];
+            String device = aSplitData[2];
+            Util.beaconDeviceMap.put(beacon, "");
+        } else {
+            String device = aSplitData[0];
+            String beacon = null;
 
-        ByteBuffer wrapped = ByteBuffer.wrap(aIdentifier);
-        int identifier = wrapped.getInt();
+            for (String key : Util.beaconDeviceMap.keySet()) {
+                if(Util.beaconDeviceMap.get(key).equals(device)) {
+                    beacon = key;
+                    break;
+                }
+            }
 
-        wrapped = ByteBuffer.wrap(aID);
-        long id = wrapped.getInt();
+            if(beacon != null) {
+                int audioMode = Util.beaconModeMap.get(beacon);
 
-        wrapped = ByteBuffer.wrap(aValue);
-        float value = wrapped.getFloat();
+                String[] values = aSplitData[1].split(";");
+                float valueX = Float.parseFloat(values[0]);
+                float valueY = Float.parseFloat(values[1]);
+                float valueZ = Float.parseFloat(values[2]);
 
-        switch (identifier) {
-            case Util.PROXIMITY:
-                ((TextView) findViewById(R.id.textView3)).setText(MessageFormat.format("Proximity: {0}", value));
-                mAudioLogic.processAudioProximity(value);
-                break;
-            case Util.HEARTBEAT:
-                ((TextView) findViewById(R.id.textView4)).setText(MessageFormat.format("Heartbeat: {0}", value));
-                break;
-            case Util.ACCELERATION_X:
-            case Util.ACCELERATION_Y:
-            case Util.ACCELERATION_Z:
-                mAudioLogic.processAudioAcceleration(identifier, value, id);
-                break;
+                mAudioLogic.processAudioAcceleration(audioMode, valueX, valueY, valueZ);
+                ((TextView) findViewById(R.id.textView6)).setText(MessageFormat.format("ID: {0}", beacon));
+            } else {
+                Log.d(MasterActivity.class.getName(),
+                        MessageFormat.format("Cannot find beacon which is connected to this device = {0}", device));
+            }
         }
-
-        ((TextView) findViewById(R.id.textView8)).setText(MessageFormat.format("ID: {0}", id));
     }
 
     @Override

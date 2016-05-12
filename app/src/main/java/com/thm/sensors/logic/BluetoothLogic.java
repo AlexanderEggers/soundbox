@@ -11,7 +11,7 @@ import com.thm.sensors.Util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -38,7 +38,7 @@ public final class BluetoothLogic {
     public void startConnection(int type) {
         switch (type) {
             case Util.MASTER:
-                if(mAcceptThread == null) {
+                if (mAcceptThread == null) {
                     mAcceptThread = new AcceptThread();
                     mAcceptThread.run();
                 }
@@ -57,11 +57,13 @@ public final class BluetoothLogic {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
+        private final String mmDeviceAddress;
 
         public ConnectedThread(BluetoothSocket socket) {
             mmSocket = socket;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
+            mmDeviceAddress = socket.getRemoteDevice().getAddress();
 
             try {
                 tmpIn = mmSocket.getInputStream();
@@ -75,13 +77,7 @@ public final class BluetoothLogic {
         }
 
         public void run() {
-            /*
-            first 4 bytes are reserved for the data name (like 1 which stands for 'Heartbeat')
-            next 8 bytes are reserved for the id (like '1L')
-            last 4 bytes are reserved for the data value (like '1.25')
-            */
-
-            byte[] buffer = new byte[16];  // buffer store for the stream
+            byte[] buffer = new byte[100];  // buffer store for the stream
             int bytes; // bytes returned from read()
 
             // Keep listening to the InputStream until an exception occurs
@@ -113,6 +109,10 @@ public final class BluetoothLogic {
                 mmSocket.close();
             } catch (IOException e) {
             }
+        }
+
+        public String getDeviceAddress() {
+            return mmDeviceAddress;
         }
     }
 
@@ -210,46 +210,27 @@ public final class BluetoothLogic {
         }
     }
 
-    public boolean isMasterConnectionAvailable() {
+    public boolean isConnectionAvailable() {
         return !mThreads.isEmpty();
     }
 
-    public void prepareData(int identifier, long id, float value) {
-        ArrayList<Byte> data = new ArrayList<>();
-        data = addDataList(data, getBytes(identifier));
-        data = addDataList(data, getBytes(id));
-        data = addDataList(data, getBytes(value));
-        sendData(data);
-    }
-
-    private byte[] getBytes(int identifier) {
-        return ByteBuffer.allocate(4).putInt(identifier).array();
-    }
-
-    private byte[] getBytes(long id) {
-        return ByteBuffer.allocate(8).putLong(id).array();
-    }
-
-    private byte[] getBytes(float value) {
-        return ByteBuffer.allocate(4).putFloat(value).array();
-    }
-
-    private ArrayList<Byte> addDataList(ArrayList<Byte> data, byte[] array) {
-        for (byte b : array) {
-            data.add(b);
-        }
-        return data;
-    }
-
-    private void sendData(ArrayList<Byte> data) {
-        byte[] streamD = new byte[data.size()];
-
-        for (int i = 0; i < data.size(); i++) {
-            streamD[i] = data.get(i);
-        }
+    public void sendDataToMaster(String data) {
+        byte[] aBytes = data.getBytes(StandardCharsets.UTF_8);
 
         if (!mClosing) {
-            mThreads.get(MASTER_THREAD).write(streamD);
+            mThreads.get(MASTER_THREAD).write(aBytes);
+        }
+    }
+
+    public void sendDataToSlave(String deviceAddress, String data) {
+        for (ConnectedThread thread : mThreads) {
+            if(thread.getDeviceAddress().equals(deviceAddress)) {
+                byte[] aBytes = data.getBytes(StandardCharsets.UTF_8);
+
+                if (!mClosing) {
+                    thread.write(aBytes);
+                }
+            }
         }
     }
 

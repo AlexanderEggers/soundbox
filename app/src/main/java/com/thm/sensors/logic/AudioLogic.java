@@ -19,51 +19,13 @@ import org.puredata.core.utils.IoUtils;
 public final class AudioLogic {
 
     private Activity mContext;
-    private long xAccelerationID, yAccelerationID, zAccelerationID;
-    private float xAccelerationValue, yAccelerationValue, zAccelerationValue;
 
     public AudioLogic(Activity context) {
         mContext = context;
     }
 
-    public void processAudioProximity(float value) {
-        //send gyro value as well!!!
-        //map this value!!!
-        PdBase.sendFloat("toneHeight", value * 100f);
-    }
+    public void processAudioAcceleration(int audioMode, float valueX, float valueY, float valueZ) {
 
-    public void processAudioAcceleration(int identifier, float value, long id) {
-        switch (identifier) {
-            case Util.ACCELERATION_X:
-                xAccelerationID = id;
-                xAccelerationValue = value;
-                break;
-            case Util.ACCELERATION_Y:
-                yAccelerationID = id;
-                yAccelerationValue = value;
-                break;
-            case Util.ACCELERATION_Z:
-                zAccelerationID = id;
-                zAccelerationValue = value;
-                break;
-        }
-
-        if (xAccelerationID == yAccelerationID && xAccelerationID == zAccelerationID) {
-            //work with values to prepare those for the audio system
-
-            /*
-            PdBase.sendFloat("?", xAccelerationValue);
-            PdBase.sendFloat("?", yAccelerationValue);
-            PdBase.sendFloat("?", zAccelerationValue);
-            */
-
-            ((TextView) mContext.findViewById(R.id.textView5)).setText(
-                    MessageFormat.format("Acceleration X: {0}", xAccelerationValue));
-            ((TextView) mContext.findViewById(R.id.textView6)).setText(
-                    MessageFormat.format("Acceleration Y: {0}", yAccelerationValue));
-            ((TextView) mContext.findViewById(R.id.textView7)).setText(
-                    MessageFormat.format("Acceleration Z: {0}", zAccelerationValue));
-        }
     }
 
     public void initPD() throws IOException {

@@ -6,10 +6,6 @@
     android:keepScreenOn="true"
     tools:context=".activity.SlaveActivity">
 
-    <ViewStub
-        android:id="@+id/stub"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:inflatedId="@+id/inflatedId" />
+    <include layout="@layout/slave_content" />
 
 </android.support.design.widget.CoordinatorLayout>

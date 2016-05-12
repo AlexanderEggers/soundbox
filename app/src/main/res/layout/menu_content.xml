@@ -12,35 +12,27 @@
     tools:showIn="@layout/menu_activity">
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/button1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.25"
+        android:layout_weight="0.3333333"
         android:onClick="onClick"
-        android:text="Proximity" />
+        android:text="Sensor" />
 
     <Button
         android:id="@+id/button2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.25"
+        android:layout_weight="0.3333333"
         android:onClick="onClick"
-        android:text="Heartbeat" />
+        android:text="Master" />
 
     <Button
         android:id="@+id/button3"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.25"
+        android:layout_weight="0.3333333"
         android:onClick="onClick"
-        android:text="Acceleration" />
-
-    <Button
-        android:id="@+id/button4"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="0.25"
-        android:onClick="onClick"
-        android:text="Master" />
+        android:text="Settings" />
 
 </LinearLayout>
