@@ -58,11 +58,11 @@ public final class AudioLogic {
             */
 
             ((TextView) mContext.findViewById(R.id.textView5)).setText(
-                    MessageFormat.format("Acceleration: {0}", xAccelerationValue));
+                    MessageFormat.format("Acceleration X: {0}", xAccelerationValue));
             ((TextView) mContext.findViewById(R.id.textView6)).setText(
-                    MessageFormat.format("Acceleration: {0}", yAccelerationValue));
+                    MessageFormat.format("Acceleration Y: {0}", yAccelerationValue));
             ((TextView) mContext.findViewById(R.id.textView7)).setText(
-                    MessageFormat.format("Acceleration: {0}", zAccelerationValue));
+                    MessageFormat.format("Acceleration Z: {0}", zAccelerationValue));
         }
     }
 

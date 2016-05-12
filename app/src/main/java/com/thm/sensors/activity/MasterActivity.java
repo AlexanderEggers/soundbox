@@ -60,8 +60,10 @@ public final class MasterActivity extends Activity {
 
         ((TextView) findViewById(R.id.textView3)).setText("Proximity: n/a");
         ((TextView) findViewById(R.id.textView4)).setText("Heartbeat: n/a");
-        ((TextView) findViewById(R.id.textView5)).setText("Acceleration: n/a");
-        ((TextView) findViewById(R.id.textView6)).setText("Beacon-ID: n/a");
+        ((TextView) findViewById(R.id.textView5)).setText("Acceleration X: n/a");
+        ((TextView) findViewById(R.id.textView6)).setText("Acceleration Y: n/a");
+        ((TextView) findViewById(R.id.textView7)).setText("Acceleration Z: n/a");
+        ((TextView) findViewById(R.id.textView8)).setText("Beacon-ID: n/a");
 
         mAudioLogic = new AudioLogic(this);
 
