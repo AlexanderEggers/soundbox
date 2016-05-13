@@ -6,7 +6,7 @@ public final class Util {
     /**
      * General values
      */
-    public static final boolean DEV_MODE = false;
+    public static final boolean DEV_MODE = true;
 
     /**
      * Device types

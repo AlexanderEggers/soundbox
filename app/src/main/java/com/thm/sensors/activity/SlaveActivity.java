@@ -89,6 +89,8 @@ public final class SlaveActivity extends Activity {
         } else {
             if (mBluetoothLogic == null) {
                 Log.w(SlaveActivity.class.getName(), "Senor data could not be sent. Logic = " + mBluetoothLogic);
+            } else if(!Util.isLogin) {
+                Log.w(SlaveActivity.class.getName(), "This device is not in range of a beacon.");
             } else {
                 Log.w(SlaveActivity.class.getName(), "Senor data could not be sent. " +
                         "Master = " + mBluetoothLogic.isConnectionAvailable());
