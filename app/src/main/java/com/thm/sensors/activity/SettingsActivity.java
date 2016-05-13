@@ -164,7 +164,6 @@ public final class SettingsActivity extends Activity implements View.OnClickList
                 Util.beaconColorMap = (HashMap<String, String>) in.readObject();
                 Util.beaconModeMap = (HashMap<String, Integer>) in.readObject();
                 Util.beaconLastData = (HashMap<String, Long>) in.readObject();
-                in.close();
             } catch (Exception e) {
                 Log.d(SettingsActivity.class.getName(), "loadSettings: " + e.getMessage());
                 e.printStackTrace();
@@ -185,6 +184,9 @@ public final class SettingsActivity extends Activity implements View.OnClickList
         Util.beaconDeviceMap.clear();
         Util.beaconColorMap.clear();
         Util.beaconModeMap.clear();
-        new File(getFilesDir() + "/" + SETTINGS_FILE_NAME).delete();
+
+        if(!new File(getFilesDir() + "/" + SETTINGS_FILE_NAME).delete()) {
+            Log.d(SettingsActivity.class.getName(), "Found no settings file");
+        }
     }
 }

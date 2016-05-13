@@ -81,7 +81,7 @@ public final class MasterActivity extends Activity {
                 while (!mStopRunning) {
                     for (String beacon : Util.beaconLastData.keySet()) {
                         if(Util.beaconDeviceMap.get(beacon) != null) {
-                            long diff = MAX_INACTIVE_TIME - Util.beaconLastData.get(beacon);
+                            long diff = System.currentTimeMillis() - Util.beaconLastData.get(beacon);
 
                             if(diff > MAX_INACTIVE_TIME) {
                                 String device = Util.beaconDeviceMap.get(beacon);
