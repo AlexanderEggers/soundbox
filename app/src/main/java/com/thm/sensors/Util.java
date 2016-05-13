@@ -24,6 +24,7 @@ public final class Util {
      */
     public static HashMap<String, String> beaconDeviceMap = new HashMap<>(), beaconColorMap = new HashMap<>();
     public static HashMap<String, Integer> beaconModeMap = new HashMap<>();
+    public static HashMap<String, Long> beaconLastData = new HashMap<>();
 
     /**
      * Slave connection values

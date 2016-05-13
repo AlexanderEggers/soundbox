@@ -108,6 +108,7 @@ public final class BluetoothLogic {
             try {
                 mmSocket.close();
             } catch (IOException e) {
+                e.getStackTrace();
             }
         }
 
@@ -127,6 +128,7 @@ public final class BluetoothLogic {
                 // MY_UUID is the app's UUID string, also used by the client code
                 tmp = mBluetoothAdapter.listenUsingRfcommWithServiceRecord("Bluetooth Service", MY_UUID);
             } catch (IOException e) {
+                e.getStackTrace();
             }
             mmServerSocket = tmp;
         }
@@ -159,6 +161,7 @@ public final class BluetoothLogic {
             try {
                 mmServerSocket.close();
             } catch (IOException e) {
+                e.getStackTrace();
             }
         }
     }
@@ -176,6 +179,7 @@ public final class BluetoothLogic {
                 // MY_UUID is the app's UUID string, also used by the server code
                 tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
             } catch (IOException e) {
+                e.getStackTrace();
             }
             mmSocket = tmp;
         }
@@ -206,6 +210,7 @@ public final class BluetoothLogic {
             try {
                 mmSocket.close();
             } catch (IOException e) {
+                e.getStackTrace();
             }
         }
     }

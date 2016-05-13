@@ -22,9 +22,11 @@ import java.text.MessageFormat;
 
 public final class MasterActivity extends Activity {
 
+    private static final long MAX_INACTIVE_TIME = 1000;
     private BluetoothLogic mBluetoothLogic;
     private Handler mHandler;
     private AudioLogic mAudioLogic;
+    private boolean mStopRunning = false;
 
     @Override
     protected void onResume() {
@@ -72,6 +74,32 @@ public final class MasterActivity extends Activity {
             e.getStackTrace();
             finish();
         }
+
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                while (!mStopRunning) {
+                    for (String beacon : Util.beaconLastData.keySet()) {
+                        if(Util.beaconDeviceMap.get(beacon) != null) {
+                            long diff = MAX_INACTIVE_TIME - Util.beaconLastData.get(beacon);
+
+                            if(diff > MAX_INACTIVE_TIME) {
+                                String device = Util.beaconDeviceMap.get(beacon);
+                                Util.beaconDeviceMap.put(beacon, null);
+                                mBluetoothLogic.sendDataToSlave(device, "LOGOUT_SLAVE%" + beacon);
+                            }
+                        }
+                    }
+
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return null;
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
@@ -98,6 +126,7 @@ public final class MasterActivity extends Activity {
 
             if (Util.beaconDeviceMap.get(beacon) == null && Util.beaconDeviceMap.containsKey(beacon)) {
                 Util.beaconDeviceMap.put(beacon, device);
+                Util.beaconLastData.put(beacon, System.currentTimeMillis());
                 mBluetoothLogic.sendDataToSlave(device, color);
             } else {
                 mBluetoothLogic.sendDataToSlave(device, "ERROR%" + beacon);
@@ -106,7 +135,7 @@ public final class MasterActivity extends Activity {
             String beacon = aSplitData[1];
             String device = aSplitData[2];
             Util.beaconDeviceMap.put(beacon, null);
-            mBluetoothLogic.sendDataToSlave(device, "CONFIRM_LOGOUT%" + beacon);
+            mBluetoothLogic.sendDataToSlave(device, "LOGOUT_SLAVE%" + beacon);
         } else {
             String device = aSplitData[0];
             String beacon = null;
@@ -119,6 +148,7 @@ public final class MasterActivity extends Activity {
             }
 
             if (beacon != null) {
+                Util.beaconLastData.put(beacon, System.currentTimeMillis());
                 int audioMode = Util.beaconModeMap.get(beacon);
 
                 String[] values = aSplitData[2].split(";");
@@ -146,5 +176,6 @@ public final class MasterActivity extends Activity {
     protected void onStop() {
         super.onStop();
         mBluetoothLogic.close();
+        mStopRunning = true;
     }
 }

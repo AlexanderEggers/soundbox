@@ -66,7 +66,7 @@ public final class SlaveActivity extends Activity {
         byte[] aData = (byte[]) msg.obj;
         String data = new String(aData);
 
-        if (data.contains("ERROR") || data.contains("CONFIRM_LOGOUT")) {
+        if (data.contains("ERROR") || data.contains("LOGOUT_SLAVE")) {
             String[] values = data.split("%");
 
             if (values[1].equals(Util.connectedBeacon)) {

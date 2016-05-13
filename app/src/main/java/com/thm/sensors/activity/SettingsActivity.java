@@ -86,6 +86,7 @@ public final class SettingsActivity extends Activity implements View.OnClickList
                             Util.beaconDeviceMap.put(beacon, null);
                             Util.beaconColorMap.put(beacon, color);
                             Util.beaconModeMap.put(beacon, mode);
+                            Util.beaconLastData.put(beacon, 0L);
                         } else {
                             Log.d(SettingsActivity.class.getName(),
                                     MessageFormat.format("Cannot apply the settings because the specific beacon " +
@@ -121,6 +122,7 @@ public final class SettingsActivity extends Activity implements View.OnClickList
             out.writeObject(Util.beaconDeviceMap);
             out.writeObject(Util.beaconColorMap);
             out.writeObject(Util.beaconModeMap);
+            out.writeObject(Util.beaconLastData);
         } catch (Exception e) {
             if (file != null) {
                 file.delete();
@@ -161,6 +163,7 @@ public final class SettingsActivity extends Activity implements View.OnClickList
                 Util.beaconDeviceMap = (HashMap<String, String>) in.readObject();
                 Util.beaconColorMap = (HashMap<String, String>) in.readObject();
                 Util.beaconModeMap = (HashMap<String, Integer>) in.readObject();
+                Util.beaconLastData = (HashMap<String, Long>) in.readObject();
                 in.close();
             } catch (Exception e) {
                 Log.d(SettingsActivity.class.getName(), "loadSettings: " + e.getMessage());
