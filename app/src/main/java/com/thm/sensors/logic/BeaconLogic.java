@@ -20,7 +20,7 @@ import org.altbeacon.beacon.Region;
 
 import java.util.Collection;
 
-public final class BeaconLogic implements BeaconConsumer, SlaveLogic {
+public final class BeaconLogic implements BeaconConsumer {
 
     private static final double MIN_RANGE_IN_METERS = 2;
     private BeaconManager mBeaconManager;
@@ -94,12 +94,10 @@ public final class BeaconLogic implements BeaconConsumer, SlaveLogic {
         return mContext.bindService(intent, serviceConnection, i);
     }
 
-    @Override
     public void onResume() {
         mBeaconManager.bind(this);
     }
 
-    @Override
     public void onPause() {
         mBeaconManager.unbind(this);
     }

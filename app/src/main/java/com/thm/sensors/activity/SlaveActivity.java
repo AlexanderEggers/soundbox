@@ -13,11 +13,11 @@ import com.thm.sensors.Util;
 import com.thm.sensors.logic.AccelerationLogic;
 import com.thm.sensors.logic.BeaconLogic;
 import com.thm.sensors.logic.BluetoothLogic;
-import com.thm.sensors.logic.SlaveLogic;
 
 public final class SlaveActivity extends Activity {
 
-    private SlaveLogic mAcceleration, mBeaconLogic;
+    private AccelerationLogic mAcceleration;
+    private BeaconLogic mBeaconLogic;
     private BluetoothLogic mBluetoothLogic;
     private Handler mHandler;
 
@@ -29,7 +29,7 @@ public final class SlaveActivity extends Activity {
             mAcceleration.onResume();
         }
 
-        if(mBeaconLogic != null) {
+        if (mBeaconLogic != null) {
             mBeaconLogic.onResume();
         }
     }
@@ -65,7 +65,7 @@ public final class SlaveActivity extends Activity {
         byte[] aData = (byte[]) msg.obj;
         String data = new String(aData);
 
-        if(data.equals("ERROR")) {
+        if (data.equals("ERROR")) {
             Util.isLogin = false;
             Util.connectedBeacon = null;
         } else {
@@ -104,7 +104,7 @@ public final class SlaveActivity extends Activity {
     protected void onPause() {
         super.onPause();
 
-        if(mAcceleration != null) {
+        if (mAcceleration != null) {
             mAcceleration.onPause();
         }
 

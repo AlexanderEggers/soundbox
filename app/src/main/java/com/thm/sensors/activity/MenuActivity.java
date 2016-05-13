@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.Toolbar;
 
 import com.thm.sensors.R;
-import com.thm.sensors.Util;
 
 public final class MenuActivity extends Activity implements View.OnClickListener {
 

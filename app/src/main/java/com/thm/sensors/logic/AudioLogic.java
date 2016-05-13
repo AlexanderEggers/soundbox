@@ -1,11 +1,9 @@
 package com.thm.sensors.logic;
 
 import android.app.Activity;
-import android.widget.TextView;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.MessageFormat;
 
 import com.thm.sensors.R;
 import com.thm.sensors.Util;
@@ -18,14 +16,12 @@ import org.puredata.core.utils.IoUtils;
 
 public final class AudioLogic {
 
-    private Activity mContext;
+    private final Activity mContext;
+    private final AudioModeLogic mAudioModeLogic;
 
     public AudioLogic(Activity context) {
         mContext = context;
-    }
-
-    public void processAudioAcceleration(int audioMode, float valueX, float valueY, float valueZ) {
-
+        mAudioModeLogic = new AudioModeLogic();
     }
 
     public void initPD() throws IOException {
@@ -40,7 +36,30 @@ public final class AudioLogic {
         IoUtils.extractZipResource(mContext.getResources().openRawResource(R.raw.simplepatch), dir, true);
         File pdPatch = new File(dir, "simplepatch.pd");
         PdBase.openPatch(pdPatch.getAbsolutePath());
+    }
+
+    public void startAudio() {
         PdAudio.startAudio(mContext);
         PdBase.sendFloat("toneHeight", 127.0f);
+    }
+
+    public void processAudioAcceleration(int audioMode, float valueX, float valueY, float valueZ) {
+        switch (audioMode) {
+            case Util.AUDIO_MODE_1:
+                mAudioModeLogic.executeAudioMode1(valueX, valueY);
+                break;
+            case Util.AUDIO_MODE_2:
+                mAudioModeLogic.executeAudioMode2(valueX);
+                break;
+            case Util.AUDIO_MODE_3:
+                mAudioModeLogic.executeAudioMode3(valueX, valueY, valueZ);
+                break;
+            case Util.AUDIO_MODE_4:
+                mAudioModeLogic.executeAudioMode4(valueZ);
+                break;
+            case Util.AUDIO_MODE_5:
+                mAudioModeLogic.executeAudioMode5(valueY, valueZ);
+                break;
+        }
     }
 }

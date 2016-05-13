@@ -15,7 +15,7 @@ import com.thm.sensors.activity.SlaveActivity;
 
 import java.text.MessageFormat;
 
-public final class AccelerationLogic implements SensorEventListener, SlaveLogic {
+public final class AccelerationLogic implements SensorEventListener {
 
     private SensorManager mSensorManager;
     private Sensor mSensor;
@@ -58,7 +58,7 @@ public final class AccelerationLogic implements SensorEventListener, SlaveLogic 
 
             String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
             String data = deviceAddress + "%" + mLinearAcceleration[0] + ";"
-                    + mLinearAcceleration[1] + ";" +  mLinearAcceleration[2];
+                    + mLinearAcceleration[1] + ";" + mLinearAcceleration[2];
             ((SlaveActivity) mContext).sendSensorData(data);
 
             Log.i(AccelerationLogic.class.getName(), textX);
@@ -71,12 +71,10 @@ public final class AccelerationLogic implements SensorEventListener, SlaveLogic 
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
-    @Override
     public void onResume() {
         mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
-    @Override
     public void onPause() {
         mSensorManager.unregisterListener(this);
     }
