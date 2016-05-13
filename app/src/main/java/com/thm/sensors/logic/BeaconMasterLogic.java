@@ -31,9 +31,15 @@ public final class BeaconMasterLogic extends BeaconLogic {
                     if (distance < MIN_RANGE_IN_METERS) {
                         foundBeacon = true;
                         if(!beacon.getBluetoothAddress().equals(Util.connectedSettingsBeacon)) {
-                            ((TextView) mContext.findViewById(R.id.textView3))
-                                    .setText(MessageFormat.format("Beacon:{0}", beacon.getBluetoothAddress()));
+                            String beaconAddress = beacon.getBluetoothAddress();
+                            Util.connectedSettingsBeacon = beaconAddress;
 
+                            ((TextView) mContext.findViewById(R.id.textView3))
+                                    .setText(MessageFormat.format("Beacon:{0}", beaconAddress));
+                            ((EditText) mContext.findViewById(R.id.editText))
+                                    .setText(Util.beaconColorMap.get(beaconAddress));
+                            ((EditText) mContext.findViewById(R.id.editText2))
+                                    .setText(Util.beaconModeMap.get(beaconAddress));
                         }
                         break;
                     }

@@ -96,21 +96,23 @@ public final class MasterActivity extends Activity {
             String device = aSplitData[2];
             String color = "0xD53B3B"; //only testing, later via Util.beaconColorMap!!
 
-            if (Util.beaconDeviceMap.get(beacon) == null) {
+            if (Util.beaconDeviceMap.get(beacon) == null && Util.beaconDeviceMap.containsKey(beacon)) {
                 Util.beaconDeviceMap.put(beacon, device);
                 mBluetoothLogic.sendDataToSlave(device, color);
             } else {
-                mBluetoothLogic.sendDataToSlave(device, "ERROR");
+                mBluetoothLogic.sendDataToSlave(device, "ERROR%" + beacon);
             }
         } else if (data.contains("Logout")) {
             String beacon = aSplitData[1];
+            String device = aSplitData[2];
             Util.beaconDeviceMap.put(beacon, null);
+            mBluetoothLogic.sendDataToSlave(device, "CONFIRM_LOGOUT%" + beacon);
         } else {
             String device = aSplitData[0];
             String beacon = null;
 
             for (String key : Util.beaconDeviceMap.keySet()) {
-                if (Util.beaconDeviceMap.get(key).equals(device)) {
+                if (Util.beaconDeviceMap.get(key).equals(device) && key.equals(aSplitData[1])) {
                     beacon = key;
                     break;
                 }
@@ -119,7 +121,7 @@ public final class MasterActivity extends Activity {
             if (beacon != null) {
                 int audioMode = Util.beaconModeMap.get(beacon);
 
-                String[] values = aSplitData[1].split(";");
+                String[] values = aSplitData[2].split(";");
                 float valueX = Float.parseFloat(values[0]);
                 float valueY = Float.parseFloat(values[1]);
                 float valueZ = Float.parseFloat(values[2]);
@@ -129,6 +131,7 @@ public final class MasterActivity extends Activity {
             } else {
                 Log.d(MasterActivity.class.getName(),
                         MessageFormat.format("Cannot find a beacon which is connected to this device = {0}", device));
+                mBluetoothLogic.sendDataToSlave(device, "ERROR%" + aSplitData[1]);
             }
         }
     }

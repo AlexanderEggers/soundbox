@@ -4,9 +4,14 @@ import java.util.HashMap;
 
 public final class Util {
     /**
+     * General values
+     */
+    public static final boolean DEV_MODE = true;
+
+    /**
      * Device types
      */
-    public final static int MASTER = 0, SLAVE = 1;
+    public static final int MASTER = 0, SLAVE = 1;
 
     /**
      * Audio modes
@@ -27,7 +32,7 @@ public final class Util {
     public static String connectedBeacon;
 
     /**
-     * Master Settings values
+     * Master settings values
      */
     public static String connectedSettingsBeacon;
 }

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.thm.sensors.R;
+import com.thm.sensors.Util;
 import com.thm.sensors.activity.SlaveActivity;
 
 import java.text.MessageFormat;
@@ -57,7 +58,7 @@ public final class AccelerationLogic implements SensorEventListener {
             ((TextView) mContext.findViewById(R.id.textViewZ)).setText(textZ);
 
             String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
-            String data = deviceAddress + "%" + mLinearAcceleration[0] + ";"
+            String data = deviceAddress + "%" + Util.connectedBeacon + "%" + mLinearAcceleration[0] + ";"
                     + mLinearAcceleration[1] + ";" + mLinearAcceleration[2];
             ((SlaveActivity) mContext).sendSensorData(data);
 

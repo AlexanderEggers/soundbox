@@ -41,6 +41,7 @@ public final class AudioLogic {
     public void startAudio() {
         PdAudio.startAudio(mContext);
         PdBase.sendFloat("toneHeight", 127.0f);
+        //insert all audio controls here to initialize those - important part!!
     }
 
     public void processAudioAcceleration(int audioMode, float valueX, float valueY, float valueZ) {

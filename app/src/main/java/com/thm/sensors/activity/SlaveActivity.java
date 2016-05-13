@@ -66,9 +66,16 @@ public final class SlaveActivity extends Activity {
         byte[] aData = (byte[]) msg.obj;
         String data = new String(aData);
 
-        if (data.equals("ERROR")) {
-            Util.isLogin = false;
-            Util.connectedBeacon = null;
+        if (data.contains("ERROR") || data.contains("CONFIRM_LOGOUT")) {
+            String[] values = data.split("%");
+
+            if (values[1].equals(Util.connectedBeacon)) {
+                Util.isLogin = false;
+                Util.connectedBeacon = null;
+            } else {
+                Log.w(SlaveActivity.class.getName(), "Tried to disconnect an old connection. " +
+                        "Beacon = " + values[1]);
+            }
         } else {
             int color = Integer.parseInt(data);
             findViewById(R.id.slave_parent_layout).setBackgroundColor(color);
