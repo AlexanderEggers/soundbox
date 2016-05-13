@@ -31,6 +31,11 @@ public final class MenuActivity extends Activity implements View.OnClickListener
                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
                 break;
+            case R.id.button3:
+                intent = new Intent(this, SettingsActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
+                break;
         }
     }
 }

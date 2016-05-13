@@ -96,7 +96,7 @@ public final class MasterActivity extends Activity {
             String device = aSplitData[2];
             String color = "0xD53B3B"; //only testing, later via Util.beaconColorMap!!
 
-            if (Util.beaconDeviceMap.get(beacon).equals("")) {
+            if (Util.beaconDeviceMap.get(beacon) == null) {
                 Util.beaconDeviceMap.put(beacon, device);
                 mBluetoothLogic.sendDataToSlave(device, color);
             } else {
@@ -104,7 +104,7 @@ public final class MasterActivity extends Activity {
             }
         } else if (data.contains("Logout")) {
             String beacon = aSplitData[1];
-            Util.beaconDeviceMap.put(beacon, "");
+            Util.beaconDeviceMap.put(beacon, null);
         } else {
             String device = aSplitData[0];
             String beacon = null;

@@ -12,6 +12,7 @@ import com.thm.sensors.R;
 import com.thm.sensors.Util;
 import com.thm.sensors.logic.AccelerationLogic;
 import com.thm.sensors.logic.BeaconLogic;
+import com.thm.sensors.logic.BeaconSlaveLogic;
 import com.thm.sensors.logic.BluetoothLogic;
 
 public final class SlaveActivity extends Activity {
@@ -42,7 +43,7 @@ public final class SlaveActivity extends Activity {
         mAcceleration = new AccelerationLogic();
         mAcceleration.startLogic(this);
 
-        mBeaconLogic = new BeaconLogic();
+        mBeaconLogic = new BeaconSlaveLogic();
         mBeaconLogic.startLogic(this);
 
         mHandler = new Handler() {
