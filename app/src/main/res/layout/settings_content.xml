@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:keepScreenOn="true"
     android:focusableInTouchMode="true"
+    android:keepScreenOn="true"
     tools:context=".activity.SettingsActivity"
     tools:showIn="@layout/settings_activity">
 
@@ -16,7 +16,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="31dp"
         android:layout_marginTop="76dp"
-        android:text="Beacon:"
+        android:text="Beacon"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
@@ -49,21 +49,12 @@
         android:layout_toEndOf="@+id/textView4"
         android:inputType="text" />
 
-    <EditText
-        android:id="@+id/editText2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textView5"
-        android:layout_alignStart="@+id/editText"
-        android:ems="1"
-        android:inputType="number" />
-
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/textView5"
         android:layout_below="@+id/textView5"
-        android:layout_centerHorizontal="true"
         android:onClick="onClick"
         android:text="Save" />
 
@@ -80,9 +71,28 @@
         android:id="@+id/button5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Reset settings"
-        android:layout_alignTop="@+id/button4"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="35dp" />
+        android:layout_alignTop="@+id/button4"
+        android:layout_marginEnd="35dp"
+        android:text="Reset settings" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/textView5"
+        android:layout_centerHorizontal="true"
+        android:text="0"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Button
+        android:id="@+id/button6"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/editText"
+        android:layout_below="@+id/editText"
+        android:onClick="onClick"
+        android:text="Edit" />
 
 </RelativeLayout>

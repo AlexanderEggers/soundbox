@@ -30,26 +30,26 @@ public final class BeaconMasterLogic extends BeaconLogic {
                     Log.d(BeaconMasterLogic.class.getName(), distance + "");
                     if (distance < MIN_RANGE_IN_METERS) {
                         foundBeacon = true;
-                        if(!beacon.getBluetoothAddress().equals(Util.connectedSettingsBeacon)) {
+                        if (!beacon.getBluetoothAddress().equals(Util.connectedSettingsBeacon)) {
                             String beaconAddress = beacon.getBluetoothAddress();
                             Util.connectedSettingsBeacon = beaconAddress;
 
                             ((TextView) mContext.findViewById(R.id.textView3))
-                                    .setText(MessageFormat.format("Beacon:{0}", beaconAddress));
+                                    .setText(MessageFormat.format("Beacon {0}", beaconAddress));
                             ((EditText) mContext.findViewById(R.id.editText))
                                     .setText(Util.beaconColorMap.get(beaconAddress));
-                            ((EditText) mContext.findViewById(R.id.editText2))
+                            ((TextView) mContext.findViewById(R.id.textView))
                                     .setText(Util.beaconModeMap.get(beaconAddress));
                         }
                         break;
                     }
                 }
 
-                if(!foundBeacon && Util.connectedSettingsBeacon != null) {
+                if (!foundBeacon && Util.connectedSettingsBeacon != null) {
                     Util.connectedSettingsBeacon = null;
-                    ((TextView) mContext.findViewById(R.id.textView3)).setText("Beacon:");
+                    ((TextView) mContext.findViewById(R.id.textView3)).setText("Beacon");
                     ((EditText) mContext.findViewById(R.id.editText)).setText("");
-                    ((EditText) mContext.findViewById(R.id.editText2)).setText("");
+                    ((TextView) mContext.findViewById(R.id.textView)).setText("");
                 }
             }
         });

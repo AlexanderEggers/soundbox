@@ -1,12 +1,12 @@
 package com.thm.sensors.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.MenuItem;
 
 import com.thm.sensors.R;
 import com.thm.sensors.Util;
@@ -97,15 +97,18 @@ public final class SlaveActivity extends Activity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                overridePendingTransition(0, 0);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+    public void onBackPressed() {
+        //Back button of this activity; depending on the dev mode if the application
+        //is going to be closed or only jumping back to the menu
+
+        if (!Util.DEV_MODE) {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         }
+        finish();
+        overridePendingTransition(0, 0);
     }
 
     @Override
