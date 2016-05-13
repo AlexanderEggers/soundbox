@@ -17,7 +17,7 @@ The beacon implementation can be found in the ".logic.BeaconLogic" file. The imp
 TODO
 
 ## Settings
-TODO
+Settings are responsible for changing the audio mode and the color of a certain beacon. All beacons are mapped by the master device regarding these values. The color value will change the slave device background color and the audio mode is responsible for the specific modification of the audio sample by the slave acceleration sensor.
 
 ## Requirements
 To run this app the device needs to match certain requirements:
@@ -25,4 +25,4 @@ To run this app the device needs to match certain requirements:
 * Min SDK Level: 21 (Android 5.0 - Lollipop)
 * Sensors:
   * Acceleration sensor
-  * Beacon(s) to track the distance
+  * Beacon(s)
