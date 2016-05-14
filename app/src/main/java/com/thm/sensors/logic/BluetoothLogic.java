@@ -235,6 +235,7 @@ public final class BluetoothLogic {
                 if (!mClosing) {
                     thread.write(aBytes);
                 }
+                break;
             }
         }
     }

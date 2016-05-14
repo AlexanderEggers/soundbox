@@ -26,7 +26,7 @@ public final class AccelerationLogic implements SensorEventListener {
     public void startLogic(Activity context) {
         mContext = context;
 
-        if(Util.DEV_MODE) {
+        if (Util.DEV_MODE) {
             ((TextView) context.findViewById(R.id.textViewX)).setText("Acceleration Value X: ");
             ((TextView) context.findViewById(R.id.textViewY)).setText("Acceleration Value Y: ");
             ((TextView) context.findViewById(R.id.textViewZ)).setText("Acceleration Value Z: ");
@@ -54,23 +54,23 @@ public final class AccelerationLogic implements SensorEventListener {
             mLinearAcceleration[2] = event.values[2] - mGravity[2];
 
             String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
-            String data = deviceAddress + "%" + Util.connectedBeacon + "%" + mLinearAcceleration[0] + ";"
+            String data = "Data%" + deviceAddress + "%" + Util.connectedBeacon + "%" + mLinearAcceleration[0] + ";"
                     + mLinearAcceleration[1] + ";" + mLinearAcceleration[2];
             ((SlaveActivity) mContext).sendSensorData(data);
 
-            String textX = MessageFormat.format("Acceleration Value X: {0}", mLinearAcceleration[0]);
-            String textY = MessageFormat.format("Acceleration Value Y: {0}", mLinearAcceleration[1]);
-            String textZ = MessageFormat.format("Acceleration Value Z: {0}", mLinearAcceleration[2]);
+            if (Util.DEV_MODE) {
+                String textX = MessageFormat.format("Acceleration Value X: {0}", mLinearAcceleration[0]);
+                String textY = MessageFormat.format("Acceleration Value Y: {0}", mLinearAcceleration[1]);
+                String textZ = MessageFormat.format("Acceleration Value Z: {0}", mLinearAcceleration[2]);
 
-            if(Util.DEV_MODE) {
                 ((TextView) mContext.findViewById(R.id.textViewX)).setText(textX);
                 ((TextView) mContext.findViewById(R.id.textViewY)).setText(textY);
                 ((TextView) mContext.findViewById(R.id.textViewZ)).setText(textZ);
-            }
 
-            Log.i(AccelerationLogic.class.getName(), textX);
-            Log.i(AccelerationLogic.class.getName(), textY);
-            Log.i(AccelerationLogic.class.getName(), textZ);
+                Log.i(AccelerationLogic.class.getName(), textX);
+                Log.i(AccelerationLogic.class.getName(), textY);
+                Log.i(AccelerationLogic.class.getName(), textZ);
+            }
         }
     }
 

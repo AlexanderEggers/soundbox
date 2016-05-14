@@ -65,21 +65,33 @@ public final class SlaveActivity extends Activity {
     private void handleData(Message msg) {
         byte[] aData = (byte[]) msg.obj;
         String data = new String(aData);
+        String[] aSplitData = data.split("%");
+        String identifier = aSplitData[0];
 
-        if (data.contains("ERROR") || data.contains("LOGOUT_SLAVE")) {
-            String[] values = data.split("%");
-
-            if (values[1].equals(Util.connectedBeacon)) {
-                Util.isLogin = false;
-                Util.connectedBeacon = null;
-            } else {
-                Log.w(SlaveActivity.class.getName(), "Tried to disconnect an old connection. " +
-                        "Beacon = " + values[1]);
-            }
-        } else {
-            int color = Integer.parseInt(data);
-            findViewById(R.id.slave_parent_layout).setBackgroundColor(color);
-            Util.isLogin = true;
+        switch (identifier) {
+            case "ERROR":
+            case "LOGOUT_SLAVE":
+                String beacon = aSplitData[1];
+                if (beacon.equals(Util.connectedBeacon)) {
+                    Util.isLogin = false;
+                    Util.connectedBeacon = null;
+                    findViewById(R.id.slave_parent_layout).setBackgroundColor(Util.DEFAULT_BACKGROUND_COLOR);
+                } else {
+                    Log.w(SlaveActivity.class.getName(), "Tried to disconnect an old connection. " +
+                            "Beacon = " + beacon);
+                }
+                break;
+            case "LOGIN_SLAVE":
+                beacon = aSplitData[1];
+                if (beacon.equals(Util.connectedBeacon)) {
+                    int color = Integer.parseInt(aSplitData[2]);
+                    findViewById(R.id.slave_parent_layout).setBackgroundColor(color);
+                    Util.isLogin = true;
+                } else {
+                    Log.w(SlaveActivity.class.getName(), "Tried to connect an old connection. " +
+                            "Beacon = " + beacon);
+                }
+                break;
         }
     }
 
@@ -89,7 +101,7 @@ public final class SlaveActivity extends Activity {
         } else {
             if (mBluetoothLogic == null) {
                 Log.w(SlaveActivity.class.getName(), "Senor data could not be sent. Logic = " + mBluetoothLogic);
-            } else if(!Util.isLogin) {
+            } else if (!Util.isLogin) {
                 Log.w(SlaveActivity.class.getName(), "This device is not in range of a beacon.");
             } else {
                 Log.w(SlaveActivity.class.getName(), "Senor data could not be sent. " +

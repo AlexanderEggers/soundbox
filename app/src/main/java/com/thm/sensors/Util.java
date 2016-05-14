@@ -31,6 +31,7 @@ public final class Util {
      */
     public static boolean isLogin;
     public static String connectedBeacon;
+    public static final int DEFAULT_BACKGROUND_COLOR = 0xFFFFFF;
 
     /**
      * Master settings values
