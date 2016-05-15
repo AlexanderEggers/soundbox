@@ -25,6 +25,8 @@ public final class BeaconMasterLogic extends BeaconLogic {
         mBeaconManager.setRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
+                System.out.println(Util.scanForBeacons);
+
                 if(Util.scanForBeacons) {
                     Beacon fBeacon = null;
                     boolean foundBeacon = false;
@@ -60,6 +62,7 @@ public final class BeaconMasterLogic extends BeaconLogic {
                                 }
                             });
                         }
+                        Util.scanForBeacons = false;
                     }
                 }
             }
