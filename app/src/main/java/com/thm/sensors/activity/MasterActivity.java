@@ -22,7 +22,7 @@ import java.text.MessageFormat;
 
 public final class MasterActivity extends Activity {
 
-    private static final long MAX_INACTIVE_TIME = 1000;
+    private static final long MAX_INACTIVE_TIME = 3000;
     private BluetoothLogic mBluetoothLogic;
     private Handler mHandler;
     private AudioLogic mAudioLogic;
@@ -88,7 +88,7 @@ public final class MasterActivity extends Activity {
                     }
 
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(3000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -117,6 +117,8 @@ public final class MasterActivity extends Activity {
         String identifier = aSplitData[0];
         String beacon = aSplitData[1];
         String device = aSplitData[2];
+
+        Log.i(MasterActivity.class.getName(), "Identifier: " + identifier);
 
         switch (identifier) {
             case "Login":

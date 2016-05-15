@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public final class SettingsActivity extends Activity implements View.OnClickListener {
@@ -75,8 +76,6 @@ public final class SettingsActivity extends Activity implements View.OnClickList
     public void onClick(View v) {
         View rootView = v.getRootView();
         String[] beaconValues = ((TextView) rootView.findViewById(R.id.textView3)).getText().toString().split(" ");
-
-        System.out.println(v.getId());
 
         switch (v.getId()) {
             case R.id.button:

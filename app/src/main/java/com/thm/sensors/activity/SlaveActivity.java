@@ -68,6 +68,8 @@ public final class SlaveActivity extends Activity {
         String[] aSplitData = data.split("%");
         String identifier = aSplitData[0];
 
+        Log.i(MasterActivity.class.getName(), "Identifier: " + identifier);
+
         switch (identifier) {
             case "ERROR":
             case "LOGOUT_SLAVE":
