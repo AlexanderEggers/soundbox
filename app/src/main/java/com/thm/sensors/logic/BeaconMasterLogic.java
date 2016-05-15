@@ -1,5 +1,7 @@
 package com.thm.sensors.logic;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -31,15 +33,20 @@ public final class BeaconMasterLogic extends BeaconLogic {
                     if (distance < MIN_RANGE_IN_METERS) {
                         foundBeacon = true;
                         if (!beacon.getBluetoothAddress().equals(Util.connectedSettingsBeacon)) {
-                            String beaconAddress = beacon.getBluetoothAddress();
+                            final String beaconAddress = beacon.getBluetoothAddress();
                             Util.connectedSettingsBeacon = beaconAddress;
 
-                            ((TextView) mContext.findViewById(R.id.textView3))
-                                    .setText(MessageFormat.format("Beacon {0}", beaconAddress));
-                            ((EditText) mContext.findViewById(R.id.editText))
-                                    .setText(Util.beaconColorMap.get(beaconAddress));
-                            ((TextView) mContext.findViewById(R.id.textView))
-                                    .setText(Util.beaconModeMap.get(beaconAddress));
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ((TextView) mContext.findViewById(R.id.textView3))
+                                            .setText(MessageFormat.format("Beacon {0}", beaconAddress));
+                                    ((EditText) mContext.findViewById(R.id.editText))
+                                            .setText(Util.beaconColorMap.get(beaconAddress));
+                                    ((TextView) mContext.findViewById(R.id.textView))
+                                            .setText(Util.beaconModeMap.get(beaconAddress));
+                                }
+                            });
                         }
                         break;
                     }
