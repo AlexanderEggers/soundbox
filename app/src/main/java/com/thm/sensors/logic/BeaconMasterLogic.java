@@ -41,10 +41,13 @@ public final class BeaconMasterLogic extends BeaconLogic {
                                 public void run() {
                                     ((TextView) mContext.findViewById(R.id.textView3))
                                             .setText(MessageFormat.format("Beacon {0}", beaconAddress));
-                                    ((EditText) mContext.findViewById(R.id.editText))
-                                            .setText(Util.beaconColorMap.get(beaconAddress));
-                                    ((TextView) mContext.findViewById(R.id.textView))
-                                            .setText(Util.beaconModeMap.get(beaconAddress));
+
+                                    if(Util.beaconColorMap.containsKey(beaconAddress)) {
+                                        ((EditText) mContext.findViewById(R.id.editText))
+                                                .setText(Util.beaconColorMap.get(beaconAddress));
+                                        ((TextView) mContext.findViewById(R.id.textView))
+                                                .setText(Util.beaconModeMap.get(beaconAddress));
+                                    }
                                 }
                             });
                         }
