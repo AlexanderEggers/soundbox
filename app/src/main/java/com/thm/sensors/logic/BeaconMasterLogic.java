@@ -32,6 +32,7 @@ public final class BeaconMasterLogic extends BeaconLogic {
                     Log.d(BeaconMasterLogic.class.getName(), distance + "");
                     if (distance < MIN_RANGE_IN_METERS) {
                         foundBeacon = true;
+                        Log.i(BeaconMasterLogic.class.getName(), "Address: " + beacon.getBluetoothAddress());
                         if (!beacon.getBluetoothAddress().equals(Util.connectedSettingsBeacon)) {
                             final String beaconAddress = beacon.getBluetoothAddress();
                             Util.connectedSettingsBeacon = beaconAddress;
@@ -55,7 +56,7 @@ public final class BeaconMasterLogic extends BeaconLogic {
                     }
                 }
 
-                if (!foundBeacon && Util.connectedSettingsBeacon != null) {
+                if (!foundBeacon) {
                     Util.connectedSettingsBeacon = null;
 
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
