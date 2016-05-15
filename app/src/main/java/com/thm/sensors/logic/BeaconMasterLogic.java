@@ -25,38 +25,41 @@ public final class BeaconMasterLogic extends BeaconLogic {
         mBeaconManager.setRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
+                Beacon fBeacon = null;
                 boolean foundBeacon = false;
 
                 for (Beacon beacon : beacons) {
                     double distance = beacon.getDistance();
-                    Log.d(BeaconMasterLogic.class.getName(), distance + "");
+                    Log.d(BeaconMasterLogic.class.getName(), "Distance: " + distance);
                     if (distance < MIN_RANGE_IN_METERS) {
+                        fBeacon = beacon;
                         foundBeacon = true;
-                        Log.i(BeaconMasterLogic.class.getName(), "Address: " + beacon.getBluetoothAddress());
-                        if (!beacon.getBluetoothAddress().equals(Util.connectedSettingsBeacon)) {
-                            final String beaconAddress = beacon.getBluetoothAddress();
-                            Util.connectedSettingsBeacon = beaconAddress;
-
-                            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ((TextView) mContext.findViewById(R.id.textView3))
-                                            .setText(MessageFormat.format("Beacon {0}", beaconAddress));
-
-                                    if(Util.beaconColorMap.containsKey(beaconAddress)) {
-                                        ((EditText) mContext.findViewById(R.id.editText))
-                                                .setText(Util.beaconColorMap.get(beaconAddress));
-                                        ((TextView) mContext.findViewById(R.id.textView))
-                                                .setText(Util.beaconModeMap.get(beaconAddress));
-                                    }
-                                }
-                            });
-                        }
                         break;
                     }
                 }
 
-                if (!foundBeacon) {
+                if(foundBeacon && fBeacon != null) {
+                    Log.i(BeaconMasterLogic.class.getName(), "Address: " + fBeacon.getBluetoothAddress());
+                    if (!fBeacon.getBluetoothAddress().equals(Util.connectedSettingsBeacon)) {
+                        final String beaconAddress = fBeacon.getBluetoothAddress();
+                        Util.connectedSettingsBeacon = beaconAddress;
+
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                ((TextView) mContext.findViewById(R.id.textView3))
+                                        .setText(MessageFormat.format("Beacon {0}", beaconAddress));
+
+                                if(Util.beaconColorMap.containsKey(beaconAddress)) {
+                                    ((EditText) mContext.findViewById(R.id.editText))
+                                            .setText(Util.beaconColorMap.get(beaconAddress));
+                                    ((TextView) mContext.findViewById(R.id.textView))
+                                            .setText(Util.beaconModeMap.get(beaconAddress));
+                                }
+                            }
+                        });
+                    }
+                } else {
                     Util.connectedSettingsBeacon = null;
 
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
