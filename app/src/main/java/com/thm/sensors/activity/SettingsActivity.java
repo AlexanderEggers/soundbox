@@ -111,10 +111,23 @@ public final class SettingsActivity extends Activity implements View.OnClickList
                 case R.id.button6:
                     editMode();
                     break;
+                case R.id.button7:
+                    resetSettingInput();
+                    Util.scanForBeacons = true;
+                    break;
+                case R.id.button8:
+                    resetSettingInput();
+                    break;
             }
         } else {
             Log.d(SettingsActivity.class.getName(), "Cannot apply settings because no beacon has been found!");
         }
+    }
+
+    private void resetSettingInput() {
+        ((TextView) findViewById(R.id.textView3)).setText("Beacon");
+        ((EditText) findViewById(R.id.editText)).setText("");
+        ((TextView) findViewById(R.id.textView)).setText("");
     }
 
     private void editMode() {

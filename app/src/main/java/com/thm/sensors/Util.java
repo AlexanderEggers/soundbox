@@ -37,4 +37,5 @@ public final class Util {
      * Master settings values
      */
     public static String connectedSettingsBeacon;
+    public static boolean scanForBeacons;
 }

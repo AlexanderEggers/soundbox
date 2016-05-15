@@ -25,51 +25,42 @@ public final class BeaconMasterLogic extends BeaconLogic {
         mBeaconManager.setRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
-                Beacon fBeacon = null;
-                boolean foundBeacon = false;
+                if(Util.scanForBeacons) {
+                    Beacon fBeacon = null;
+                    boolean foundBeacon = false;
 
-                for (Beacon beacon : beacons) {
-                    double distance = beacon.getDistance();
-                    Log.d(BeaconMasterLogic.class.getName(), "Distance: " + distance);
-                    if (distance < MIN_RANGE_IN_METERS) {
-                        fBeacon = beacon;
-                        foundBeacon = true;
-                        break;
-                    }
-                }
-
-                if(foundBeacon && fBeacon != null) {
-                    Log.i(BeaconMasterLogic.class.getName(), "Address: " + fBeacon.getBluetoothAddress());
-                    if (!fBeacon.getBluetoothAddress().equals(Util.connectedSettingsBeacon)) {
-                        final String beaconAddress = fBeacon.getBluetoothAddress();
-                        Util.connectedSettingsBeacon = beaconAddress;
-
-                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                ((TextView) mContext.findViewById(R.id.textView3))
-                                        .setText(MessageFormat.format("Beacon {0}", beaconAddress));
-
-                                if(Util.beaconColorMap.containsKey(beaconAddress)) {
-                                    ((EditText) mContext.findViewById(R.id.editText))
-                                            .setText(Util.beaconColorMap.get(beaconAddress));
-                                    ((TextView) mContext.findViewById(R.id.textView))
-                                            .setText(Util.beaconModeMap.get(beaconAddress));
-                                }
-                            }
-                        });
-                    }
-                } else {
-                    Util.connectedSettingsBeacon = null;
-
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((TextView) mContext.findViewById(R.id.textView3)).setText("Beacon");
-                            ((EditText) mContext.findViewById(R.id.editText)).setText("");
-                            ((TextView) mContext.findViewById(R.id.textView)).setText("");
+                    for (Beacon beacon : beacons) {
+                        double distance = beacon.getDistance();
+                        Log.d(BeaconMasterLogic.class.getName(), "Distance: " + distance);
+                        if (distance < MIN_RANGE_IN_METERS) {
+                            fBeacon = beacon;
+                            foundBeacon = true;
+                            break;
                         }
-                    });
+                    }
+
+                    if (foundBeacon) {
+                        Log.i(BeaconMasterLogic.class.getName(), "Address: " + fBeacon.getBluetoothAddress());
+                        if (!fBeacon.getBluetoothAddress().equals(Util.connectedSettingsBeacon)) {
+                            final String beaconAddress = fBeacon.getBluetoothAddress();
+                            Util.connectedSettingsBeacon = beaconAddress;
+
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ((TextView) mContext.findViewById(R.id.textView3))
+                                            .setText(MessageFormat.format("Beacon {0}", beaconAddress));
+
+                                    if (Util.beaconColorMap.containsKey(beaconAddress)) {
+                                        ((EditText) mContext.findViewById(R.id.editText))
+                                                .setText(Util.beaconColorMap.get(beaconAddress));
+                                        ((TextView) mContext.findViewById(R.id.textView))
+                                                .setText(Util.beaconModeMap.get(beaconAddress));
+                                    }
+                                }
+                            });
+                        }
+                    }
                 }
             }
         });
