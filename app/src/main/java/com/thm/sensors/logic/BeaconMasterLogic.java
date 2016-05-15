@@ -57,9 +57,15 @@ public final class BeaconMasterLogic extends BeaconLogic {
 
                 if (!foundBeacon && Util.connectedSettingsBeacon != null) {
                     Util.connectedSettingsBeacon = null;
-                    ((TextView) mContext.findViewById(R.id.textView3)).setText("Beacon");
-                    ((EditText) mContext.findViewById(R.id.editText)).setText("");
-                    ((TextView) mContext.findViewById(R.id.textView)).setText("");
+
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((TextView) mContext.findViewById(R.id.textView3)).setText("Beacon");
+                            ((EditText) mContext.findViewById(R.id.editText)).setText("");
+                            ((TextView) mContext.findViewById(R.id.textView)).setText("");
+                        }
+                    });
                 }
             }
         });
