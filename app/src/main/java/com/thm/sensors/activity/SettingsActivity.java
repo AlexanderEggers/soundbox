@@ -76,9 +76,11 @@ public final class SettingsActivity extends Activity implements View.OnClickList
         View rootView = v.getRootView();
         String[] beaconValues = ((TextView) rootView.findViewById(R.id.textView3)).getText().toString().split(" ");
 
-        if (beaconValues.length > 1) {
-            switch (v.getId()) {
-                case R.id.button:
+        System.out.println(v.getId());
+
+        switch (v.getId()) {
+            case R.id.button:
+                if (beaconValues.length > 1) {
                     String color = ((EditText) rootView.findViewById(R.id.editText)).getText().toString();
                     String modeValue = ((TextView) rootView.findViewById(R.id.textView)).getText().toString();
                     String beacon = beaconValues[1];
@@ -101,26 +103,26 @@ public final class SettingsActivity extends Activity implements View.OnClickList
                                 "been set correctly!");
                     }
                     saveSettings();
-                    break;
-                case R.id.button4:
-                    loadSettings();
-                    break;
-                case R.id.button5:
-                    resetSettings();
-                    break;
-                case R.id.button6:
-                    editMode();
-                    break;
-                case R.id.button7:
-                    resetSettingInput();
-                    Util.scanForBeacons = true;
-                    break;
-                case R.id.button8:
-                    resetSettingInput();
-                    break;
-            }
-        } else {
-            Log.d(SettingsActivity.class.getName(), "Cannot apply settings because no beacon has been found!");
+                } else {
+                    Log.d(SettingsActivity.class.getName(), "Cannot apply settings because no beacon has been found!");
+                }
+                break;
+            case R.id.button4:
+                loadSettings();
+                break;
+            case R.id.button5:
+                resetSettings();
+                break;
+            case R.id.button6:
+                editMode();
+                break;
+            case R.id.button7:
+                resetSettingInput();
+                Util.scanForBeacons = true;
+                break;
+            case R.id.button8:
+                resetSettingInput();
+                break;
         }
     }
 
