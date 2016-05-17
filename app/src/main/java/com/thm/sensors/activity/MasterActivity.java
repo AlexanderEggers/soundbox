@@ -80,9 +80,9 @@ public final class MasterActivity extends Activity {
                             long diff = System.currentTimeMillis() - Util.beaconLastData.get(beacon);
 
                             if (diff > MAX_INACTIVE_TIME) {
-                                /*String device = Util.beaconDeviceMap.get(beacon);
+                                String device = Util.beaconDeviceMap.get(beacon);
                                 Util.beaconDeviceMap.put(beacon, null);
-                                mBluetoothLogic.sendDataToSlave(device, "LOGOUT_SLAVE%" + beacon + "%");*/
+                                mBluetoothLogic.sendDataToSlave(device, "LOGOUT_SLAVE%" + beacon + "%");
                             }
                         }
                     }
@@ -162,6 +162,10 @@ public final class MasterActivity extends Activity {
                     float valueX = Float.parseFloat(values[0]);
                     float valueY = Float.parseFloat(values[1]);
                     float valueZ = Float.parseFloat(values[2]);
+
+                    ((TextView) findViewById(R.id.textView3)).setText(MessageFormat.format("X: {0}", valueX));
+                    ((TextView) findViewById(R.id.textView4)).setText(MessageFormat.format("Y: {0}", valueY));
+                    ((TextView) findViewById(R.id.textView5)).setText(MessageFormat.format("Z: {0}", valueZ));
 
                     mAudioLogic.processAudioAcceleration(audioMode, valueX, valueY, valueZ);
                     ((TextView) findViewById(R.id.textView6)).setText(MessageFormat.format("Beacon: {0}", beacon));
