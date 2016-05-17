@@ -123,6 +123,7 @@ public final class MasterActivity extends Activity {
         switch (identifier) {
             case "Login":
                 String color = Util.beaconColorMap.get(beacon);
+                System.out.println("KEY EXISTS: " + Util.beaconDeviceMap.containsKey(beacon));
                 if (Util.beaconDeviceMap.get(beacon) == null && Util.beaconDeviceMap.containsKey(beacon)) {
                     Util.beaconDeviceMap.put(beacon, device);
                     Util.beaconLastData.put(beacon, System.currentTimeMillis());

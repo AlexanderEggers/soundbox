@@ -80,11 +80,15 @@ public final class SettingsActivity extends Activity implements View.OnClickList
         switch (v.getId()) {
             case R.id.button:
                 if (beaconValues.length > 1) {
+                    System.out.println("INSIDE 1. ARG SAVE SETTINGS");
+
                     String color = ((EditText) rootView.findViewById(R.id.editText)).getText().toString();
                     String modeValue = ((TextView) rootView.findViewById(R.id.textView)).getText().toString();
                     String beacon = beaconValues[1];
 
                     if (!modeValue.equals("") && !color.equals("") && color.contains("0x")) {
+                        System.out.println("INSIDE 2. ARG SAVE SETTINGS");
+
                         int mode = Integer.parseInt(modeValue);
 
                         if (Util.beaconDeviceMap.get(beacon) == null) {
