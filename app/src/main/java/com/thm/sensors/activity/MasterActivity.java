@@ -145,7 +145,8 @@ public final class MasterActivity extends Activity {
             case "Data":
                 boolean foundBeaconDevice = false;
                 for (String key : Util.beaconDeviceMap.keySet()) {
-                    if (Util.beaconDeviceMap.get(key).equals(device) && key.equals(beacon)) {
+                    if (Util.beaconDeviceMap.get(key) != null &&
+                            Util.beaconDeviceMap.get(key).equals(device) && key.equals(beacon)) {
                         foundBeaconDevice = true;
                         break;
                     }

@@ -87,7 +87,7 @@ public final class SlaveActivity extends Activity {
             case "LOGIN_SLAVE":
                 beacon = aSplitData[1];
                 if (beacon.equals(Util.connectedBeacon)) {
-                    int color = Color.parseColor(aSplitData[2]);
+                    int color = Color.parseColor(aSplitData[2].trim());
                     findViewById(R.id.slave_parent_layout).setBackgroundColor(color);
                     Util.isLogin = true;
                 } else {
