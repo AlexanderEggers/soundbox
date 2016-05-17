@@ -1,6 +1,7 @@
 package com.thm.sensors.activity;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -151,5 +152,9 @@ public final class SlaveActivity extends Activity {
     protected void onStop() {
         super.onStop();
         mBluetoothLogic.close();
+
+        String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
+        String logoutData = "Logout%" + Util.connectedBeacon + "%" + deviceAddress + "%";
+        sendSensorData("Logout", logoutData);
     }
 }
