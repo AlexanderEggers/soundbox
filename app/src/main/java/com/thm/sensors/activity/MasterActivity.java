@@ -124,6 +124,7 @@ public final class MasterActivity extends Activity {
             case "Login":
                 String color = Util.beaconColorMap.get(beacon);
                 System.out.println("KEY EXISTS: " + Util.beaconDeviceMap.containsKey(beacon));
+                System.out.println("BEACON: " + beacon);
                 if (Util.beaconDeviceMap.get(beacon) == null && Util.beaconDeviceMap.containsKey(beacon)) {
                     Util.beaconDeviceMap.put(beacon, device);
                     Util.beaconLastData.put(beacon, System.currentTimeMillis());
@@ -144,6 +145,7 @@ public final class MasterActivity extends Activity {
                 break;
             case "Data":
                 boolean foundBeaconDevice = false;
+                System.out.println(Util.beaconDeviceMap.keySet().toString());
                 for (String key : Util.beaconDeviceMap.keySet()) {
                     if (Util.beaconDeviceMap.get(key) != null &&
                             Util.beaconDeviceMap.get(key).equals(device) && key.equals(beacon)) {

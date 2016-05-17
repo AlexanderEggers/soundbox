@@ -144,7 +144,6 @@ public final class SettingsActivity extends Activity implements View.OnClickList
     }
 
     private void saveSettings() {
-        resetSettings();
         File file = null;
         FileOutputStream fileOut = null;
         ObjectOutputStream out = null;
