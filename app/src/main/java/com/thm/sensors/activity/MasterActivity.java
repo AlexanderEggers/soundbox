@@ -82,7 +82,7 @@ public final class MasterActivity extends Activity {
                             if (diff > MAX_INACTIVE_TIME) {
                                 String device = Util.beaconDeviceMap.get(beacon);
                                 Util.beaconDeviceMap.put(beacon, null);
-                                mBluetoothLogic.sendDataToSlave(device, "LOGOUT_SLAVE%" + beacon);
+                                mBluetoothLogic.sendDataToSlave(device, "LOGOUT_SLAVE%" + beacon + "%");
                             }
                         }
                     }
@@ -127,17 +127,17 @@ public final class MasterActivity extends Activity {
                 if (Util.beaconDeviceMap.get(beacon) == null && Util.beaconDeviceMap.containsKey(beacon)) {
                     Util.beaconDeviceMap.put(beacon, device);
                     Util.beaconLastData.put(beacon, System.currentTimeMillis());
-                    mBluetoothLogic.sendDataToSlave(device, "LOGIN_SLAVE%" + beacon + "%" + color);
+                    mBluetoothLogic.sendDataToSlave(device, "LOGIN_SLAVE%" + beacon + "%" + color + "%");
                     totalDevices++;
                     ((TextView) findViewById(R.id.textView8)).setText(
                             MessageFormat.format("Total Devices: {0}", totalDevices));
                 } else {
-                    mBluetoothLogic.sendDataToSlave(device, "ERROR%" + beacon);
+                    mBluetoothLogic.sendDataToSlave(device, "ERROR%" + beacon + "%");
                 }
                 break;
             case "Logout":
                 Util.beaconDeviceMap.put(beacon, null);
-                mBluetoothLogic.sendDataToSlave(device, "LOGOUT_SLAVE%" + beacon);
+                mBluetoothLogic.sendDataToSlave(device, "LOGOUT_SLAVE%" + beacon + "%");
                 totalDevices--;
                 ((TextView) findViewById(R.id.textView8)).setText(
                         MessageFormat.format("Total Devices: {0}", totalDevices));
@@ -165,7 +165,7 @@ public final class MasterActivity extends Activity {
                 } else {
                     Log.d(MasterActivity.class.getName(),
                             MessageFormat.format("Cannot find a beacon which is connected to this device = {0}", device));
-                    mBluetoothLogic.sendDataToSlave(device, "ERROR%" + beacon);
+                    mBluetoothLogic.sendDataToSlave(device, "ERROR%" + beacon + "%");
                 }
                 break;
         }

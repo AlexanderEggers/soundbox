@@ -55,7 +55,7 @@ public final class AccelerationLogic implements SensorEventListener {
 
             String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
             String data = "Data%" + deviceAddress + "%" + Util.connectedBeacon + "%" + mLinearAcceleration[0] + ";"
-                    + mLinearAcceleration[1] + ";" + mLinearAcceleration[2];
+                    + mLinearAcceleration[1] + ";" + mLinearAcceleration[2] + "%";
             ((SlaveActivity) mContext).sendSensorData("data" , data);
 
             if (Util.DEV_MODE) {
