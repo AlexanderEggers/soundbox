@@ -80,9 +80,9 @@ public final class MasterActivity extends Activity {
                             long diff = System.currentTimeMillis() - Util.beaconLastData.get(beacon);
 
                             if (diff > MAX_INACTIVE_TIME) {
-                                String device = Util.beaconDeviceMap.get(beacon);
+                                /*String device = Util.beaconDeviceMap.get(beacon);
                                 Util.beaconDeviceMap.put(beacon, null);
-                                mBluetoothLogic.sendDataToSlave(device, "LOGOUT_SLAVE%" + beacon + "%");
+                                mBluetoothLogic.sendDataToSlave(device, "LOGOUT_SLAVE%" + beacon + "%");*/
                             }
                         }
                     }
