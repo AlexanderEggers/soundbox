@@ -2,6 +2,7 @@ package com.thm.sensors.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -86,7 +87,7 @@ public final class SlaveActivity extends Activity {
             case "LOGIN_SLAVE":
                 beacon = aSplitData[1];
                 if (beacon.equals(Util.connectedBeacon)) {
-                    int color = Integer.parseInt(aSplitData[2]);
+                    int color = Color.parseColor(aSplitData[2]);
                     findViewById(R.id.slave_parent_layout).setBackgroundColor(color);
                     Util.isLogin = true;
                 } else {

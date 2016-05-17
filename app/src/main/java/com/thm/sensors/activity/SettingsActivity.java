@@ -88,19 +88,15 @@ public final class SettingsActivity extends Activity implements View.OnClickList
                     String modeValue = ((TextView) rootView.findViewById(R.id.textView)).getText().toString();
                     String beacon = beaconValues[1];
 
-
-                    System.out.println("MODE: " + !modeValue.equals(""));
-                    System.out.println("COLOR" + !color.equals(""));
-                    System.out.println("COLOR 2" + color.contains("0x"));
-
-                    if (!modeValue.equals("") && !color.equals("") && color.contains("0x")) {
+                    if (!modeValue.equals("") && !color.equals("") && color.contains("0x")
+                            && (color.length() >= 4 || color.length() <= 6)) {
                         System.out.println("INSIDE 2. ARG SAVE SETTINGS");
 
                         int mode = Integer.parseInt(modeValue);
 
                         if (Util.beaconDeviceMap.get(beacon) == null) {
                             Util.beaconDeviceMap.put(beacon, null);
-                            Util.beaconColorMap.put(beacon, color);
+                            Util.beaconColorMap.put(beacon,color);
                             Util.beaconModeMap.put(beacon, mode);
                             Util.beaconLastData.put(beacon, 0L);
                         } else {
