@@ -97,14 +97,20 @@ public final class SlaveActivity extends Activity {
         }
     }
 
-    public void sendSensorData(String value) {
-        if (mBluetoothLogic != null && mBluetoothLogic.isConnectionAvailable() && Util.isLogin) {
-            mBluetoothLogic.sendDataToMaster(value);
+    public void sendSensorData(String type, String value) {
+        if (mBluetoothLogic != null && mBluetoothLogic.isConnectionAvailable()) {
+            if (type.equals("Login") || type.equals("Logout")) {
+                mBluetoothLogic.sendDataToMaster(value);
+            } else {
+                if (Util.isLogin) {
+                    mBluetoothLogic.sendDataToMaster(value);
+                } else {
+                    Log.w(SlaveActivity.class.getName(), "This device is not in range of a beacon.");
+                }
+            }
         } else {
             if (mBluetoothLogic == null) {
                 Log.w(SlaveActivity.class.getName(), "Senor data could not be sent. Logic = " + mBluetoothLogic);
-            } else if (!Util.isLogin) {
-                Log.w(SlaveActivity.class.getName(), "This device is not in range of a beacon.");
             } else {
                 Log.w(SlaveActivity.class.getName(), "Senor data could not be sent. " +
                         "Master = " + mBluetoothLogic.isConnectionAvailable());

@@ -33,7 +33,7 @@ public final class BeaconSlaveLogic extends BeaconLogic {
                         } else if (Util.connectedBeacon == null) {
                             String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
                             String loginData = "Login%" + beacon.getBluetoothAddress() + "%" + deviceAddress;
-                            ((SlaveActivity) mContext).sendSensorData(loginData);
+                            ((SlaveActivity) mContext).sendSensorData("Login", loginData);
                             Util.connectedBeacon = beacon.getBluetoothAddress();
                             foundBeacon = true;
                             break;
@@ -45,7 +45,7 @@ public final class BeaconSlaveLogic extends BeaconLogic {
                     if (Util.connectedBeacon != null) {
                         String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
                         String logoutData = "Logout%" + Util.connectedBeacon + "%" + deviceAddress;
-                        ((SlaveActivity) mContext).sendSensorData(logoutData);
+                        ((SlaveActivity) mContext).sendSensorData("Logout", logoutData);
                     }
                 }
             }

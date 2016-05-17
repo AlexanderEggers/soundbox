@@ -40,7 +40,7 @@ public final class AccelerationLogic implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER && Util.isLogin) {
             final float alpha = 0.8f;
 
             // Isolate the force of mGravity with the low-pass filter.
@@ -56,7 +56,7 @@ public final class AccelerationLogic implements SensorEventListener {
             String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
             String data = "Data%" + deviceAddress + "%" + Util.connectedBeacon + "%" + mLinearAcceleration[0] + ";"
                     + mLinearAcceleration[1] + ";" + mLinearAcceleration[2];
-            ((SlaveActivity) mContext).sendSensorData(data);
+            ((SlaveActivity) mContext).sendSensorData("data" , data);
 
             if (Util.DEV_MODE) {
                 String textX = MessageFormat.format("Acceleration Value X: {0}", mLinearAcceleration[0]);
