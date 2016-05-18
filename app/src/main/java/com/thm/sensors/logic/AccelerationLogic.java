@@ -22,8 +22,23 @@ public final class AccelerationLogic implements SensorEventListener {
     private Sensor mSensor;
     private float[] mGravity = {0f, 0f, 0f}, mLinearAcceleration = new float[3];
     private Activity mContext;
+    private final int savedValueAmount = 15;
+
+    //niki added code
+    private int valueCounter = 0;
+    private float[][] lastSensorValues = new float[savedValueAmount][3];
+    //end code niki
 
     public void startLogic(Activity context) {
+
+        //niki added code (fill array with empty vectors)
+        for (int i = 0; i < lastSensorValues.length; i++) {
+            for (int k = 0; i < 3; i++) {
+                lastSensorValues[i][k] = 0.0f;
+            }
+        }
+        //end code niki
+
         mContext = context;
 
         if (Util.DEV_MODE) {
@@ -40,23 +55,41 @@ public final class AccelerationLogic implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        //TODO: Send only every 20th iteration via average axis values
+        //TODO: Send only every savedValueAmount iteration via average axis values
 
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER && Util.isLogin) {
+
             final float alpha = 0.8f;
 
+            //niki: werte ins array einspeisen
+            lastSensorValues[valueCounter][0] = (1 - alpha) * event.values[0];
+            lastSensorValues[valueCounter][1] = (1 - alpha) * event.values[1];
+            lastSensorValues[valueCounter][2] = (1 - alpha) * event.values[2];
+            //iterate through the array
+            valueCounter = (valueCounter + 1) % lastSensorValues.length;
+            // ende niki
 
-            //hierfür einen toggle einbauen, dass er es nicht immer rausrechnet!
+
+
+
+            //hierfür einen toggle einbauen, dass er die erdbeschleunigung nicht immer rausrechnet!
             /*
             // Isolate the force of mGravity with the low-pass filter.
             mGravity[0] = alpha * mGravity[0] + (1 - alpha) * event.values[0];
             mGravity[1] = alpha * mGravity[1] + (1 - alpha) * event.values[1];
             mGravity[2] = alpha * mGravity[2] + (1 - alpha) * event.values[2];
             */
+
+            /*
             // Remove the mGravity contribution with the high-pass filter.
             mLinearAcceleration[0] = event.values[0] - mGravity[0];
             mLinearAcceleration[1] = event.values[1] - mGravity[1];
             mLinearAcceleration[2] = event.values[2] - mGravity[2];
+            */
+
+            mLinearAcceleration[0] = processArrayValues(0);
+            mLinearAcceleration[1] = processArrayValues(1);
+            mLinearAcceleration[2] = processArrayValues(2);
 
             String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
             String data = "Data%" + Util.connectedBeacon + "%" + deviceAddress + "%" + mLinearAcceleration[0] + ";"
@@ -78,6 +111,21 @@ public final class AccelerationLogic implements SensorEventListener {
             }
         }
     }
+
+    //funktion, die für einen parameter den average aus dem array holt
+    private float processArrayValues(int k) {
+        float sum = 0;
+        float avg = 0;
+
+        for (int i = 0; i < savedValueAmount; i++) {
+            sum += lastSensorValues[i][k];
+        }
+
+        avg = sum / savedValueAmount;
+
+        return avg;
+    }
+    //ende niki
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
