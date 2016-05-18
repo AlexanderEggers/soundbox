@@ -35,6 +35,10 @@ public final class SlaveActivity extends Activity {
         if (mBeaconLogic != null) {
             mBeaconLogic.onResume();
         }
+
+        if(Util.currentColor != -1) {
+            findViewById(R.id.slave_parent_layout).setBackgroundColor(Util.currentColor);
+        }
     }
 
     @Override
@@ -80,6 +84,7 @@ public final class SlaveActivity extends Activity {
                     Util.isLogin = false;
                     Util.connectedBeacon = null;
                     findViewById(R.id.slave_parent_layout).setBackgroundColor(Util.DEFAULT_BACKGROUND_COLOR);
+                    Util.currentColor = -1;
                 } else {
                     Log.w(SlaveActivity.class.getName(), "Tried to disconnect an old connection. " +
                             "Beacon = " + beacon);
@@ -88,8 +93,8 @@ public final class SlaveActivity extends Activity {
             case "LOGIN_SLAVE":
                 beacon = aSplitData[1];
                 if (beacon.equals(Util.connectedBeacon)) {
-                    int color = Color.parseColor(aSplitData[2].trim());
-                    findViewById(R.id.slave_parent_layout).setBackgroundColor(color);
+                    Util.currentColor = Color.parseColor(aSplitData[2].trim());
+                    findViewById(R.id.slave_parent_layout).setBackgroundColor(Util.currentColor);
                     Util.isLogin = true;
                 } else {
                     Log.w(SlaveActivity.class.getName(), "Tried to connect an old connection. " +

@@ -40,6 +40,8 @@ public final class AccelerationLogic implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+        //TODO: Send only every 20th iteration via average axis values
+
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER && Util.isLogin) {
             final float alpha = 0.8f;
 
