@@ -30,7 +30,7 @@ public final class MasterActivity extends Activity {
     private int totalDevices;
 
     //Niki added code
-    private final int savedValueAmount = 10;
+    private final int savedValueAmount = 7;
     private int valueCounter = 0;
     private float[][] lastSensorValues = new float[savedValueAmount][3];
     //end code niki
@@ -189,6 +189,7 @@ public final class MasterActivity extends Activity {
                     // ende niki
 
                     float valueX = processArrayValues(0);
+
                     float valueY = processArrayValues(1);
                     float valueZ = processArrayValues(2);
 

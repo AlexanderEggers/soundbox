@@ -69,13 +69,14 @@ public final class SlaveActivity extends Activity {
     }
 
     private void handleData(Message msg) {
+
+        //wenn ich das phone as slave nehme, wird diese funktion nicht aufgerufen
         byte[] aData = (byte[]) msg.obj;
         String data = new String(aData);
         String[] aSplitData = data.split("%");
         String identifier = aSplitData[0];
 
         Log.i(MasterActivity.class.getName(), "Identifier: " + identifier);
-
         switch (identifier) {
             case "ERROR":
             case "LOGOUT_SLAVE":

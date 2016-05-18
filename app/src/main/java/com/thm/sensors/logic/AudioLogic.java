@@ -33,14 +33,13 @@ public final class AudioLogic {
 
     public void loadPDPatch() throws IOException {
         File dir = mContext.getFilesDir();
-        IoUtils.extractZipResource(mContext.getResources().openRawResource(R.raw.tremotone), dir, true);
-        File pdPatch = new File(dir, "tremotone.pd");
+        IoUtils.extractZipResource(mContext.getResources().openRawResource(R.raw.simplestpatch), dir, true);
+        File pdPatch = new File(dir, "simplestpatch.pd");
         PdBase.openPatch(pdPatch.getAbsolutePath());
     }
 
     public void startAudio() {
         PdAudio.startAudio(mContext);
-        PdBase.sendBang("START");
 
         //insert all audio controls here to initialize those - important part!!
     }

@@ -9,7 +9,7 @@ public final class AudioModeLogic {
     //beacon1
     public void executeAudioMode1(float valueX) {
 
-        PdBase.sendFloat("toneHeight", valueX);
+        PdBase.sendFloat("toneHeight", mapValue(valueX));
     }
 
     //beacon2
@@ -19,11 +19,9 @@ public final class AudioModeLogic {
 
     //beacon3
     public void executeAudioMode3(float valueX, float valueY, float valueZ) {
-        System.out.println("executingaudio3");
-        System.out.println(valueX + " " + valueY + " " + valueZ);
-        PdBase.sendFloat("freq1", mapValue(valueX));
-        PdBase.sendFloat("freq2", mapValue(valueY));
-        PdBase.sendFloat("allManipulator", mapValue(valueZ));
+        PdBase.sendFloat("toneHeight", mapValue(valueX));
+        PdBase.sendFloat("vibspeed$1", mapValue(valueY));
+        PdBase.sendFloat("vibdepth$1", 0.0f);
 
     }
 
@@ -39,7 +37,7 @@ public final class AudioModeLogic {
 
     private float mapValue(float f) {
 
-       float value = 80.0f + (f * 10);
+       float value = 80.0f + (f * 20);
 
         if (value > 127.0f) {
             value = 127.0f;
