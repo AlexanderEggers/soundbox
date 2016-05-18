@@ -29,6 +29,12 @@ public final class MasterActivity extends Activity {
     private boolean mStopRunning = false;
     private int totalDevices;
 
+    //Niki added code
+    private final int savedValueAmount = 10;
+    private int valueCounter = 0;
+    private float[][] lastSensorValues = new float[savedValueAmount][3];
+    //end code niki
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -41,6 +47,14 @@ public final class MasterActivity extends Activity {
         setContentView(R.layout.master_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setActionBar(toolbar);
+
+        //niki added code (fill array with empty vectors)
+        for (int i = 0; i < lastSensorValues.length; i++) {
+            for (int k = 0; i < 3; i++) {
+                lastSensorValues[i][k] = 0.0f;
+            }
+        }
+        //end code niki
 
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -159,11 +173,27 @@ public final class MasterActivity extends Activity {
                     int audioMode = Util.beaconModeMap.get(beacon);
 
                     String[] values = aSplitData[3].split(";");
+
+                    /* Auskommentiert, wegen Array-einspeisung
                     float valueX = Float.parseFloat(values[0]);
                     float valueY = Float.parseFloat(values[1]);
                     float valueZ = Float.parseFloat(values[2]);
+                    */
 
-                    ((TextView) findViewById(R.id.textView3)).setText(MessageFormat.format("X: {0}", valueX));
+                    //niki: werte ins array einspeisen
+                    lastSensorValues[valueCounter][0] = Float.parseFloat(values[0]);
+                    lastSensorValues[valueCounter][1] = Float.parseFloat(values[1]);
+                    lastSensorValues[valueCounter][2] = Float.parseFloat(values[2]);
+                    //iterate through the array
+                    valueCounter = (valueCounter + 1) % lastSensorValues.length;
+                    // ende niki
+
+                    float valueX = processArrayValues(0);
+                    float valueY = processArrayValues(1);
+                    float valueZ = processArrayValues(2);
+
+
+                            ((TextView) findViewById(R.id.textView3)).setText(MessageFormat.format("X: {0}", valueX));
                     ((TextView) findViewById(R.id.textView4)).setText(MessageFormat.format("Y: {0}", valueY));
                     ((TextView) findViewById(R.id.textView5)).setText(MessageFormat.format("Z: {0}", valueZ));
 
@@ -190,4 +220,19 @@ public final class MasterActivity extends Activity {
         mBluetoothLogic.close();
         mStopRunning = true;
     }
+
+    //funktion, die für einen parameter den average aus dem array holt
+    private float processArrayValues(int k) {
+        float sum = 0;
+        float avg = 0;
+
+        for (int i = 0; i < savedValueAmount; i++) {
+            sum += lastSensorValues[i][k];
+        }
+
+        avg = sum / savedValueAmount;
+
+        return avg;
+    }
+    //ende niki
 }

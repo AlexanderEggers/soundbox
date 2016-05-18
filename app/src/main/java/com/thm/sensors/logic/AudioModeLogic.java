@@ -4,15 +4,18 @@ import org.puredata.core.PdBase;
 
 public final class AudioModeLogic {
 
-    //slaveseitig immer den mittelwert aus den letzten (ca) 30 werten senden (probieren)
+
 
     //beacon1
     public void executeAudioMode1(float valueX) {
-        valueX = 80.0f + Math.abs(valueX * 10);
-        System.out.println("TESTING___________");
+
+
+        valueX = 80.0f + (valueX * 10);
 
         if (valueX > 127.0f) {
             valueX = 127.0f;
+        } else if (valueX < 0.0f) {
+            valueX = 0.0f;
         }
 
         PdBase.sendFloat("toneHeight", valueX);

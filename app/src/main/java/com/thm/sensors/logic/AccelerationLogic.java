@@ -22,9 +22,9 @@ public final class AccelerationLogic implements SensorEventListener {
     private Sensor mSensor;
     private float[] mGravity = {0f, 0f, 0f}, mLinearAcceleration = new float[3];
     private Activity mContext;
-    private final int savedValueAmount = 15;
 
     //niki added code
+    private final int savedValueAmount = 3;
     private int valueCounter = 0;
     private float[][] lastSensorValues = new float[savedValueAmount][3];
     //end code niki
