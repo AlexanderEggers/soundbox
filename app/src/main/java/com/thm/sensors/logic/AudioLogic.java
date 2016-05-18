@@ -40,25 +40,26 @@ public final class AudioLogic {
 
     public void startAudio() {
         PdAudio.startAudio(mContext);
-        PdBase.sendFloat("toneHeight", 127.0f);
         //insert all audio controls here to initialize those - important part!!
     }
 
     public void processAudioAcceleration(int audioMode, float valueX, float valueY, float valueZ) {
+
+
         switch (audioMode) {
-            case Util.AUDIO_MODE_1:
-                mAudioModeLogic.executeAudioMode1(valueX, valueY);
+            case 1:
+                mAudioModeLogic.executeAudioMode1(valueX);
                 break;
-            case Util.AUDIO_MODE_2:
+            case 2:
                 mAudioModeLogic.executeAudioMode2(valueX);
                 break;
-            case Util.AUDIO_MODE_3:
+            case 3:
                 mAudioModeLogic.executeAudioMode3(valueX, valueY, valueZ);
                 break;
-            case Util.AUDIO_MODE_4:
+            case 4:
                 mAudioModeLogic.executeAudioMode4(valueZ);
                 break;
-            case Util.AUDIO_MODE_5:
+            case 5:
                 mAudioModeLogic.executeAudioMode5(valueY, valueZ);
                 break;
         }

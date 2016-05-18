@@ -45,11 +45,14 @@ public final class AccelerationLogic implements SensorEventListener {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER && Util.isLogin) {
             final float alpha = 0.8f;
 
+
+            //hierfür einen toggle einbauen, dass er es nicht immer rausrechnet!
+            /*
             // Isolate the force of mGravity with the low-pass filter.
             mGravity[0] = alpha * mGravity[0] + (1 - alpha) * event.values[0];
             mGravity[1] = alpha * mGravity[1] + (1 - alpha) * event.values[1];
             mGravity[2] = alpha * mGravity[2] + (1 - alpha) * event.values[2];
-
+            */
             // Remove the mGravity contribution with the high-pass filter.
             mLinearAcceleration[0] = event.values[0] - mGravity[0];
             mLinearAcceleration[1] = event.values[1] - mGravity[1];
