@@ -9,7 +9,7 @@ public final class AudioModeLogic {
     //beacon1
     public void executeAudioMode1(float valueX) {
 
-        PdBase.sendFloat("toneHeight", mapValue(valueX));
+        PdBase.sendFloat("cutoff", mapValue(valueX));
     }
 
     //beacon2
@@ -20,9 +20,8 @@ public final class AudioModeLogic {
     //beacon3
     public void executeAudioMode3(float valueX, float valueY, float valueZ) {
         PdBase.sendFloat("freq1", mapValue(valueX));
-        PdBase.sendFloat("freq2", mapValue(valueY));
-        PdBase.sendFloat("allManipulator", mapValue(valueZ));
-
+        PdBase.sendFloat("allManipulator", 127.0f);
+        PdBase.sendFloat("cutoff", 127.0f);
     }
 
     //beacon4
