@@ -1,8 +1,17 @@
 # Sound of HAW
-Targeting the acceleration sensor inside an android device and executing events if the device is in range of an iBeacon (sending a value via bluetooth) which will modify sound samples.
+Targeting the acceleration sensor inside an android device and executing events if the device is in range of an iBeacon (sending a value via bluetooth) which will modify sound filters.
 
 ## Usage
-TODO
+1. Choose a master device
+2. Place the beacons in the room (each beacon should have a min distance of 3 meters to the other beacons)
+3. Beacon configuration
+4. Take the master device and go to the first beacon. 
+5. Push the "settings" button. The settings page should show a bluetooth address at the top. 
+6. Now decide a color you want to show the slave devices of they are in range of this beacon. This color can include 0-9 and A-Z (no special characters!). 
+7. After this you decide an audio mode. The mode decides the audio filter which will modified later.
+8. Hit save.
+9. Repeat the steps (6 - 8) for all beacons.
+10. Take a slave device, push the "sensor" button and go to a beacon.
 
 ## Functions
 ##### Bluetooth
@@ -15,10 +24,10 @@ The only sensor we are going to use is the acceleration sensor which will only b
 The acceleration logic can be found in the .logic package. All three axis of the acceleration (x,y,z) are merged into one string value which will be send to the master device.
 
 ##### Beacon
-The beacon implementation can be found in the ".logic.BeaconLogic" file. The important part of this logic class is the method "didRangeBeaconsInRegion" which is attached to a listener. This listener is called in certain intervals. This method checks the current distance to all avaiable beacon in it's region (region = specific range of the device). If a certain distance to a beacon has been reached (can be changed in the final double value inside the class), the device will try to "login" to this specific beacon by sending a login request to the master device.
+The beacon implementation can be found in the ".logic.BeaconLogic" file. We are using the android beacon library (https://github.com/AltBeacon/android-beacon-library) to access the beacons. The important part of this logic class is the method "didRangeBeaconsInRegion" which is attached to a listener. This listener is called in certain intervals. This method checks the current distance to all avaiable beacon in it's region (region = specific range of the device). If a certain distance to a beacon has been reached (can be changed in the final double value inside the class), the device will try to "login" to this specific beacon by sending a login request to the master device.
 
 ##### Audio
-TODO
+The audio part is seperated into several audio modes. Each audio mode is modifing another sound filter. We are using the pure data implementation (https://github.com/libpd/pd-for-android) to create specific audio filters. Those audio filter are accessed via the class logic.AudioModeLogic. The pure data sound file (which includes all sound samples and filter) can be found in res/raw/simplestpatch.zip.
 
 ##### Settings
 Settings are responsible for changing the audio mode and the color of a certain beacon. All beacons are mapped by the master device regarding these values. The color value will change the slave device background color and the audio mode is responsible for the specific modification of the audio sample by the slave acceleration sensor.
@@ -29,4 +38,5 @@ To run this app the device needs to match certain requirements:
 * Min SDK Level: 21 (Android 5.0 - Lollipop)
 * Acceleration sensor
 * Beacon(s)
+* Fine location permission
   
