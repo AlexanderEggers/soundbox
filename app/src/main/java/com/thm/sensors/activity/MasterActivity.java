@@ -30,7 +30,8 @@ public final class MasterActivity extends Activity {
     private int totalDevices;
 
     //Niki added code
-    private final int savedValueAmount = 7;
+    private final int savedValueAmount = 3;
+    private boolean interpolating = false;
     private int valueCounter = 0;
     private float[][] lastSensorValues = new float[savedValueAmount][3];
     //end code niki
@@ -49,9 +50,11 @@ public final class MasterActivity extends Activity {
         setActionBar(toolbar);
 
         //niki added code (fill array with empty vectors)
-        for (int i = 0; i < lastSensorValues.length; i++) {
-            for (int k = 0; i < 3; i++) {
-                lastSensorValues[i][k] = 0.0f;
+        if (interpolating) {
+            for (int i = 0; i < lastSensorValues.length; i++) {
+                for (int k = 0; i < 3; i++) {
+                    lastSensorValues[i][k] = 0.0f;
+                }
             }
         }
         //end code niki
@@ -174,33 +177,39 @@ public final class MasterActivity extends Activity {
 
                     String[] values = aSplitData[3].split(";");
 
-                    /* Auskommentiert, wegen Array-einspeisung
-                    float valueX = Float.parseFloat(values[0]);
-                    float valueY = Float.parseFloat(values[1]);
-                    float valueZ = Float.parseFloat(values[2]);
-                    */
+                    float valueX = 0;
+                    float valueY = 0;
+                    float valueZ = 0;
 
-                    //niki: werte ins array einspeisen
-                    lastSensorValues[valueCounter][0] = Float.parseFloat(values[0]);
-                    lastSensorValues[valueCounter][1] = Float.parseFloat(values[1]);
-                    lastSensorValues[valueCounter][2] = Float.parseFloat(values[2]);
-                    //iterate through the array
-                    valueCounter = (valueCounter + 1) % lastSensorValues.length;
-                    // ende niki
+                    if (interpolating) {
+                        //niki: werte ins array einspeisen
+                        lastSensorValues[valueCounter][0] = Float.parseFloat(values[0]);
+                        lastSensorValues[valueCounter][1] = Float.parseFloat(values[1]);
+                        lastSensorValues[valueCounter][2] = Float.parseFloat(values[2]);
+                        valueCounter = (valueCounter + 1) % lastSensorValues.length;
+                        // ende niki
 
-                    float valueX = processArrayValues(0);
+                        valueX = processArrayValues(0);
+                        valueY = processArrayValues(1);
+                        valueZ = processArrayValues(2);
+                    } else if (!interpolating) {
+                        valueX = Float.parseFloat(values[0]);
+                        valueY = Float.parseFloat(values[1]);
+                        valueZ = Float.parseFloat(values[2]);
+                    }
 
-                    float valueY = processArrayValues(1);
-                    float valueZ = processArrayValues(2);
 
 
-                            ((TextView) findViewById(R.id.textView3)).setText(MessageFormat.format("X: {0}", valueX));
+
+                    ((TextView) findViewById(R.id.textView3)).setText(MessageFormat.format("X: {0}", valueX));
                     ((TextView) findViewById(R.id.textView4)).setText(MessageFormat.format("Y: {0}", valueY));
                     ((TextView) findViewById(R.id.textView5)).setText(MessageFormat.format("Z: {0}", valueZ));
 
                     mAudioLogic.processAudioAcceleration(audioMode, valueX, valueY, valueZ);
                     ((TextView) findViewById(R.id.textView6)).setText(MessageFormat.format("Beacon: {0}", beacon));
+
                 } else {
+
                     Log.d(MasterActivity.class.getName(),
                             MessageFormat.format("Cannot find a beacon which is connected to this device = {0}", device));
                     mBluetoothLogic.sendDataToSlave(device, "ERROR%" + beacon + "%");

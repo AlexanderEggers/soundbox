@@ -24,6 +24,7 @@ public final class AccelerationLogic implements SensorEventListener {
     private Activity mContext;
 
     //niki added code
+    private boolean interpolating = false;
     private final int savedValueAmount = 3;
     private int valueCounter = 0;
     private float[][] lastSensorValues = new float[savedValueAmount][3];
@@ -32,9 +33,11 @@ public final class AccelerationLogic implements SensorEventListener {
     public void startLogic(Activity context) {
 
         //niki added code (fill array with empty vectors)
-        for (int i = 0; i < lastSensorValues.length; i++) {
-            for (int k = 0; i < 3; i++) {
-                lastSensorValues[i][k] = 0.0f;
+        if (interpolating) {
+            for (int i = 0; i < lastSensorValues.length; i++) {
+                for (int k = 0; i < 3; i++) {
+                    lastSensorValues[i][k] = 0.0f;
+                }
             }
         }
         //end code niki
@@ -60,16 +63,24 @@ public final class AccelerationLogic implements SensorEventListener {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER && Util.isLogin) {
 
             final float alpha = 0.8f;
+            if (interpolating) {
+                //niki: werte ins array einspeisen
+                lastSensorValues[valueCounter][0] = (1 - alpha) * event.values[0];
+                lastSensorValues[valueCounter][1] = (1 - alpha) * event.values[1];
+                lastSensorValues[valueCounter][2] = (1 - alpha) * event.values[2];
+                //iterate through the array
+                valueCounter = (valueCounter + 1) % lastSensorValues.length;
+                //ende niki
 
-            //niki: werte ins array einspeisen
-            lastSensorValues[valueCounter][0] = (1 - alpha) * event.values[0];
-            lastSensorValues[valueCounter][1] = (1 - alpha) * event.values[1];
-            lastSensorValues[valueCounter][2] = (1 - alpha) * event.values[2];
-            //iterate through the array
-            valueCounter = (valueCounter + 1) % lastSensorValues.length;
-            // ende niki
-
-
+                mLinearAcceleration[0] = processArrayValues(0);
+                mLinearAcceleration[1] = processArrayValues(1);
+                mLinearAcceleration[2] = processArrayValues(2);
+            } else if (!interpolating){
+                //wenn man ohne Array arbeitet
+                mLinearAcceleration[0] = event.values[0];
+                mLinearAcceleration[1] = event.values[1];
+                mLinearAcceleration[2] = event.values[2];
+            }
 
 
             //hierfür einen toggle einbauen, dass er die erdbeschleunigung nicht immer rausrechnet!
@@ -87,9 +98,7 @@ public final class AccelerationLogic implements SensorEventListener {
             mLinearAcceleration[2] = event.values[2] - mGravity[2];
             */
 
-            mLinearAcceleration[0] = processArrayValues(0);
-            mLinearAcceleration[1] = processArrayValues(1);
-            mLinearAcceleration[2] = processArrayValues(2);
+
 
             String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
             String data = "Data%" + Util.connectedBeacon + "%" + deviceAddress + "%" + mLinearAcceleration[0] + ";"

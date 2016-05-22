@@ -19,9 +19,9 @@ public final class AudioModeLogic {
 
     //beacon3
     public void executeAudioMode3(float valueX, float valueY, float valueZ) {
-        PdBase.sendFloat("toneHeight", mapValue(valueX));
-        PdBase.sendFloat("vibspeed$1", mapValue(valueY));
-        PdBase.sendFloat("vibdepth$1", 0.0f);
+        PdBase.sendFloat("freq1", mapValue(valueX));
+        PdBase.sendFloat("freq2", mapValue(valueY));
+        PdBase.sendFloat("allManipulator", mapValue(valueZ));
 
     }
 

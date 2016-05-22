@@ -40,7 +40,7 @@ public final class AudioLogic {
 
     public void startAudio() {
         PdAudio.startAudio(mContext);
-
+        PdBase.sendBang("START");
         //insert all audio controls here to initialize those - important part!!
     }
 
