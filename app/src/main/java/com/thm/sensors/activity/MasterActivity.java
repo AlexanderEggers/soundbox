@@ -198,9 +198,6 @@ public final class MasterActivity extends Activity {
                         valueZ = Float.parseFloat(values[2]);
                     }
 
-
-
-
                     ((TextView) findViewById(R.id.textView3)).setText(MessageFormat.format("X: {0}", valueX));
                     ((TextView) findViewById(R.id.textView4)).setText(MessageFormat.format("Y: {0}", valueY));
                     ((TextView) findViewById(R.id.textView5)).setText(MessageFormat.format("Z: {0}", valueZ));
@@ -209,7 +206,6 @@ public final class MasterActivity extends Activity {
                     ((TextView) findViewById(R.id.textView6)).setText(MessageFormat.format("Beacon: {0}", beacon));
 
                 } else {
-
                     Log.d(MasterActivity.class.getName(),
                             MessageFormat.format("Cannot find a beacon which is connected to this device = {0}", device));
                     mBluetoothLogic.sendDataToSlave(device, "ERROR%" + beacon + "%");
@@ -231,18 +227,17 @@ public final class MasterActivity extends Activity {
         mStopRunning = true;
     }
 
-    //funktion, die für einen parameter den average aus dem array holt
+    /**
+     * Author: niki
+     * @param k value base
+     * @return holt average aus dem array
+     */
     private float processArrayValues(int k) {
         float sum = 0;
-        float avg = 0;
-
         for (int i = 0; i < savedValueAmount; i++) {
             sum += lastSensorValues[i][k];
         }
 
-        avg = sum / savedValueAmount;
-
-        return avg;
+        return sum / savedValueAmount;
     }
-    //ende niki
 }

@@ -69,8 +69,6 @@ public final class SlaveActivity extends Activity {
     }
 
     private void handleData(Message msg) {
-
-        //wenn ich das phone as slave nehme, wird diese funktion nicht aufgerufen
         byte[] aData = (byte[]) msg.obj;
         String data = new String(aData);
         String[] aSplitData = data.split("%");

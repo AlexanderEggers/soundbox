@@ -58,11 +58,9 @@ public final class AccelerationLogic implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        //TODO: Send only every savedValueAmount iteration via average axis values
-
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER && Util.isLogin) {
-
             final float alpha = 0.8f;
+
             if (interpolating) {
                 //niki: werte ins array einspeisen
                 lastSensorValues[valueCounter][0] = (1 - alpha) * event.values[0];

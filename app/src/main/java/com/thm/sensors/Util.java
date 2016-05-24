@@ -16,8 +16,8 @@ public final class Util {
     /**
      * Audio modes
      */
-    public static final int AUDIO_MODE_1 = 0, AUDIO_MODE_2 = 1, AUDIO_MODE_3 = 2, AUDIO_MODE_4 = 3,
-            AUDIO_MODE_5 = 4;
+    public static final int AUDIO_MODE_1 = 1, AUDIO_MODE_2 = 2, AUDIO_MODE_3 = 3, AUDIO_MODE_4 = 4,
+            AUDIO_MODE_5 = 5;
 
     /**
      * Data structure

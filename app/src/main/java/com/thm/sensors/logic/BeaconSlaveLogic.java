@@ -14,7 +14,7 @@ import java.util.Collection;
 
 public final class BeaconSlaveLogic extends BeaconLogic {
 
-    private int timeout = 0;
+    private boolean timeoutCheck;
 
     @Override
     public void onBeaconServiceConnect() {
@@ -29,7 +29,7 @@ public final class BeaconSlaveLogic extends BeaconLogic {
                     double distance = beacon.getDistance();
                     Log.d(BeaconSlaveLogic.class.getName(), distance + "");
                     if (distance < MIN_RANGE_IN_METERS) {
-                        timeout = 0;
+                        timeoutCheck = false;
                         foundBeacon = true;
 
                         if (Util.connectedBeacon == null) {
@@ -44,14 +44,17 @@ public final class BeaconSlaveLogic extends BeaconLogic {
 
                 if (!foundBeacon && Util.isLogin) {
                     if (Util.connectedBeacon != null) {
-                        timeout++;
 
-                        if(timeout == 10) {
-                            timeout = 0;
+                        if(timeoutCheck) {
+                            timeoutCheck = false;
+                            Util.isLogin = false;
                             String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
                             String logoutData = "Logout%" + Util.connectedBeacon + "%" + deviceAddress + "%";
                             ((SlaveActivity) mContext).sendSensorData("Logout", logoutData);
+                            Util.connectedBeacon = null;
                         }
+
+                        if(!timeoutCheck) { timeoutCheck = true; }
                     }
                 }
             }

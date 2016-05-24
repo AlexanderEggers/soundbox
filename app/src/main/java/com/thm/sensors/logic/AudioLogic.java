@@ -45,26 +45,22 @@ public final class AudioLogic {
     }
 
     public void processAudioAcceleration(int audioMode, float valueX, float valueY, float valueZ) {
-
-
         switch (audioMode) {
-            case 1:
+            case Util.AUDIO_MODE_1:
                 mAudioModeLogic.executeAudioMode1(valueX);
                 break;
-            case 2:
+            case Util.AUDIO_MODE_2:
                 mAudioModeLogic.executeAudioMode2(valueX);
                 break;
-            case 3:
+            case Util.AUDIO_MODE_3:
                 mAudioModeLogic.executeAudioMode3(valueX, valueY, valueZ);
                 break;
-            case 4:
+            case Util.AUDIO_MODE_4:
                 mAudioModeLogic.executeAudioMode4(valueZ);
                 break;
-            case 5:
+            case Util.AUDIO_MODE_5:
                 mAudioModeLogic.executeAudioMode5(valueY, valueZ);
                 break;
         }
     }
-
-
 }
