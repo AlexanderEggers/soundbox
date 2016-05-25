@@ -27,7 +27,7 @@ The acceleration logic can be found in the .logic package. All three axis of the
 ##### Beacon
 The beacon implementation can be found in the ".logic.BeaconLogic" file. We are using the android beacon library (https://github.com/AltBeacon/android-beacon-library) to access the beacons. The important part of this logic class is the method "didRangeBeaconsInRegion" which is attached to a listener. This listener is called in certain intervals. This method checks the current distance to all avaiable beacon in it's region (region = specific range of the device). If a certain distance to a beacon has been reached (can be changed in the final double value inside the class), the device will try to "login" to this specific beacon by sending a login request to the master device.
 
-##### Raspberry
+##### Raspberry (optional)
 TODO
 
 ##### Audio
