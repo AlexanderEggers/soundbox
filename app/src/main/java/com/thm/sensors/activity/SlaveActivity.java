@@ -82,6 +82,7 @@ public final class SlaveActivity extends Activity {
                 if (beacon.equals(Util.connectedBeacon)) {
                     Util.isLogin = false;
                     Util.connectedBeacon = null;
+                    Util.isLoggingOut = false;
                     findViewById(R.id.slave_parent_layout).setBackgroundColor(Util.DEFAULT_BACKGROUND_COLOR);
                     Util.currentColor = -1;
                 } else {

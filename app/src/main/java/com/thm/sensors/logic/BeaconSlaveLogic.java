@@ -28,11 +28,11 @@ public final class BeaconSlaveLogic extends BeaconLogic {
                 for (Beacon beacon : beacons) {
                     double distance = beacon.getDistance();
                     Log.d(BeaconSlaveLogic.class.getName(), distance + "");
-                    if (distance < MIN_RANGE_IN_METERS) {
+                    if (distance < Util.MIN_RANGE_IN_METERS) {
                         timeoutCheck = false;
                         foundBeacon = true;
 
-                        if (Util.connectedBeacon == null) {
+                        if (Util.connectedBeacon == null && !Util.isLoggingOut) {
                             Util.connectedBeacon = beacon.getBluetoothAddress();
                             String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
                             String loginData = "Login%" + beacon.getBluetoothAddress() + "%" + deviceAddress + "%";
@@ -42,12 +42,13 @@ public final class BeaconSlaveLogic extends BeaconLogic {
                     }
                 }
 
-                if (!foundBeacon && Util.isLogin) {
+                if (!foundBeacon && Util.isLogin && !Util.isLoggingOut) {
                     if (Util.connectedBeacon != null) {
 
                         if(timeoutCheck) {
                             timeoutCheck = false;
                             Util.isLogin = false;
+                            Util.isLoggingOut = true;
                             String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
                             String logoutData = "Logout%" + Util.connectedBeacon + "%" + deviceAddress + "%";
                             ((SlaveActivity) mContext).sendSensorData("Logout", logoutData);

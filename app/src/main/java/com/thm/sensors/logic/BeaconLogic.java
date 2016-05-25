@@ -13,7 +13,6 @@ import org.altbeacon.beacon.Region;
 
 public abstract class BeaconLogic implements BeaconConsumer {
 
-    protected static final double MIN_RANGE_IN_METERS = 2;
     protected BeaconManager mBeaconManager;
     protected Activity mContext;
 

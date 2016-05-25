@@ -7,6 +7,7 @@ public final class Util {
      * General values
      */
     public static final boolean DEV_MODE = true;
+    public static final double MIN_RANGE_IN_METERS = 2;
 
     /**
      * Device types
@@ -29,7 +30,7 @@ public final class Util {
     /**
      * Slave connection values
      */
-    public static boolean isLogin;
+    public static boolean isLogin, isLoggingOut;
     public static String connectedBeacon;
     public static final int DEFAULT_BACKGROUND_COLOR = 0xFFFFFF;
     public static int currentColor = -1;

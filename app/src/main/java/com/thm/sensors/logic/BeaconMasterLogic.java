@@ -25,8 +25,6 @@ public final class BeaconMasterLogic extends BeaconLogic {
         mBeaconManager.setRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
-                System.out.println(Util.scanForBeacons);
-
                 if(Util.scanForBeacons) {
                     Beacon fBeacon = null;
                     boolean foundBeacon = false;
@@ -34,7 +32,7 @@ public final class BeaconMasterLogic extends BeaconLogic {
                     for (Beacon beacon : beacons) {
                         double distance = beacon.getDistance();
                         Log.d(BeaconMasterLogic.class.getName(), "Distance: " + distance);
-                        if (distance < MIN_RANGE_IN_METERS) {
+                        if (distance < Util.MIN_RANGE_IN_METERS) {
                             fBeacon = beacon;
                             foundBeacon = true;
                             break;
