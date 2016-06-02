@@ -22,7 +22,7 @@ public abstract class BeaconLogic implements BeaconConsumer {
         mBeaconManager.getBeaconParsers().add(new BeaconParser().
                 setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
         mBeaconManager.bind(this);
-        mBeaconManager.setForegroundScanPeriod(1000L);
+        mBeaconManager.setForegroundScanPeriod(500L);
     }
 
     @Override

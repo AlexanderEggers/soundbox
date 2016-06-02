@@ -52,7 +52,6 @@ public final class BeaconSlaveLogic extends BeaconLogic {
                             String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
                             String logoutData = "Logout%" + Util.connectedBeacon + "%" + deviceAddress + "%";
                             ((SlaveActivity) mContext).sendSensorData("Logout", logoutData);
-                            Util.connectedBeacon = null;
                         }
 
                         if(!timeoutCheck) { timeoutCheck = true; }
