@@ -1,4 +1,4 @@
-package com.thm.sensors.logic;
+package com.thm.soundbox.logic;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -6,7 +6,7 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 
-import com.thm.sensors.Util;
+import com.thm.soundbox.Util;
 
 import java.io.IOException;
 import java.io.InputStream;

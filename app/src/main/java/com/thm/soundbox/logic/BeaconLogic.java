@@ -1,4 +1,4 @@
-package com.thm.sensors.logic;
+package com.thm.soundbox.logic;
 
 import android.app.Activity;
 import android.content.Context;

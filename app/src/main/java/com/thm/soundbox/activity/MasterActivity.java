@@ -1,4 +1,4 @@
-package com.thm.sensors.activity;
+package com.thm.soundbox.activity;
 
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -10,10 +10,10 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
-import com.thm.sensors.R;
-import com.thm.sensors.Util;
-import com.thm.sensors.logic.AudioLogic;
-import com.thm.sensors.logic.BluetoothLogic;
+import com.thm.soundbox.R;
+import com.thm.soundbox.Util;
+import com.thm.soundbox.logic.AudioLogic;
+import com.thm.soundbox.logic.BluetoothLogic;
 
 import org.puredata.android.io.PdAudio;
 

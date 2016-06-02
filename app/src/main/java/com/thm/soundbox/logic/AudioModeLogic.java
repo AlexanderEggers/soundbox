@@ -1,4 +1,4 @@
-package com.thm.sensors.logic;
+package com.thm.soundbox.logic;
 
 import org.puredata.core.PdBase;
 

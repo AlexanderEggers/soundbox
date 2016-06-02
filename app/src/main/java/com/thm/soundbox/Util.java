@@ -1,4 +1,4 @@
-package com.thm.sensors;
+package com.thm.soundbox;
 
 import java.util.HashMap;
 

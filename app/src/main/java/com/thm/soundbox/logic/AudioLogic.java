@@ -1,12 +1,12 @@
-package com.thm.sensors.logic;
+package com.thm.soundbox.logic;
 
 import android.app.Activity;
 
 import java.io.File;
 import java.io.IOException;
 
-import com.thm.sensors.R;
-import com.thm.sensors.Util;
+import com.thm.soundbox.R;
+import com.thm.soundbox.Util;
 
 import org.puredata.android.io.AudioParameters;
 import org.puredata.android.io.PdAudio;

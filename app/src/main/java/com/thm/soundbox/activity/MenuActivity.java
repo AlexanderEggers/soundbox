@@ -1,4 +1,4 @@
-package com.thm.sensors.activity;
+package com.thm.soundbox.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toolbar;
 
-import com.thm.sensors.R;
+import com.thm.soundbox.R;
 
 public final class MenuActivity extends Activity implements View.OnClickListener {
 

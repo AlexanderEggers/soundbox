@@ -1,4 +1,4 @@
-package com.thm.sensors.logic;
+package com.thm.soundbox.logic;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -10,9 +10,9 @@ import android.hardware.SensorManager;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.thm.sensors.R;
-import com.thm.sensors.Util;
-import com.thm.sensors.activity.SlaveActivity;
+import com.thm.soundbox.R;
+import com.thm.soundbox.Util;
+import com.thm.soundbox.activity.SlaveActivity;
 
 import java.text.MessageFormat;
 

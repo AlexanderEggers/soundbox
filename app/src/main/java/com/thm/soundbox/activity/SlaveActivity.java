@@ -1,4 +1,4 @@
-package com.thm.sensors.activity;
+package com.thm.soundbox.activity;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -10,12 +10,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import com.thm.sensors.R;
-import com.thm.sensors.Util;
-import com.thm.sensors.logic.AccelerationLogic;
-import com.thm.sensors.logic.BeaconLogic;
-import com.thm.sensors.logic.BeaconSlaveLogic;
-import com.thm.sensors.logic.BluetoothLogic;
+import com.thm.soundbox.R;
+import com.thm.soundbox.Util;
+import com.thm.soundbox.logic.AccelerationLogic;
+import com.thm.soundbox.logic.BeaconLogic;
+import com.thm.soundbox.logic.BeaconSlaveLogic;
+import com.thm.soundbox.logic.BluetoothLogic;
 
 public final class SlaveActivity extends Activity {
 

@@ -1,10 +1,10 @@
-package com.thm.sensors.logic;
+package com.thm.soundbox.logic;
 
 import android.bluetooth.BluetoothAdapter;
 import android.util.Log;
 
-import com.thm.sensors.Util;
-import com.thm.sensors.activity.SlaveActivity;
+import com.thm.soundbox.Util;
+import com.thm.soundbox.activity.SlaveActivity;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.RangeNotifier;

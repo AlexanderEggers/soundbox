@@ -1,4 +1,4 @@
-package com.thm.sensors.logic;
+package com.thm.soundbox.logic;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -6,8 +6,8 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.thm.sensors.R;
-import com.thm.sensors.Util;
+import com.thm.soundbox.R;
+import com.thm.soundbox.Util;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.RangeNotifier;

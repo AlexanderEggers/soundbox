@@ -1,4 +1,4 @@
-package com.thm.sensors.activity;
+package com.thm.soundbox.activity;
 
 import android.Manifest;
 import android.app.Activity;
@@ -13,8 +13,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
-import com.thm.sensors.R;
-import com.thm.sensors.Util;
+import com.thm.soundbox.R;
+import com.thm.soundbox.Util;
 
 public final class AppStartActivity extends Activity {
 

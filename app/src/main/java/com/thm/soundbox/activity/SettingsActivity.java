@@ -1,4 +1,4 @@
-package com.thm.sensors.activity;
+package com.thm.soundbox.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -13,10 +13,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
-import com.thm.sensors.R;
-import com.thm.sensors.Util;
-import com.thm.sensors.logic.BeaconLogic;
-import com.thm.sensors.logic.BeaconMasterLogic;
+import com.thm.soundbox.R;
+import com.thm.soundbox.Util;
+import com.thm.soundbox.logic.BeaconLogic;
+import com.thm.soundbox.logic.BeaconMasterLogic;
 
 import java.io.File;
 import java.io.FileInputStream;
