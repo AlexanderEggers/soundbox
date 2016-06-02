@@ -1,4 +1,4 @@
-# SoundBox
+# Soundbox
 Targeting the acceleration sensor inside an android device and executing events if the device is in range of an iBeacon (sending a value via bluetooth) which will modify sound filters.
 
 ## Usage
