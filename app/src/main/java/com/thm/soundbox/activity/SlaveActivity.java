@@ -36,7 +36,7 @@ public final class SlaveActivity extends Activity {
             mBeaconLogic.onResume();
         }
 
-        if (Util.currentColor != -1) {
+        if (Util.currentColor != Util.DEFAULT_BACKGROUND_COLOR) {
             findViewById(R.id.slave_parent_layout).setBackgroundColor(Util.currentColor);
         }
 
@@ -94,7 +94,7 @@ public final class SlaveActivity extends Activity {
                     Util.connectedBeacon = null;
                     Util.isLoggingOut = false;
                     findViewById(R.id.slave_parent_layout).setBackgroundColor(Util.DEFAULT_BACKGROUND_COLOR);
-                    Util.currentColor = Util.NO_COLOR;
+                    Util.currentColor = Util.DEFAULT_BACKGROUND_COLOR;
                 } else {
                     Log.w(SlaveActivity.class.getName(), "Tried to disconnect an old connection. " +
                             "Beacon = " + beacon);
@@ -187,7 +187,7 @@ public final class SlaveActivity extends Activity {
             Util.connectedBeacon = null;
             Util.isLoggingOut = false;
             findViewById(R.id.slave_parent_layout).setBackgroundColor(Util.DEFAULT_BACKGROUND_COLOR);
-            Util.currentColor = Util.NO_COLOR;
+            Util.currentColor = Util.DEFAULT_BACKGROUND_COLOR;
         }
         mBluetoothLogic.close();
     }
