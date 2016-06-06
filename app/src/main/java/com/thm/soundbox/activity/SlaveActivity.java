@@ -36,9 +36,19 @@ public final class SlaveActivity extends Activity {
             mBeaconLogic.onResume();
         }
 
-        if(Util.currentColor != -1) {
+        if (Util.currentColor != -1) {
             findViewById(R.id.slave_parent_layout).setBackgroundColor(Util.currentColor);
         }
+
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                if (mBeaconLogic != null) {
+                    mBluetoothLogic.startConnection(Util.SLAVE);
+                }
+                return null;
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
@@ -84,7 +94,7 @@ public final class SlaveActivity extends Activity {
                     Util.connectedBeacon = null;
                     Util.isLoggingOut = false;
                     findViewById(R.id.slave_parent_layout).setBackgroundColor(Util.DEFAULT_BACKGROUND_COLOR);
-                    Util.currentColor = -1;
+                    Util.currentColor = Util.NO_COLOR;
                 } else {
                     Log.w(SlaveActivity.class.getName(), "Tried to disconnect an old connection. " +
                             "Beacon = " + beacon);
@@ -92,13 +102,20 @@ public final class SlaveActivity extends Activity {
                 break;
             case "LOGIN_SLAVE":
                 beacon = aSplitData[1];
-                if (beacon.equals(Util.connectedBeacon)) {
+                if (beacon.equals(Util.connectedBeacon) && !Util.isLoggingOut) {
                     Util.currentColor = Color.parseColor(aSplitData[2].trim());
                     findViewById(R.id.slave_parent_layout).setBackgroundColor(Util.currentColor);
                     Util.isLogin = true;
                 } else {
-                    Log.w(SlaveActivity.class.getName(), "Tried to connect an old connection. " +
-                            "Beacon = " + beacon);
+                    if (Util.isLoggingOut) {
+                        Log.i(SlaveActivity.class.getName(), "Device is currently in logout process.");
+                    } else {
+                        String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
+                        String logoutData = "Logout%" + beacon + "%" + deviceAddress + "%";
+                        sendSensorData("Logout", logoutData);
+
+                        Log.w(SlaveActivity.class.getName(), "Wrong login. Beacon = " + beacon);
+                    }
                 }
                 break;
         }
@@ -117,9 +134,9 @@ public final class SlaveActivity extends Activity {
             }
         } else {
             if (mBluetoothLogic == null) {
-                Log.w(SlaveActivity.class.getName(), "Senor data could not be sent. Logic = " + mBluetoothLogic);
+                Log.w(SlaveActivity.class.getName(), "Bluetooth logic = " + mBluetoothLogic);
             } else {
-                Log.w(SlaveActivity.class.getName(), "Senor data could not be sent. " +
+                Log.w(SlaveActivity.class.getName(), "Data could not be sent. " +
                         "Master = " + mBluetoothLogic.isConnectionAvailable());
             }
         }
@@ -156,10 +173,22 @@ public final class SlaveActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-        mBluetoothLogic.close();
+        mAcceleration.onPause();
+        mBeaconLogic.onPause();
 
-        String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
-        String logoutData = "Logout%" + Util.connectedBeacon + "%" + deviceAddress + "%";
-        sendSensorData("Logout", logoutData);
+        if (Util.connectedBeacon != null && Util.isLogin) {
+            Util.isLoggingOut = true;
+
+            String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
+            String logoutData = "Logout%" + Util.connectedBeacon + "%" + deviceAddress + "%";
+            sendSensorData("Logout", logoutData);
+
+            Util.isLogin = false;
+            Util.connectedBeacon = null;
+            Util.isLoggingOut = false;
+            findViewById(R.id.slave_parent_layout).setBackgroundColor(Util.DEFAULT_BACKGROUND_COLOR);
+            Util.currentColor = Util.NO_COLOR;
+        }
+        mBluetoothLogic.close();
     }
 }

@@ -23,20 +23,13 @@ public final class AccelerationLogic implements SensorEventListener {
     private float[] mGravity = {0f, 0f, 0f}, mLinearAcceleration = new float[3];
     private Activity mContext;
 
-    //niki added code
-    private boolean interpolating = false;
-    private final int savedValueAmount = 3;
-    private int valueCounter = 0;
-    private float[][] lastSensorValues = new float[savedValueAmount][3];
-    //end code niki
-
     public void startLogic(Activity context) {
 
         //niki added code (fill array with empty vectors)
-        if (interpolating) {
-            for (int i = 0; i < lastSensorValues.length; i++) {
+        if (Util.INTERPOLATION) {
+            for (int i = 0; i < Util.lastSensorValues.length; i++) {
                 for (int k = 0; i < 3; i++) {
-                    lastSensorValues[i][k] = 0.0f;
+                    Util.lastSensorValues[i][k] = 0.0f;
                 }
             }
         }
@@ -61,25 +54,20 @@ public final class AccelerationLogic implements SensorEventListener {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER && Util.isLogin) {
             final float alpha = 0.8f;
 
-            if (interpolating) {
-                //niki: werte ins array einspeisen
-                lastSensorValues[valueCounter][0] = (1 - alpha) * event.values[0];
-                lastSensorValues[valueCounter][1] = (1 - alpha) * event.values[1];
-                lastSensorValues[valueCounter][2] = (1 - alpha) * event.values[2];
-                //iterate through the array
-                valueCounter = (valueCounter + 1) % lastSensorValues.length;
-                //ende niki
+            if (Util.INTERPOLATION) {
+                Util.lastSensorValues[Util.valueCounter][0] = (1 - alpha) * event.values[0];
+                Util.lastSensorValues[Util.valueCounter][1] = (1 - alpha) * event.values[1];
+                Util.lastSensorValues[Util.valueCounter][2] = (1 - alpha) * event.values[2];
+                Util.valueCounter = (Util.valueCounter + 1) % Util.lastSensorValues.length;
 
-                mLinearAcceleration[0] = processArrayValues(0);
-                mLinearAcceleration[1] = processArrayValues(1);
-                mLinearAcceleration[2] = processArrayValues(2);
-            } else if (!interpolating){
-                //wenn man ohne Array arbeitet
+                mLinearAcceleration[0] = Util.processArrayValues(0);
+                mLinearAcceleration[1] = Util.processArrayValues(1);
+                mLinearAcceleration[2] = Util.processArrayValues(2);
+            } else {
                 mLinearAcceleration[0] = event.values[0];
                 mLinearAcceleration[1] = event.values[1];
                 mLinearAcceleration[2] = event.values[2];
             }
-
 
             //hierfür einen toggle einbauen, dass er die erdbeschleunigung nicht immer rausrechnet!
             /*
@@ -95,8 +83,6 @@ public final class AccelerationLogic implements SensorEventListener {
             mLinearAcceleration[1] = event.values[1] - mGravity[1];
             mLinearAcceleration[2] = event.values[2] - mGravity[2];
             */
-
-
 
             String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
             String data = "Data%" + Util.connectedBeacon + "%" + deviceAddress + "%" + mLinearAcceleration[0] + ";"
@@ -118,21 +104,6 @@ public final class AccelerationLogic implements SensorEventListener {
             }
         }
     }
-
-    //funktion, die für einen parameter den average aus dem array holt
-    private float processArrayValues(int k) {
-        float sum = 0;
-        float avg = 0;
-
-        for (int i = 0; i < savedValueAmount; i++) {
-            sum += lastSensorValues[i][k];
-        }
-
-        avg = sum / savedValueAmount;
-
-        return avg;
-    }
-    //ende niki
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {

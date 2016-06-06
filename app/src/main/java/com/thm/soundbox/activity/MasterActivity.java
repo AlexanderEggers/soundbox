@@ -29,13 +29,6 @@ public final class MasterActivity extends Activity {
     private boolean mStopRunning = false;
     private int totalDevices;
 
-    //Niki added code
-    private final int savedValueAmount = 3;
-    private boolean interpolating = false;
-    private int valueCounter = 0;
-    private float[][] lastSensorValues = new float[savedValueAmount][3];
-    //end code niki
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -50,10 +43,10 @@ public final class MasterActivity extends Activity {
         setActionBar(toolbar);
 
         //niki added code (fill array with empty vectors)
-        if (interpolating) {
-            for (int i = 0; i < lastSensorValues.length; i++) {
+        if (Util.INTERPOLATION) {
+            for (int i = 0; i < Util.lastSensorValues.length; i++) {
                 for (int k = 0; i < 3; i++) {
-                    lastSensorValues[i][k] = 0.0f;
+                    Util.lastSensorValues[i][k] = 0.0f;
                 }
             }
         }
@@ -174,25 +167,19 @@ public final class MasterActivity extends Activity {
                 if (foundBeaconDevice) {
                     Util.beaconLastData.put(beacon, System.currentTimeMillis());
                     int audioMode = Util.beaconModeMap.get(beacon);
-
                     String[] values = aSplitData[3].split(";");
+                    float valueX, valueY, valueZ;
 
-                    float valueX = 0;
-                    float valueY = 0;
-                    float valueZ = 0;
+                    if (Util.INTERPOLATION) {
+                        Util.lastSensorValues[Util.valueCounter][0] = Float.parseFloat(values[0]);
+                        Util.lastSensorValues[Util.valueCounter][1] = Float.parseFloat(values[1]);
+                        Util.lastSensorValues[Util.valueCounter][2] = Float.parseFloat(values[2]);
+                        Util.valueCounter = (Util.valueCounter + 1) % Util.lastSensorValues.length;
 
-                    if (interpolating) {
-                        //niki: werte ins array einspeisen
-                        lastSensorValues[valueCounter][0] = Float.parseFloat(values[0]);
-                        lastSensorValues[valueCounter][1] = Float.parseFloat(values[1]);
-                        lastSensorValues[valueCounter][2] = Float.parseFloat(values[2]);
-                        valueCounter = (valueCounter + 1) % lastSensorValues.length;
-                        // ende niki
-
-                        valueX = processArrayValues(0);
-                        valueY = processArrayValues(1);
-                        valueZ = processArrayValues(2);
-                    } else if (!interpolating) {
+                        valueX = Util.processArrayValues(0);
+                        valueY = Util.processArrayValues(1);
+                        valueZ = Util.processArrayValues(2);
+                    } else {
                         valueX = Float.parseFloat(values[0]);
                         valueY = Float.parseFloat(values[1]);
                         valueZ = Float.parseFloat(values[2]);
@@ -204,7 +191,6 @@ public final class MasterActivity extends Activity {
 
                     mAudioLogic.processAudioAcceleration(audioMode, valueX, valueY, valueZ);
                     ((TextView) findViewById(R.id.textView6)).setText(MessageFormat.format("Beacon: {0}", beacon));
-
                 } else {
                     Log.d(MasterActivity.class.getName(),
                             MessageFormat.format("Cannot find a beacon which is connected to this device = {0}", device));
@@ -225,19 +211,5 @@ public final class MasterActivity extends Activity {
         super.onStop();
         mBluetoothLogic.close();
         mStopRunning = true;
-    }
-
-    /**
-     * Author: niki
-     * @param k value base
-     * @return holt average aus dem array
-     */
-    private float processArrayValues(int k) {
-        float sum = 0;
-        for (int i = 0; i < savedValueAmount; i++) {
-            sum += lastSensorValues[i][k];
-        }
-
-        return sum / savedValueAmount;
     }
 }

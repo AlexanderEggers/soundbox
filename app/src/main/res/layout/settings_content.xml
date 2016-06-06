@@ -53,19 +53,19 @@
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/textView5"
-        android:layout_below="@+id/textView5"
         android:onClick="onClick"
-        android:text="Save" />
+        android:text="Save"
+        android:layout_below="@+id/textView5"
+        android:layout_alignStart="@+id/textView5" />
 
     <Button
         android:id="@+id/button4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignStart="@+id/textView5"
         android:layout_marginBottom="29dp"
-        android:text="Load Settings" />
+        android:text="Load file Settings"
+        android:layout_marginLeft="20dp" />
 
     <Button
         android:id="@+id/button5"
@@ -74,7 +74,8 @@
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/button4"
         android:layout_marginEnd="35dp"
-        android:text="Reset settings" />
+        android:text="Reset file settings"
+        android:layout_marginRight="20dp" />
 
     <TextView
         android:id="@+id/textView"
@@ -99,19 +100,18 @@
         android:id="@+id/button7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/button4"
-        android:layout_alignEnd="@+id/button4"
-        android:layout_marginBottom="28dp"
         android:onClick="onClick"
-        android:text="Scan" />
+        android:text="Scan"
+        android:layout_alignTop="@+id/button"
+        android:layout_toEndOf="@+id/button" />
 
     <Button
         android:id="@+id/button8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/button5"
-        android:layout_alignTop="@+id/button7"
         android:onClick="onClick"
-        android:text="Reset" />
+        android:text="Reset"
+        android:layout_below="@+id/textView5"
+        android:layout_toEndOf="@+id/button7" />
 
 </RelativeLayout>

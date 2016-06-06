@@ -32,12 +32,29 @@ public final class Util {
      */
     public static boolean isLogin, isLoggingOut;
     public static String connectedBeacon;
-    public static final int DEFAULT_BACKGROUND_COLOR = 0xFFFFFF;
-    public static int currentColor = -1;
+    public static final int DEFAULT_BACKGROUND_COLOR = 0xFFFFFF, NO_COLOR = -1;
+    public static int currentColor = NO_COLOR;
 
     /**
      * Master settings values
      */
     public static String connectedSettingsBeacon;
     public static boolean scanForBeacons;
+
+    /**
+     * Master-Slave values
+     */
+    public static final int SAVED_VALUE_AMOUNT = 3;
+    public static final boolean INTERPOLATION = false;
+    public static int valueCounter;
+    public static float[][] lastSensorValues = new float[Util.SAVED_VALUE_AMOUNT][3];
+
+    public static float processArrayValues(int k) {
+        float sum = 0;
+        for (int i = 0; i < SAVED_VALUE_AMOUNT; i++) {
+            sum += lastSensorValues[i][k];
+        }
+
+        return sum / SAVED_VALUE_AMOUNT;
+    }
 }
