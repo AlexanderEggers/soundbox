@@ -9,9 +9,10 @@ Targeting the acceleration sensor inside an android device and executing events 
 5. Push the "settings" button. The settings page should show a bluetooth address at the top. 
 6. Now decide a color you want to show the slave devices of they are in range of this beacon. This color can include 0-9 and A-Z (no special characters!). 
 7. After this you decide an audio mode. The mode decides the audio filter which will modified later.
-8. Hit save.
-9. Repeat the steps (6 - 8) for all beacons.
-10. Take a slave device, push the "sensor" button and go to a beacon.
+8. At last, decide if your beacon should allow the usage of gravity based accerlation calculation (make it possible to address movement of the device, like shaking)
+9. Hit save.
+10. Repeat the steps (6 - 9) for all beacons.
+11. Take a slave device, push the "sensor" button and go to a beacon.
 
 ## Functions
 ##### Bluetooth
