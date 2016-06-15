@@ -26,6 +26,7 @@ public final class Util {
     public static HashMap<String, String> beaconDeviceMap = new HashMap<>(), beaconColorMap = new HashMap<>();
     public static HashMap<String, Integer> beaconModeMap = new HashMap<>();
     public static HashMap<String, Long> beaconLastData = new HashMap<>();
+    public static HashMap<String, Boolean> beaconGravity = new HashMap<>();
 
     /**
      * Slave connection values
@@ -34,6 +35,7 @@ public final class Util {
     public static String connectedBeacon;
     public static final int DEFAULT_BACKGROUND_COLOR = 0xFFFFFF;
     public static int currentColor = DEFAULT_BACKGROUND_COLOR;
+    public static boolean gravity;
 
     /**
      * Master settings values

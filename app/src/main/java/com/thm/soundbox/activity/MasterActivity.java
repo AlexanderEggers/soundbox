@@ -26,7 +26,7 @@ public final class MasterActivity extends Activity {
     private BluetoothLogic mBluetoothLogic;
     private Handler mHandler;
     private AudioLogic mAudioLogic;
-    private boolean mStopRunning = false;
+    private boolean mStopRunning;
     private int totalDevices;
 
     @Override
@@ -42,7 +42,6 @@ public final class MasterActivity extends Activity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setActionBar(toolbar);
 
-        //niki added code (fill array with empty vectors)
         if (Util.INTERPOLATION) {
             for (int i = 0; i < Util.lastSensorValues.length; i++) {
                 for (int k = 0; i < 3; i++) {
@@ -50,7 +49,6 @@ public final class MasterActivity extends Activity {
                 }
             }
         }
-        //end code niki
 
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -132,13 +130,12 @@ public final class MasterActivity extends Activity {
 
         switch (identifier) {
             case "Login":
-                String color = Util.beaconColorMap.get(beacon);
-                System.out.println("KEY EXISTS: " + Util.beaconDeviceMap.containsKey(beacon));
-                System.out.println("BEACON: " + beacon);
                 if (Util.beaconDeviceMap.get(beacon) == null && Util.beaconDeviceMap.containsKey(beacon)) {
                     Util.beaconDeviceMap.put(beacon, device);
                     Util.beaconLastData.put(beacon, System.currentTimeMillis());
-                    mBluetoothLogic.sendDataToSlave(device, "LOGIN_SLAVE%" + beacon + "%" + color + "%");
+                    String color = Util.beaconColorMap.get(beacon);
+                    Boolean gravity = Util.beaconGravity.get(beacon);
+                    mBluetoothLogic.sendDataToSlave(device, "LOGIN_SLAVE%" + beacon + "%" + color + "%" + gravity + "%");
                     totalDevices++;
                     ((TextView) findViewById(R.id.textView8)).setText(
                             MessageFormat.format("Total Devices: {0}", totalDevices));

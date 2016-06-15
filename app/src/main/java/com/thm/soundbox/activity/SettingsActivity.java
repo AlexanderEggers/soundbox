@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
@@ -25,7 +26,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public final class SettingsActivity extends Activity implements View.OnClickListener {
@@ -76,22 +76,17 @@ public final class SettingsActivity extends Activity implements View.OnClickList
     public void onClick(View v) {
         View rootView = v.getRootView();
         String[] beaconValues = ((TextView) rootView.findViewById(R.id.textView3)).getText().toString().split(" ");
-        System.out.println("VALUE BEACON: " + Arrays.toString(beaconValues));
 
         switch (v.getId()) {
             case R.id.button:
-                System.out.println("LENGTH: " + beaconValues.length);
                 if (beaconValues.length > 1) {
-                    System.out.println("INSIDE 1. ARG SAVE SETTINGS");
-
                     String color = ((EditText) rootView.findViewById(R.id.editText)).getText().toString();
                     String modeValue = ((TextView) rootView.findViewById(R.id.textView)).getText().toString();
                     String beacon = beaconValues[1];
+                    boolean gravity = ((Switch) rootView.findViewById(R.id.switch1)).isChecked();
 
                     if (!modeValue.equals("") && !color.equals("") && (color.length() == 6
                             || color.length() == 8)) {
-                        System.out.println("INSIDE 2. ARG SAVE SETTINGS");
-
                         int mode = Integer.parseInt(modeValue);
 
                         if (Util.beaconDeviceMap.get(beacon) == null) {
@@ -99,6 +94,7 @@ public final class SettingsActivity extends Activity implements View.OnClickList
                             Util.beaconColorMap.put(beacon, "#" + color);
                             Util.beaconModeMap.put(beacon, mode);
                             Util.beaconLastData.put(beacon, 0L);
+                            Util.beaconGravity.put(beacon, gravity);
                         } else {
                             Log.d(SettingsActivity.class.getName(),
                                     MessageFormat.format("Cannot apply the settings because the specific beacon " +
@@ -136,6 +132,7 @@ public final class SettingsActivity extends Activity implements View.OnClickList
         ((TextView) findViewById(R.id.textView3)).setText("Beacon");
         ((EditText) findViewById(R.id.editText)).setText("");
         ((TextView) findViewById(R.id.textView)).setText("");
+        ((Switch) findViewById(R.id.switch1)).setChecked(false);
     }
 
     private void editMode() {

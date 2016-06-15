@@ -25,7 +25,6 @@ public final class AccelerationLogic implements SensorEventListener {
 
     public void startLogic(Activity context) {
 
-        //niki added code (fill array with empty vectors)
         if (Util.INTERPOLATION) {
             for (int i = 0; i < Util.lastSensorValues.length; i++) {
                 for (int k = 0; i < 3; i++) {
@@ -33,7 +32,6 @@ public final class AccelerationLogic implements SensorEventListener {
                 }
             }
         }
-        //end code niki
 
         mContext = context;
 
@@ -69,20 +67,17 @@ public final class AccelerationLogic implements SensorEventListener {
                 mLinearAcceleration[2] = event.values[2];
             }
 
-            //hierfür einen toggle einbauen, dass er die erdbeschleunigung nicht immer rausrechnet!
-            /*
-            // Isolate the force of mGravity with the low-pass filter.
-            mGravity[0] = alpha * mGravity[0] + (1 - alpha) * event.values[0];
-            mGravity[1] = alpha * mGravity[1] + (1 - alpha) * event.values[1];
-            mGravity[2] = alpha * mGravity[2] + (1 - alpha) * event.values[2];
-            */
+            if(Util.gravity) {
+                // Isolate the force of mGravity with the low-pass filter.
+                mGravity[0] = alpha * mGravity[0] + (1 - alpha) * event.values[0];
+                mGravity[1] = alpha * mGravity[1] + (1 - alpha) * event.values[1];
+                mGravity[2] = alpha * mGravity[2] + (1 - alpha) * event.values[2];
 
-            /*
-            // Remove the mGravity contribution with the high-pass filter.
-            mLinearAcceleration[0] = event.values[0] - mGravity[0];
-            mLinearAcceleration[1] = event.values[1] - mGravity[1];
-            mLinearAcceleration[2] = event.values[2] - mGravity[2];
-            */
+                // Remove the mGravity contribution with the high-pass filter.
+                mLinearAcceleration[0] = event.values[0] - mGravity[0];
+                mLinearAcceleration[1] = event.values[1] - mGravity[1];
+                mLinearAcceleration[2] = event.values[2] - mGravity[2];
+            }
 
             String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
             String data = "Data%" + Util.connectedBeacon + "%" + deviceAddress + "%" + mLinearAcceleration[0] + ";"
