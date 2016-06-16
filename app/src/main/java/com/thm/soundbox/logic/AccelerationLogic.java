@@ -1,7 +1,6 @@
 package com.thm.soundbox.logic;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -80,8 +79,7 @@ public final class AccelerationLogic implements SensorEventListener {
                 mLinearAcceleration[2] = event.values[2] - mGravity[2];
             }
 
-            String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
-            String data = "Data%" + Util.connectedBeacon + "%" + deviceAddress + "%" + mLinearAcceleration[0] + ";"
+            String data = "Data%" + Util.connectedBeacon + "%" + mLinearAcceleration[0] + ";"
                     + mLinearAcceleration[1] + ";" + mLinearAcceleration[2] + "%";
             ((SlaveActivity) mContext).sendSensorData("data" , data);
 

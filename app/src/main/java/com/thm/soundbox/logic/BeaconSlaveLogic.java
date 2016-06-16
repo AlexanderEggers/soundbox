@@ -38,8 +38,7 @@ public final class BeaconSlaveLogic extends BeaconLogic {
 
                         if (Util.connectedBeacon == null) {
                             Util.connectedBeacon = beacon.getBluetoothAddress();
-                            String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
-                            String loginData = "Login%" + beacon.getBluetoothAddress() + "%" + deviceAddress + "%";
+                            String loginData = "Login%" + beacon.getBluetoothAddress() + "%";
                             Log.i(BeaconSlaveLogic.class.getName(), "Device is trying to login");
                             ((SlaveActivity) mContext).sendSensorData("Login", loginData);
                         }

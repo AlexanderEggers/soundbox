@@ -124,12 +124,13 @@ public final class MasterActivity extends AppCompatActivity {
     }
 
     private void handleData(Message msg) {
-        byte[] aData = (byte[]) msg.obj;
+        Object content = ((Object[]) msg.obj)[0];
+        String device = ((Object[]) msg.obj)[1] + "";
+        byte[] aData = (byte[]) content;
         String data = new String(aData);
         String[] aSplitData = data.split("%");
         String identifier = aSplitData[0];
         String beacon = aSplitData[1];
-        String device = aSplitData[2];
 
         Log.i(MasterActivity.class.getName(), "Identifier: " + identifier);
 
@@ -143,6 +144,7 @@ public final class MasterActivity extends AppCompatActivity {
                     Util.beaconLastData.put(beacon, System.currentTimeMillis());
                     String color = Util.beaconColorMap.get(beacon);
                     Boolean gravity = Util.beaconGravity.get(beacon);
+                    System.out.println(device);
                     mBluetoothLogic.sendDataToSlave(device, "LOGIN_SLAVE%" + beacon + "%" + color + "%" + gravity + "%");
                     totalDevices++;
                     ((TextView) findViewById(R.id.textView8)).setText(
@@ -173,7 +175,7 @@ public final class MasterActivity extends AppCompatActivity {
                 if (foundBeaconDevice) {
                     Util.beaconLastData.put(beacon, System.currentTimeMillis());
                     int audioMode = Util.beaconModeMap.get(beacon);
-                    String[] values = aSplitData[3].split(";");
+                    String[] values = aSplitData[2].split(";");
                     float valueX, valueY, valueZ;
 
                     if (Util.INTERPOLATION) {

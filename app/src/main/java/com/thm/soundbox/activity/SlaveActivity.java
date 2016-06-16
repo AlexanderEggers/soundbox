@@ -79,7 +79,8 @@ public final class SlaveActivity extends Activity {
     }
 
     private void handleData(Message msg) {
-        byte[] aData = (byte[]) msg.obj;
+        Object content = ((Object[]) msg.obj)[0];
+        byte[] aData = (byte[]) content;
         String data = new String(aData);
         String[] aSplitData = data.split("%");
         String identifier = aSplitData[0];

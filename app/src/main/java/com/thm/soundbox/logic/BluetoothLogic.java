@@ -86,8 +86,12 @@ public final class BluetoothLogic {
                     // Read from the InputStream
                     bytes = mmInStream.read(buffer);
                     // Send the obtained bytes to the UI activity
-                    if (mHandler != null)
-                        mHandler.obtainMessage(0, bytes, -1, buffer).sendToTarget();
+                    if (mHandler != null) {
+                        Object[] data = new Object[] {
+                            buffer, mmDeviceAddress
+                        };
+                        mHandler.obtainMessage(0, bytes, -1, data).sendToTarget();
+                    }
                 } catch (IOException e) {
                     break;
                 }
