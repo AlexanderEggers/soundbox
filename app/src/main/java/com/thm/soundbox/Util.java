@@ -7,7 +7,7 @@ public final class Util {
      * General values
      */
     public static final boolean DEV_MODE = true;
-    public static final double MIN_RANGE_IN_METERS = 2;
+    public static final double MIN_RANGE_IN_METERS = 3;
 
     /**
      * Device types

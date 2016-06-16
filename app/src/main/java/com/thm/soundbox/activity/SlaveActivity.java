@@ -21,7 +21,7 @@ public final class SlaveActivity extends Activity {
 
     private AccelerationLogic mAcceleration;
     private BeaconLogic mBeaconLogic;
-    private BluetoothLogic mBluetoothLogic;
+    public BluetoothLogic mBluetoothLogic;
     private Handler mHandler;
 
     @Override
@@ -43,7 +43,7 @@ public final class SlaveActivity extends Activity {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                if (mBeaconLogic != null) {
+                if (mBluetoothLogic != null) {
                     mBluetoothLogic.startConnection(Util.SLAVE);
                 }
                 return null;
@@ -55,12 +55,6 @@ public final class SlaveActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.slave_activity);
-
-        mAcceleration = new AccelerationLogic();
-        mAcceleration.startLogic(this);
-
-        mBeaconLogic = new BeaconSlaveLogic();
-        mBeaconLogic.startLogic(this);
 
         mHandler = new Handler() {
             public void handleMessage(Message msg) {
@@ -76,6 +70,12 @@ public final class SlaveActivity extends Activity {
                 return null;
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+        mAcceleration = new AccelerationLogic();
+        mAcceleration.startLogic(SlaveActivity.this);
+
+        mBeaconLogic = new BeaconSlaveLogic();
+        mBeaconLogic.startLogic(SlaveActivity.this);
     }
 
     private void handleData(Message msg) {
@@ -95,6 +95,7 @@ public final class SlaveActivity extends Activity {
                     Util.isLoggingOut = false;
                     findViewById(R.id.slave_parent_layout).setBackgroundColor(Util.DEFAULT_BACKGROUND_COLOR);
                     Util.currentColor = Util.DEFAULT_BACKGROUND_COLOR;
+
                     Util.gravity = false;
                 } else {
                     Log.w(SlaveActivity.class.getName(), "Tried to disconnect an old connection. " +
@@ -135,9 +136,12 @@ public final class SlaveActivity extends Activity {
                 }
             }
         } else {
+            Util.connectedBeacon = null;
+
             if (mBluetoothLogic == null) {
                 Log.w(SlaveActivity.class.getName(), "Bluetooth logic = " + mBluetoothLogic);
             } else {
+
                 Log.w(SlaveActivity.class.getName(), "Data could not be sent. " +
                         "Master = " + mBluetoothLogic.isConnectionAvailable());
             }

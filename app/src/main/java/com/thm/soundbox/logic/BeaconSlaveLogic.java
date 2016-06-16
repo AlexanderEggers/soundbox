@@ -28,7 +28,7 @@ public final class BeaconSlaveLogic extends BeaconLogic {
                 for (Beacon beacon : beacons) {
                     double distance = beacon.getDistance();
                     Log.d(BeaconSlaveLogic.class.getName(), distance + "");
-                    if (distance < Util.MIN_RANGE_IN_METERS) {
+                    if (distance <= Util.MIN_RANGE_IN_METERS) {
                         timeoutCheck = false;
                         foundBeacon = true;
 
@@ -36,6 +36,7 @@ public final class BeaconSlaveLogic extends BeaconLogic {
                             Util.connectedBeacon = beacon.getBluetoothAddress();
                             String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
                             String loginData = "Login%" + beacon.getBluetoothAddress() + "%" + deviceAddress + "%";
+                            System.out.println("LOGIN");
                             ((SlaveActivity) mContext).sendSensorData("Login", loginData);
                         }
                         break;

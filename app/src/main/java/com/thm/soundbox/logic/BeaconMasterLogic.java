@@ -1,5 +1,6 @@
 package com.thm.soundbox.logic;
 
+import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -8,6 +9,7 @@ import android.widget.TextView;
 
 import com.thm.soundbox.R;
 import com.thm.soundbox.Util;
+import com.thm.soundbox.activity.SettingsActivity;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.RangeNotifier;
@@ -17,6 +19,13 @@ import java.text.MessageFormat;
 import java.util.Collection;
 
 public final class BeaconMasterLogic extends BeaconLogic {
+
+    private Handler mHandler;
+
+    public void startLogic(Activity context, Handler handler) {
+        super.startLogic(context);
+        mHandler = handler;
+    }
 
     @Override
     public void onBeaconServiceConnect() {
@@ -40,23 +49,8 @@ public final class BeaconMasterLogic extends BeaconLogic {
                     }
 
                     if (foundBeacon) {
-                        final String beaconAddress = fBeacon.getBluetoothAddress();
-                        Util.connectedSettingsBeacon = beaconAddress;
-
-                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                ((TextView) mContext.findViewById(R.id.textView3))
-                                        .setText(MessageFormat.format("Beacon {0}", beaconAddress));
-
-                                if (Util.beaconColorMap.containsKey(beaconAddress)) {
-                                    ((EditText) mContext.findViewById(R.id.editText))
-                                            .setText(Util.beaconColorMap.get(beaconAddress));
-                                    ((TextView) mContext.findViewById(R.id.textView))
-                                            .setText(Util.beaconModeMap.get(beaconAddress));
-                                }
-                            }
-                        });
+                        Util.connectedSettingsBeacon = fBeacon.getBluetoothAddress();
+                        mHandler.obtainMessage().sendToTarget();
                         Util.scanForBeacons = false;
                     }
                 }

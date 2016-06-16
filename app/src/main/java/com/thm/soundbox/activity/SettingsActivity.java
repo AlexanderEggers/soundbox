@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Message;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,11 +28,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.logging.Handler;
 
 public final class SettingsActivity extends Activity implements View.OnClickListener {
 
     private static final String SETTINGS_FILE_NAME = "settings_data", AUDIO_MODE_DIALOG = "audio-mode";
     private BeaconLogic mBeaconLogic;
+    private android.os.Handler mHandler;
 
     @Override
     protected void onResume() {
@@ -50,8 +53,24 @@ public final class SettingsActivity extends Activity implements View.OnClickList
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        mHandler = new android.os.Handler() {
+            public void handleMessage(Message msg) {
+                String beaconAddress = Util.connectedSettingsBeacon;
+
+                ((TextView) findViewById(R.id.textView3))
+                        .setText(MessageFormat.format("Beacon {0}", beaconAddress));
+
+                if (Util.beaconColorMap.containsKey(beaconAddress)) {
+                    ((EditText) findViewById(R.id.editText))
+                            .setText(Util.beaconColorMap.get(beaconAddress));
+                    ((TextView) findViewById(R.id.textView))
+                            .setText(Integer.toString(Util.beaconModeMap.get(beaconAddress)));
+                }
+            }
+        };
+
         mBeaconLogic = new BeaconMasterLogic();
-        mBeaconLogic.startLogic(this);
+        ((BeaconMasterLogic) mBeaconLogic).startLogic(this, mHandler);
     }
 
     @Override

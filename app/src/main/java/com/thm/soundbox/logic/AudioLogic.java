@@ -33,8 +33,8 @@ public final class AudioLogic {
 
     public void loadPDPatch() throws IOException {
         File dir = mContext.getFilesDir();
-        IoUtils.extractZipResource(mContext.getResources().openRawResource(R.raw.oscillatormosy), dir, true);
-        File pdPatch = new File(dir, "oscillatormosy.pd");
+        IoUtils.extractZipResource(mContext.getResources().openRawResource(R.raw.tryoutsynths), dir, true);
+        File pdPatch = new File(dir, "tryoutsynths.pd");
         PdBase.openPatch(pdPatch.getAbsolutePath());
     }
 

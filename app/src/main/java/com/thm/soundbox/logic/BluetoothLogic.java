@@ -230,6 +230,7 @@ public final class BluetoothLogic {
     public void sendDataToSlave(String deviceAddress, String data) {
         for (ConnectedThread thread : mThreads) {
             if (thread.getDeviceAddress().equals(deviceAddress)) {
+                System.out.println("FOUND!");
                 byte[] aBytes = data.getBytes(StandardCharsets.UTF_8);
 
                 if (!mClosing) {
