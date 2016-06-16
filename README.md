@@ -25,10 +25,10 @@ The only sensor we are going to use is the acceleration sensor which will only b
 The acceleration logic can be found in the .logic package. All three axis of the acceleration (x,y,z) are merged into one string value which will be send to the master device.
 
 ##### Beacon
-The beacon implementation can be found in the ".logic.BeaconLogic" file. We are using the android beacon library (https://github.com/AltBeacon/android-beacon-library) to access the beacons. The important part of this logic class is the method "didRangeBeaconsInRegion" which is attached to a listener. This listener is called in certain intervals. This method checks the current distance to all avaiable beacon in it's region (region = specific range of the device). If a certain distance to a beacon has been reached (can be changed in the final double value inside the class), the device will try to "login" to this specific beacon by sending a login request to the master device.
+The beacon implementation can be found in the ".logic.BeaconLogic" file. We are using the android beacon library (https://github.com/AltBeacon/android-beacon-library) to access the beacons. The important part of this logic class is the method "didRangeBeaconsInRegion" which is attached to a listener. This listener is called in certain intervals. This method checks the current distance to all avaiable beacon in it's region (region = specific range of the device). If a certain distance to a beacon has been reached (can be changed in the final double value inside the class), the device will try to "login" to this specific beacon by sending a login request to the master device. It can take around 1-3 secounds until a device has been fully (un-)registered at the master device.
 
 ##### Audio
-The audio part is seperated into several audio modes. Each audio mode is modifing another sound filter. We are using the pure data implementation (https://github.com/libpd/pd-for-android) to create specific audio filters. Those audio filter are accessed via the class logic.AudioModeLogic. The pure data sound file (which includes all sound samples and filter) can be found in res/raw/simplestpatch.zip.
+The audio part is seperated into several audio modes. Each audio mode is modifing another sound filter. We are using the pure data implementation (https://github.com/libpd/pd-for-android) to create specific audio filters. Those audio filter are accessed via the class logic.AudioModeLogic. The pure data sound file (which includes all sound samples and filter) can be found in res/raw/ folder.
 
 ##### Settings
 Settings are responsible for changing the audio mode and the color of a certain beacon. All beacons are mapped by the master device regarding these values. The color value will change the slave device background color and the audio mode is responsible for the specific modification of the audio sample by the slave acceleration sensor.
@@ -36,7 +36,7 @@ Settings are responsible for changing the audio mode and the color of a certain 
 ## Requirements
 To run this app the device needs to match certain requirements:
 * Bluetooth
-* Min SDK Level: 21 (Android 5.0 - Lollipop)
+* Min SDK Level: 19 (Android 4.4.x - KitKat)
 * Acceleration sensor
 * Beacon(s)
 * Fine location permission
