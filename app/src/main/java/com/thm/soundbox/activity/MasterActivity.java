@@ -22,7 +22,7 @@ import java.text.MessageFormat;
 
 public final class MasterActivity extends AppCompatActivity {
 
-    private static final long MAX_INACTIVE_TIME = 3000;
+    private static final long MAX_INACTIVE_TIME = 2000;
     private BluetoothLogic mBluetoothLogic;
     private Handler mHandler;
     private AudioLogic mAudioLogic;
@@ -144,7 +144,6 @@ public final class MasterActivity extends AppCompatActivity {
                     Util.beaconLastData.put(beacon, System.currentTimeMillis());
                     String color = Util.beaconColorMap.get(beacon);
                     Boolean gravity = Util.beaconGravity.get(beacon);
-                    System.out.println(device);
                     mBluetoothLogic.sendDataToSlave(device, "LOGIN_SLAVE%" + beacon + "%" + color + "%" + gravity + "%");
                     totalDevices++;
                     ((TextView) findViewById(R.id.textView8)).setText(
@@ -163,7 +162,6 @@ public final class MasterActivity extends AppCompatActivity {
                 break;
             case "Data":
                 boolean foundBeaconDevice = false;
-                System.out.println(Util.beaconDeviceMap.keySet().toString());
                 for (String key : Util.beaconDeviceMap.keySet()) {
                     if (Util.beaconDeviceMap.get(key) != null &&
                             Util.beaconDeviceMap.get(key).equals(device) && key.equals(beacon)) {

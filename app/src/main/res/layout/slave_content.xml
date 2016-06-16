@@ -33,22 +33,20 @@
         android:id="@+id/textViewZ"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewX"
+        android:layout_below="@+id/textViewY"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_marginBottom="20dp"
         android:text=""
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_marginTop="40dp" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
         android:id="@+id/beaconID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewY"
+        android:layout_below="@+id/textViewZ"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:text=""
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_marginTop="40dp" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 </RelativeLayout>

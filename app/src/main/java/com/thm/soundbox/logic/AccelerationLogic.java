@@ -67,7 +67,7 @@ public final class AccelerationLogic implements SensorEventListener {
                 mLinearAcceleration[2] = event.values[2];
             }
 
-            if(Util.gravity) {
+            if (Util.gravity) {
                 // Isolate the force of mGravity with the low-pass filter.
                 mGravity[0] = alpha * mGravity[0] + (1 - alpha) * event.values[0];
                 mGravity[1] = alpha * mGravity[1] + (1 - alpha) * event.values[1];
@@ -81,7 +81,7 @@ public final class AccelerationLogic implements SensorEventListener {
 
             String data = "Data%" + Util.connectedBeacon + "%" + mLinearAcceleration[0] + ";"
                     + mLinearAcceleration[1] + ";" + mLinearAcceleration[2] + "%";
-            ((SlaveActivity) mContext).sendSensorData("data" , data);
+            ((SlaveActivity) mContext).sendSensorData("data", data);
 
             if (Util.DEV_MODE) {
                 String textX = MessageFormat.format("Acceleration Value X: {0}", mLinearAcceleration[0]);
