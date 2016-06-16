@@ -1,5 +1,6 @@
 package com.thm.soundbox.logic;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.util.Log;
 
@@ -14,7 +15,11 @@ import java.util.Collection;
 
 public final class BeaconSlaveLogic extends BeaconLogic {
 
-    private boolean timeoutCheck;
+    @Override
+    public void startLogic(Activity context) {
+        super.startLogic(context);
+        mBeaconManager.setForegroundScanPeriod(1000L);
+    }
 
     @Override
     public void onBeaconServiceConnect() {
@@ -27,16 +32,15 @@ public final class BeaconSlaveLogic extends BeaconLogic {
 
                 for (Beacon beacon : beacons) {
                     double distance = beacon.getDistance();
-                    Log.d(BeaconSlaveLogic.class.getName(), distance + "");
+                    Log.d(BeaconSlaveLogic.class.getName(), "Beacon: " + beacon + " " + distance + "");
                     if (distance <= Util.MIN_RANGE_IN_METERS) {
-                        timeoutCheck = false;
                         foundBeacon = true;
 
                         if (Util.connectedBeacon == null) {
                             Util.connectedBeacon = beacon.getBluetoothAddress();
                             String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
                             String loginData = "Login%" + beacon.getBluetoothAddress() + "%" + deviceAddress + "%";
-                            System.out.println("LOGIN");
+                            Log.i(BeaconSlaveLogic.class.getName(), "Device is trying to login");
                             ((SlaveActivity) mContext).sendSensorData("Login", loginData);
                         }
                         break;
@@ -45,17 +49,11 @@ public final class BeaconSlaveLogic extends BeaconLogic {
 
                 if (!foundBeacon && Util.isLogin && !Util.isLoggingOut) {
                     if (Util.connectedBeacon != null) {
-
-                        if(timeoutCheck) {
-                            timeoutCheck = false;
-                            Util.isLogin = false;
-                            Util.isLoggingOut = true;
-                            String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
-                            String logoutData = "Logout%" + Util.connectedBeacon + "%" + deviceAddress + "%";
-                            ((SlaveActivity) mContext).sendSensorData("Logout", logoutData);
-                        } else {
-                            timeoutCheck = true;
-                        }
+                        Util.isLogin = false;
+                        Util.isLoggingOut = true;
+                        String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
+                        String logoutData = "Logout%" + Util.connectedBeacon + "%" + deviceAddress + "%";
+                        ((SlaveActivity) mContext).sendSensorData("Logout", logoutData);
                     }
                 }
             }

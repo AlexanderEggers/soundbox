@@ -1,15 +1,14 @@
 package com.thm.soundbox.activity;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.thm.soundbox.R;
 import com.thm.soundbox.Util;
@@ -21,7 +20,7 @@ import org.puredata.android.io.PdAudio;
 import java.io.IOException;
 import java.text.MessageFormat;
 
-public final class MasterActivity extends Activity {
+public final class MasterActivity extends AppCompatActivity {
 
     private static final long MAX_INACTIVE_TIME = 3000;
     private BluetoothLogic mBluetoothLogic;
@@ -38,12 +37,10 @@ public final class MasterActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //TODO alle Werte aus paired beacon device löschen
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.master_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setActionBar(toolbar);
+        setSupportActionBar(toolbar);
 
         if (Util.INTERPOLATION) {
             for (int i = 0; i < Util.lastSensorValues.length; i++) {
@@ -53,8 +50,12 @@ public final class MasterActivity extends Activity {
             }
         }
 
-        if (getActionBar() != null) {
-            getActionBar().setDisplayHomeAsUpEnabled(true);
+        for (String key : Util.beaconDeviceMap.keySet()) {
+            Util.beaconDeviceMap.put(key, null);
+        }
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
         mHandler = new Handler() {

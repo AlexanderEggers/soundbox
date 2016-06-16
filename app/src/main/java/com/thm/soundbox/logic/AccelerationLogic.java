@@ -93,7 +93,8 @@ public final class AccelerationLogic implements SensorEventListener {
                 ((TextView) mContext.findViewById(R.id.textViewX)).setText(textX);
                 ((TextView) mContext.findViewById(R.id.textViewY)).setText(textY);
                 ((TextView) mContext.findViewById(R.id.textViewZ)).setText(textZ);
-                ((TextView) mContext.findViewById(R.id.beaconID)).setText("BeaconID: " + Util.connectedBeacon);
+                ((TextView) mContext.findViewById(R.id.beaconID)).setText(MessageFormat.format(
+                        "BeaconID: {0}", Util.connectedBeacon));
 
                 Log.i(AccelerationLogic.class.getName(), textX);
                 Log.i(AccelerationLogic.class.getName(), textY);

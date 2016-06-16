@@ -1,40 +1,32 @@
 package com.thm.soundbox.activity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.thm.soundbox.R;
 import com.thm.soundbox.Util;
 import com.thm.soundbox.logic.BeaconLogic;
 import com.thm.soundbox.logic.BeaconMasterLogic;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.logging.Handler;
 
-public final class SettingsActivity extends Activity implements View.OnClickListener {
+public final class SettingsActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String SETTINGS_FILE_NAME = "settings_data", AUDIO_MODE_DIALOG = "audio-mode";
+    private static final String AUDIO_MODE_DIALOG = "audio-mode";
     private BeaconLogic mBeaconLogic;
-    private android.os.Handler mHandler;
 
     @Override
     protected void onResume() {
@@ -47,13 +39,13 @@ public final class SettingsActivity extends Activity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setActionBar(toolbar);
+        setSupportActionBar(toolbar);
 
-        if (getActionBar() != null) {
-            getActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        mHandler = new android.os.Handler() {
+        Handler mHandler = new android.os.Handler() {
             public void handleMessage(Message msg) {
                 String beaconAddress = Util.connectedSettingsBeacon;
 
@@ -123,16 +115,9 @@ public final class SettingsActivity extends Activity implements View.OnClickList
                         Log.d(SettingsActivity.class.getName(), "Cannot apply settings because mode or color haven't " +
                                 "been set correctly!");
                     }
-                    saveSettings();
                 } else {
                     Log.d(SettingsActivity.class.getName(), "Cannot apply settings because no beacon has been found!");
                 }
-                break;
-            case R.id.button4:
-                loadSettings();
-                break;
-            case R.id.button5:
-                resetSettings();
                 break;
             case R.id.button6:
                 editMode();
@@ -157,86 +142,6 @@ public final class SettingsActivity extends Activity implements View.OnClickList
     private void editMode() {
         DialogFragment dialog = new DialogModeFragment();
         dialog.show(getFragmentManager(), AUDIO_MODE_DIALOG);
-    }
-
-    private void saveSettings() {
-        File file = null;
-        FileOutputStream fileOut = null;
-        ObjectOutputStream out = null;
-
-        try {
-            file = new File(getFilesDir() + "/" + SETTINGS_FILE_NAME + "_temp");
-            fileOut = new FileOutputStream(file);
-            out = new ObjectOutputStream(fileOut);
-            out.writeObject(Util.beaconDeviceMap);
-            out.writeObject(Util.beaconColorMap);
-            out.writeObject(Util.beaconModeMap);
-            out.writeObject(Util.beaconLastData);
-        } catch (Exception e) {
-            if (file != null) {
-                file.delete();
-                file = null;
-            }
-
-            Log.d(SettingsActivity.class.getName(), "saveSettings: " + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-
-                if (fileOut != null) {
-                    fileOut.close();
-                }
-            } catch (IOException e) {
-                Log.d(SettingsActivity.class.getName(), "saveSettings: " + e.getMessage());
-                e.printStackTrace();
-            }
-
-            if (file != null) {
-                new File(getFilesDir() + "/" + SETTINGS_FILE_NAME).delete();
-                file.renameTo(new File(getFilesDir() + "/" + SETTINGS_FILE_NAME));
-            }
-        }
-
-    }
-
-    private void loadSettings() {
-        ObjectInputStream in = null;
-        File file = new File(getFilesDir() + "/" + SETTINGS_FILE_NAME);
-
-        if (file.exists()) {
-            try {
-                in = new ObjectInputStream(new FileInputStream(file));
-                Util.beaconDeviceMap = (HashMap<String, String>) in.readObject();
-                Util.beaconColorMap = (HashMap<String, String>) in.readObject();
-                Util.beaconModeMap = (HashMap<String, Integer>) in.readObject();
-                Util.beaconLastData = (HashMap<String, Long>) in.readObject();
-            } catch (Exception e) {
-                Log.d(SettingsActivity.class.getName(), "loadSettings: " + e.getMessage());
-                e.printStackTrace();
-            } finally {
-                if (in != null) {
-                    try {
-                        in.close();
-                    } catch (IOException e) {
-                        Log.d(SettingsActivity.class.getName(), "loadSettings: " + e.getMessage());
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
-
-    private void resetSettings() {
-        Util.beaconDeviceMap.clear();
-        Util.beaconColorMap.clear();
-        Util.beaconModeMap.clear();
-
-        if (!new File(getFilesDir() + "/" + SETTINGS_FILE_NAME).delete()) {
-            Log.d(SettingsActivity.class.getName(), "Found no settings file");
-        }
     }
 
     public static class DialogModeFragment extends DialogFragment {

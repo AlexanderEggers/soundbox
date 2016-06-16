@@ -2,20 +2,14 @@ package com.thm.soundbox.logic;
 
 import android.app.Activity;
 import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
-import android.widget.EditText;
-import android.widget.TextView;
 
-import com.thm.soundbox.R;
 import com.thm.soundbox.Util;
-import com.thm.soundbox.activity.SettingsActivity;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
-import java.text.MessageFormat;
 import java.util.Collection;
 
 public final class BeaconMasterLogic extends BeaconLogic {
@@ -25,6 +19,7 @@ public final class BeaconMasterLogic extends BeaconLogic {
     public void startLogic(Activity context, Handler handler) {
         super.startLogic(context);
         mHandler = handler;
+        mBeaconManager.setForegroundScanPeriod(250L);
     }
 
     @Override
@@ -40,7 +35,7 @@ public final class BeaconMasterLogic extends BeaconLogic {
 
                     for (Beacon beacon : beacons) {
                         double distance = beacon.getDistance();
-                        Log.d(BeaconMasterLogic.class.getName(), "Distance: " + distance);
+                        Log.d(BeaconSlaveLogic.class.getName(), "Beacon: " + beacon + " " + distance + "");
                         if (distance < Util.MIN_RANGE_IN_METERS) {
                             fBeacon = beacon;
                             foundBeacon = true;
