@@ -17,7 +17,7 @@ public final class BeaconSlaveLogic extends BeaconLogic {
     @Override
     public void startLogic(Activity context) {
         super.startLogic(context);
-        mBeaconManager.setForegroundScanPeriod(1000L);
+        mBeaconManager.setForegroundScanPeriod(500L);
     }
 
     @Override
@@ -27,24 +27,47 @@ public final class BeaconSlaveLogic extends BeaconLogic {
         mBeaconManager.setRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
+                Beacon closestBeacon = null;
+                double shortestDistance = Double.MAX_VALUE;
+
                 for (Beacon beacon : beacons) {
-                    if (beacon.getDistance() <= Util.MIN_RANGE_IN_METERS) {
-                        if(Util.connectedBeacon == null) {
-                            Util.connectedBeacon = beacon.getBluetoothAddress();
-                            String loginData = "Login%" + beacon.getBluetoothAddress() + "%";
-                            Log.i(BeaconSlaveLogic.class.getName(), "Device is trying to login");
-                            ((SlaveActivity) mContext).sendSensorData("Login", loginData);
-                            break;
+                    double distance = beacon.getDistance();
+                    if (distance <= Util.MIN_RANGE) {
+                        if(distance < shortestDistance) {
+                            closestBeacon = beacon;
+                            shortestDistance = distance;
                         }
-                    } else if (Util.connectedBeacon != null &&
-                            beacon.getBluetoothAddress().equals(Util.connectedBeacon) && !Util.isLoggingOut) {
-                        Util.isLogin = false;
-                        Util.isLoggingOut = true;
-                        String logoutData = "Logout%" + Util.connectedBeacon + "%";
-                        ((SlaveActivity) mContext).sendSensorData("Logout", logoutData);
                     }
+                }
+
+                if(closestBeacon != null) {
+                    if(Util.connectedBeacon != null) {
+                        if(!closestBeacon.getBluetoothAddress().equals(Util.connectedBeacon)) {
+                            logout();
+                            login(closestBeacon);
+                        }
+                    } else {
+                        login(closestBeacon);
+                    }
+                } else if(Util.connectedBeacon != null && !Util.isLoggingOut) {
+                    logout();
                 }
             }
         });
+    }
+
+    private void login(Beacon beacon) {
+        Util.connectedBeacon = beacon.getBluetoothAddress();
+        String loginData = "Login%" + beacon.getBluetoothAddress() + "%";
+        Log.i(BeaconSlaveLogic.class.getName(), "Device is trying to login.");
+        ((SlaveActivity) mContext).sendSensorData("Login", loginData);
+    }
+
+    private void logout() {
+        Util.isLogin = false;
+        Util.isLoggingOut = true;
+        String logoutData = "Logout%" + Util.connectedBeacon + "%";
+        Log.i(BeaconSlaveLogic.class.getName(), "Device is trying to logout.");
+        ((SlaveActivity) mContext).sendSensorData("Logout", logoutData);
     }
 }

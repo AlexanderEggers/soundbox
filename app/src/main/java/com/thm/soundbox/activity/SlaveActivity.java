@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.WindowManager;
 
 import com.thm.soundbox.R;
 import com.thm.soundbox.Util;
@@ -25,35 +26,10 @@ public final class SlaveActivity extends Activity {
     private Handler mHandler;
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        if (mAcceleration != null) {
-            mAcceleration.onResume();
-        }
-
-        if (mBeaconLogic != null) {
-            mBeaconLogic.onResume();
-        }
-
-        if (Util.currentColor != Util.DEFAULT_BACKGROUND_COLOR) {
-            findViewById(R.id.slave_parent_layout).setBackgroundColor(Util.currentColor);
-        }
-
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                if (mBluetoothLogic != null) {
-                    mBluetoothLogic.startConnection(Util.SLAVE);
-                }
-                return null;
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.slave_activity);
 
         mHandler = new Handler() {
@@ -73,6 +49,7 @@ public final class SlaveActivity extends Activity {
 
         mAcceleration = new AccelerationLogic();
         mAcceleration.startLogic(SlaveActivity.this);
+        mAcceleration.onResume();
 
         mBeaconLogic = new BeaconSlaveLogic();
         mBeaconLogic.startLogic(SlaveActivity.this);
@@ -88,6 +65,7 @@ public final class SlaveActivity extends Activity {
         String identifier = aSplitData[0];
 
         Log.i(MasterActivity.class.getName(), "Identifier: " + identifier);
+
         switch (identifier) {
             case "ERROR":
             case "LOGOUT_SLAVE":
@@ -98,7 +76,6 @@ public final class SlaveActivity extends Activity {
                     Util.isLoggingOut = false;
                     findViewById(R.id.slave_parent_layout).setBackgroundColor(Util.DEFAULT_BACKGROUND_COLOR);
                     Util.currentColor = Util.DEFAULT_BACKGROUND_COLOR;
-
                     Util.gravity = false;
                 } else {
                     Log.w(SlaveActivity.class.getName(), "Tried to disconnect an old connection. " +
@@ -156,6 +133,7 @@ public final class SlaveActivity extends Activity {
         //Back button of this activity; depending on the dev mode if the application
         //is going to be closed or only jumping back to the menu
 
+
         if (!Util.DEV_MODE) {
             Intent intent = new Intent(Intent.ACTION_MAIN);
             intent.addCategory(Intent.CATEGORY_HOME);
@@ -167,37 +145,27 @@ public final class SlaveActivity extends Activity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-
-        if (mAcceleration != null) {
-            mAcceleration.onPause();
-        }
-
-        if (mBeaconLogic != null) {
-            mBeaconLogic.onPause();
-        }
-    }
-
-    @Override
     protected void onStop() {
         super.onStop();
         mAcceleration.onPause();
         mBeaconLogic.onPause();
 
-        if (Util.connectedBeacon != null && Util.isLogin) {
+        if (Util.connectedBeacon != null) {
             Util.isLoggingOut = true;
 
-            String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
-            String logoutData = "Logout%" + Util.connectedBeacon + "%" + deviceAddress + "%";
+            Log.i(SlaveActivity.class.getName(), "Device trying to logout.");
+            String logoutData = "Logout%" + Util.connectedBeacon + "%";
             sendSensorData("Logout", logoutData);
+            mBluetoothLogic.close();
 
             Util.isLogin = false;
             Util.connectedBeacon = null;
             Util.isLoggingOut = false;
+            Util.gravity = false;
             findViewById(R.id.slave_parent_layout).setBackgroundColor(Util.DEFAULT_BACKGROUND_COLOR);
             Util.currentColor = Util.DEFAULT_BACKGROUND_COLOR;
+        } else {
+            mBluetoothLogic.close();
         }
-        mBluetoothLogic.close();
     }
 }

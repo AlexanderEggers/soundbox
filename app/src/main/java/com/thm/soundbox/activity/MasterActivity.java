@@ -22,18 +22,12 @@ import java.text.MessageFormat;
 
 public final class MasterActivity extends AppCompatActivity {
 
-    private static final long MAX_INACTIVE_TIME = 2000;
+    private static final long MAX_INACTIVE_TIME = 3000;
     private BluetoothLogic mBluetoothLogic;
     private Handler mHandler;
     private AudioLogic mAudioLogic;
     private boolean mStopRunning;
     private int mTotalDevices;
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        PdAudio.startAudio(this);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,11 +82,12 @@ public final class MasterActivity extends AppCompatActivity {
             protected Void doInBackground(Void... params) {
                 while (!mStopRunning) {
                     for (String beacon : Util.beaconLastData.keySet()) {
-                        if (Util.beaconDeviceMap.get(beacon) != null) {
+                        if (Util.beaconDeviceMap.get(beacon) != null && Util.beaconLastData.get(beacon) != 0L) {
                             long diff = System.currentTimeMillis() - Util.beaconLastData.get(beacon);
                             if (diff > MAX_INACTIVE_TIME) {
                                 String device = Util.beaconDeviceMap.get(beacon);
                                 Util.beaconDeviceMap.put(beacon, null);
+                                Log.i(MasterActivity.class.getName(), "Forcing to logout slave.");
                                 mBluetoothLogic.sendDataToSlave(device, "LOGOUT_SLAVE%" + beacon + "%");
                                 Util.beaconLastData.put(beacon, 0L);
                                 mTotalDevices--;
@@ -101,7 +96,7 @@ public final class MasterActivity extends AppCompatActivity {
                     }
 
                     try {
-                        Thread.sleep(3000);
+                        Thread.sleep(5000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -140,8 +135,9 @@ public final class MasterActivity extends AppCompatActivity {
         switch (identifier) {
             case "Login":
                 if (Util.beaconDeviceMap.get(beacon) == null && Util.beaconDeviceMap.containsKey(beacon)) {
-                    Util.beaconDeviceMap.put(beacon, device);
+                    System.out.println("DEVICE: " + device);
                     Util.beaconLastData.put(beacon, System.currentTimeMillis());
+                    Util.beaconDeviceMap.put(beacon, device);
                     String color = Util.beaconColorMap.get(beacon);
                     Boolean gravity = Util.beaconGravity.get(beacon);
                     mBluetoothLogic.sendDataToSlave(device, "LOGIN_SLAVE%" + beacon + "%" + color + "%" + gravity + "%");
@@ -149,16 +145,23 @@ public final class MasterActivity extends AppCompatActivity {
                     ((TextView) findViewById(R.id.textView8)).setText(
                             MessageFormat.format("Total Devices: {0}", mTotalDevices));
                 } else {
-                    Log.d(MasterActivity.class.getName(), "Slave Error Logout: Missing beacon or beacon already in use");
+                    if(Util.beaconDeviceMap.get(beacon).equals(device)) {
+                        Util.beaconDeviceMap.put(beacon, null);
+                        mTotalDevices--;
+                    }
+                    Log.d(MasterActivity.class.getName(), "Slave Error Login: Missing beacon or beacon already in use");
                     mBluetoothLogic.sendDataToSlave(device, "ERROR%" + beacon + "%");
                 }
                 break;
             case "Logout":
-                Util.beaconDeviceMap.put(beacon, null);
-                mBluetoothLogic.sendDataToSlave(device, "LOGOUT_SLAVE%" + beacon + "%");
-                mTotalDevices--;
-                ((TextView) findViewById(R.id.textView8)).setText(
-                        MessageFormat.format("Total Devices: {0}", mTotalDevices));
+                if(Util.beaconDeviceMap.get(beacon) != null) {
+                    Util.beaconDeviceMap.put(beacon, null);
+                    Util.beaconLastData.put(beacon, 0L);
+                    mBluetoothLogic.sendDataToSlave(device, "LOGOUT_SLAVE%" + beacon + "%");
+                    mTotalDevices--;
+                    ((TextView) findViewById(R.id.textView8)).setText(
+                            MessageFormat.format("Total Devices: {0}", mTotalDevices));
+                }
                 break;
             case "Data":
                 boolean foundBeaconDevice = false;

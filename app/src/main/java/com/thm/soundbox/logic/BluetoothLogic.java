@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 
 public final class BluetoothLogic {
@@ -21,10 +22,11 @@ public final class BluetoothLogic {
     private static final int MASTER_THREAD = 0;
     private final Handler mHandler;
     private final BluetoothAdapter mBluetoothAdapter;
-    private ArrayList<ConnectedThread> mThreads;
+    private HashMap<String, ConnectedThread> mThreads;
     private AcceptThread mAcceptThread;
     private ConnectThread mConnectThread;
-    private boolean mKeepAcceptAlive = true, mKeepConnectAlive = true, mClosing = false;
+    private String mMasterAddress;
+    private boolean mKeepAcceptAlive = true, mKeepConnectAlive = true, mClosing;
 
     public BluetoothLogic(Handler handler) {
         mHandler = handler;
@@ -32,7 +34,7 @@ public final class BluetoothLogic {
         if (!mBluetoothAdapter.isEnabled()) {
             mBluetoothAdapter.enable();
         }
-        mThreads = new ArrayList<>();
+        mThreads = new HashMap<>();
     }
 
     public void startConnection(int type) {
@@ -47,6 +49,7 @@ public final class BluetoothLogic {
                 ArrayList<BluetoothDevice> pairedDevices = new ArrayList<>(mBluetoothAdapter.getBondedDevices());
                 if (!pairedDevices.isEmpty() && pairedDevices.get(MASTER_THREAD) != null && mThreads.isEmpty()) {
                     mConnectThread = new ConnectThread(pairedDevices.get(MASTER_THREAD));
+                    mMasterAddress = pairedDevices.get(MASTER_THREAD).getAddress();
                     mConnectThread.run();
                 }
                 break;
@@ -77,7 +80,7 @@ public final class BluetoothLogic {
         }
 
         public void run() {
-            byte[] buffer = new byte[512];  // buffer store for the stream
+            byte[] buffer = new byte[1024];  // buffer store for the stream
             int bytes; // bytes returned from read()
 
             // Keep listening to the InputStream until an exception occurs
@@ -152,7 +155,7 @@ public final class BluetoothLogic {
                 if (socket != null) {
                     // Do work to manage the connection (in a separate thread)
                     ConnectedThread thread = new ConnectedThread(socket);
-                    mThreads.add(thread);
+                    mThreads.put(thread.getDeviceAddress(), thread);
                     thread.run();
                 }
             }
@@ -203,7 +206,7 @@ public final class BluetoothLogic {
 
             // Do work to manage the connection (in a separate thread)
             ConnectedThread thread = new ConnectedThread(mmSocket);
-            mThreads.add(thread);
+            mThreads.put(thread.getDeviceAddress(), thread);
             thread.run();
         }
 
@@ -227,19 +230,16 @@ public final class BluetoothLogic {
         byte[] aBytes = data.getBytes(StandardCharsets.UTF_8);
 
         if (!mClosing) {
-            mThreads.get(MASTER_THREAD).write(aBytes);
+            mThreads.get(mMasterAddress).write(aBytes);
         }
     }
 
     public void sendDataToSlave(String deviceAddress, String data) {
-        for (ConnectedThread thread : mThreads) {
-            if (thread.getDeviceAddress().equals(deviceAddress)) {
-                byte[] aBytes = data.getBytes(StandardCharsets.UTF_8);
+        if(mThreads.containsKey(deviceAddress)) {
+            byte[] aBytes = data.getBytes(StandardCharsets.UTF_8);
 
-                if (!mClosing) {
-                    thread.write(aBytes);
-                }
-                break;
+            if (!mClosing) {
+                mThreads.get(deviceAddress).write(aBytes);
             }
         }
     }
@@ -248,9 +248,10 @@ public final class BluetoothLogic {
         mKeepAcceptAlive = false;
         mClosing = true;
 
-        for (ConnectedThread thread : mThreads) {
+        for (ConnectedThread thread : mThreads.values()) {
             thread.cancel();
         }
+        mThreads.clear();
 
         if (mAcceptThread != null) {
             mAcceptThread.cancel();

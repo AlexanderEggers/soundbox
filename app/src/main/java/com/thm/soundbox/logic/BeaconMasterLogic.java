@@ -36,7 +36,7 @@ public final class BeaconMasterLogic extends BeaconLogic {
                     for (Beacon beacon : beacons) {
                         double distance = beacon.getDistance();
                         Log.d(BeaconSlaveLogic.class.getName(), "Beacon: " + beacon + " " + distance + "");
-                        if (distance < Util.MIN_RANGE_IN_METERS) {
+                        if (distance < Util.MIN_RANGE) {
                             fBeacon = beacon;
                             foundBeacon = true;
                             break;
