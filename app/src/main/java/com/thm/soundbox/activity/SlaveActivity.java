@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -76,6 +77,8 @@ public final class SlaveActivity extends Activity {
 
         mBeaconLogic = new BeaconSlaveLogic();
         mBeaconLogic.startLogic(SlaveActivity.this);
+
+        findViewById(R.id.slave_parent_layout).setBackgroundColor(Util.DEFAULT_BACKGROUND_COLOR);
     }
 
     private void handleData(Message msg) {

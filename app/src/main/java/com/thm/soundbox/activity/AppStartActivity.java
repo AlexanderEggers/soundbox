@@ -19,18 +19,18 @@ import com.thm.soundbox.Util;
 public final class AppStartActivity extends Activity {
 
     private static final int PERMISSION_REQUEST_CODE = 0;
-    private boolean requestingPermission, openLocationActivity, onResumeFix;
+    private boolean mRequestingPermission, mOpenLocationActivity, mOnResumeFix;
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        if (openLocationActivity && onResumeFix) {
+        if (mOpenLocationActivity && mOnResumeFix) {
             moveToNextActivity();
         }
 
-        if (!onResumeFix) {
-            onResumeFix = true;
+        if (!mOnResumeFix) {
+            mOnResumeFix = true;
         }
     }
 
@@ -43,7 +43,7 @@ public final class AppStartActivity extends Activity {
         if (result == PackageManager.PERMISSION_GRANTED) {
             checkLocation();
         } else {
-            requestingPermission = true;
+            mRequestingPermission = true;
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_CODE);
         }
@@ -53,7 +53,7 @@ public final class AppStartActivity extends Activity {
             bluetooth.enable();
         }
 
-        if (!requestingPermission && !openLocationActivity) {
+        if (!mRequestingPermission && !mOpenLocationActivity) {
             moveToNextActivity();
         }
     }
@@ -75,7 +75,7 @@ public final class AppStartActivity extends Activity {
     private void checkLocation() {
         LocationManager location = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (!location.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            openLocationActivity = true;
+            mOpenLocationActivity = true;
             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             startActivity(intent);
         }
