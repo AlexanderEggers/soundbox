@@ -3,6 +3,7 @@ package com.thm.soundbox.activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -90,6 +92,9 @@ public final class SettingsActivity extends AppCompatActivity implements View.On
 
         switch (v.getId()) {
             case R.id.button:
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
                 if (beaconValues.length > 1) {
                     String color = ((EditText) rootView.findViewById(R.id.editText)).getText().toString();
                     String modeValue = ((TextView) rootView.findViewById(R.id.textView)).getText().toString();
@@ -106,12 +111,15 @@ public final class SettingsActivity extends AppCompatActivity implements View.On
                             Util.beaconModeMap.put(beacon, mode);
                             Util.beaconLastData.put(beacon, 0L);
                             Util.beaconGravity.put(beacon, gravity);
+                            createSimpleDialog("Save complete.");
                         } else {
+                            createSimpleDialog("Selected beacon has still a device!");
                             Log.d(SettingsActivity.class.getName(),
                                     MessageFormat.format("Cannot apply the settings because the specific beacon " +
                                             "still has a slave device! - {0}", beacon));
                         }
                     } else {
+                        createSimpleDialog("Entered values include errors!");
                         Log.d(SettingsActivity.class.getName(), "Cannot apply settings because mode or color haven't " +
                                 "been set correctly!");
                     }
@@ -162,5 +170,18 @@ public final class SettingsActivity extends AppCompatActivity implements View.On
                     });
             return builder.create();
         }
+    }
+
+    private void createSimpleDialog(String text) {
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setTitle("Info");
+        alertDialog.setMessage(text);
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
     }
 }

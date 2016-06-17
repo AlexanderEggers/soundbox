@@ -22,7 +22,7 @@ import java.text.MessageFormat;
 
 public final class MasterActivity extends AppCompatActivity {
 
-    private static final long MAX_INACTIVE_TIME = 3000;
+    private static final long MAX_INACTIVE_TIME = 1000;
     private BluetoothLogic mBluetoothLogic;
     private Handler mHandler;
     private AudioLogic mAudioLogic;
@@ -96,7 +96,7 @@ public final class MasterActivity extends AppCompatActivity {
                     }
 
                     try {
-                        Thread.sleep(5000);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
