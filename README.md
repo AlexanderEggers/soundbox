@@ -3,7 +3,7 @@ Targeting the acceleration sensor inside an android device and executing events 
 
 ## Usage
 1. Choose a master device
-2. Place the beacons in the room (each beacon should have a min distance of 3 meters to the other beacons)
+2. Place the beacons in the room (each beacon should have a min distance of 2 meters to the other beacons)
 3. Beacon configuration
 4. Take the master device and go to the first beacon. 
 5. Push the "settings" button. The settings page should show a bluetooth address at the top. 
@@ -17,7 +17,7 @@ Targeting the acceleration sensor inside an android device and executing events 
 ## Functions
 ##### Bluetooth
 You need two devices which will act as slave and master. The master device can be activated via the menu button "Master".
-The slave device will be activated via acceleration button. It's important that the master device is connected to the bluetooth system as soon as possible to prevent timeouts if a slave tries to connect to the master device.
+The slave device will be activated via "sensor" button.
 
 ##### Acceleration
 The only sensor we are going to use is the acceleration sensor which will only be triggered if the device is in range of a beacon (within the min range). The slave device will perform a handshake to the master to make sure that it's device is allow to use this specific beacon acceleration sensor.
