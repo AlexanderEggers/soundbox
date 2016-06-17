@@ -1,7 +1,6 @@
 package com.thm.soundbox.logic;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
 import android.util.Log;
 
 import com.thm.soundbox.Util;
@@ -28,26 +27,16 @@ public final class BeaconSlaveLogic extends BeaconLogic {
         mBeaconManager.setRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
-                boolean foundBeacon = false;
-
                 for (Beacon beacon : beacons) {
-                    double distance = beacon.getDistance();
-                    Log.d(BeaconSlaveLogic.class.getName(), "Beacon: " + beacon + " " + distance + "");
-                    if (distance <= Util.MIN_RANGE_IN_METERS) {
-                        foundBeacon = true;
-
-                        if (Util.connectedBeacon == null) {
+                    if (beacon.getDistance() <= Util.MIN_RANGE_IN_METERS) {
+                        if(Util.connectedBeacon == null) {
                             Util.connectedBeacon = beacon.getBluetoothAddress();
                             String loginData = "Login%" + beacon.getBluetoothAddress() + "%";
                             Log.i(BeaconSlaveLogic.class.getName(), "Device is trying to login");
                             ((SlaveActivity) mContext).sendSensorData("Login", loginData);
+                            break;
                         }
-                        break;
-                    }
-                }
-
-                if (!foundBeacon && Util.isLogin && !Util.isLoggingOut) {
-                    if (Util.connectedBeacon != null) {
+                    } else if (Util.connectedBeacon.equals(beacon.getBluetoothAddress())) {
                         Util.isLogin = false;
                         Util.isLoggingOut = true;
                         String logoutData = "Logout%" + Util.connectedBeacon + "%";
