@@ -22,7 +22,7 @@ import java.text.MessageFormat;
 
 public final class MasterActivity extends AppCompatActivity {
 
-    private static final long MAX_INACTIVE_TIME = 1000;
+    private static final long MAX_INACTIVE_TIME = 5000;
     private BluetoothLogic mBluetoothLogic;
     private Handler mHandler;
     private AudioLogic mAudioLogic;
@@ -96,7 +96,7 @@ public final class MasterActivity extends AppCompatActivity {
                     }
 
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(5000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -135,7 +135,6 @@ public final class MasterActivity extends AppCompatActivity {
         switch (identifier) {
             case "Login":
                 if (Util.beaconDeviceMap.get(beacon) == null && Util.beaconDeviceMap.containsKey(beacon)) {
-                    System.out.println("DEVICE: " + device);
                     Util.beaconLastData.put(beacon, System.currentTimeMillis());
                     Util.beaconDeviceMap.put(beacon, device);
                     String color = Util.beaconColorMap.get(beacon);
