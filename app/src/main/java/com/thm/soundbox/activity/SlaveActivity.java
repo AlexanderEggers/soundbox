@@ -105,32 +105,26 @@ public final class SlaveActivity extends Activity {
     }
 
     public void sendData(final String type, final String value) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                if (mBluetoothLogic != null && mBluetoothLogic.isMasterAvailable()) {
-                    if (type.equals("Login") || type.equals("Logout")) {
-                        mBluetoothLogic.sendDataToMaster(value);
-                    } else {
-                        if (Util.isLogin) {
-                            mBluetoothLogic.sendDataToMaster(value);
-                        } else {
-                            Log.w(SlaveActivity.class.getName(), "This device is not in range of a beacon.");
-                        }
-                    }
+        if (mBluetoothLogic != null && mBluetoothLogic.isMasterAvailable()) {
+            if (type.equals("Login") || type.equals("Logout")) {
+                mBluetoothLogic.sendDataToMaster(value);
+            } else {
+                if (Util.isLogin) {
+                    mBluetoothLogic.sendDataToMaster(value);
                 } else {
-                    Util.connectedBeacon = null;
-
-                    if (mBluetoothLogic == null) {
-                        Log.w(SlaveActivity.class.getName(), "Bluetooth logic = " + mBluetoothLogic);
-                    } else {
-                        Log.w(SlaveActivity.class.getName(), "Data could not be sent. " +
-                                "Master = " + mBluetoothLogic.isMasterAvailable());
-                    }
+                    Log.w(SlaveActivity.class.getName(), "This device is not in range of a beacon.");
                 }
-                return null;
             }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } else {
+            Util.connectedBeacon = null;
+
+            if (mBluetoothLogic == null) {
+                Log.w(SlaveActivity.class.getName(), "Bluetooth logic = " + mBluetoothLogic);
+            } else {
+                Log.w(SlaveActivity.class.getName(), "Data could not be sent. " +
+                        "Master = " + mBluetoothLogic.isMasterAvailable());
+            }
+        }
     }
 
     @Override
