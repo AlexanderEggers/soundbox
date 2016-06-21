@@ -31,7 +31,7 @@ The beacon implementation can be found in the ".logic.BeaconLogic" file. We are 
 The audio part is seperated into several audio modes. Each audio mode is modifing another sound filter. We are using the pure data implementation (https://github.com/libpd/pd-for-android) to create specific audio filters. Those audio filter are accessed via the class logic.AudioModeLogic. The pure data sound file (which includes all sound samples and filter) can be found in res/raw/ folder.
 
 ##### Settings
-Settings are responsible for changing the audio mode and the color of a certain beacon. All beacons are mapped by the master device regarding these values. The color value will change the slave device background color and the audio mode is responsible for the specific modification of the audio sample by the slave acceleration sensor.
+Settings are responsible for changing the audio mode, the color and the gravity mode of a certain beacon. All beacons are mapped by the master device regarding these values. The color value will change the slave device background color after it's login. The audio mode is responsible for the specific modification of the audio sample by the slave acceleration sensor. The last value called "gravity" is a slider which will enable the slave device to track different movements (like shaking).
 
 ## Requirements
 To run this app the device needs to match certain requirements:
