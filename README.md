@@ -39,4 +39,8 @@ To run this app the device needs to match certain requirements:
 * Min SDK Level: 19 (Android 4.4.x - KitKat)
 * Acceleration sensor
 * Beacon(s)
-* Fine location permission
+* Device permissions:
+  * Bluetooth
+  * Bluetooth Admin
+  * Fine location
+  * Internet
