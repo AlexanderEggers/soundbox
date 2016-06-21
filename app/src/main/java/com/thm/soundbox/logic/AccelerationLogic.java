@@ -81,7 +81,7 @@ public final class AccelerationLogic implements SensorEventListener {
 
             String data = "Data%" + Util.connectedBeacon + "%" + mLinearAcceleration[0] + ";"
                     + mLinearAcceleration[1] + ";" + mLinearAcceleration[2] + "%";
-            ((SlaveActivity) mContext).sendSensorData("data", data);
+            ((SlaveActivity) mContext).sendData("data", data);
 
             if (Util.DEV_MODE) {
                 String textX = MessageFormat.format("Acceleration Value X: {0}", mLinearAcceleration[0]);

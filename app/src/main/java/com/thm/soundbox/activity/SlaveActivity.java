@@ -95,7 +95,7 @@ public final class SlaveActivity extends Activity {
                     } else {
                         String deviceAddress = BluetoothAdapter.getDefaultAdapter().getAddress();
                         String logoutData = "Logout%" + beacon + "%" + deviceAddress + "%";
-                        sendSensorData("Logout", logoutData);
+                        sendData("Logout", logoutData);
 
                         Log.w(SlaveActivity.class.getName(), "Wrong login. Beacon = " + beacon);
                     }
@@ -104,35 +104,39 @@ public final class SlaveActivity extends Activity {
         }
     }
 
-    public void sendSensorData(String type, String value) {
-        if (mBluetoothLogic != null && mBluetoothLogic.isConnectionAvailable()) {
-            if (type.equals("Login") || type.equals("Logout")) {
-                mBluetoothLogic.sendDataToMaster(value);
-            } else {
-                if (Util.isLogin) {
-                    mBluetoothLogic.sendDataToMaster(value);
+    public void sendData(final String type, final String value) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                if (mBluetoothLogic != null && mBluetoothLogic.isMasterAvailable()) {
+                    if (type.equals("Login") || type.equals("Logout")) {
+                        mBluetoothLogic.sendDataToMaster(value);
+                    } else {
+                        if (Util.isLogin) {
+                            mBluetoothLogic.sendDataToMaster(value);
+                        } else {
+                            Log.w(SlaveActivity.class.getName(), "This device is not in range of a beacon.");
+                        }
+                    }
                 } else {
-                    Log.w(SlaveActivity.class.getName(), "This device is not in range of a beacon.");
+                    Util.connectedBeacon = null;
+
+                    if (mBluetoothLogic == null) {
+                        Log.w(SlaveActivity.class.getName(), "Bluetooth logic = " + mBluetoothLogic);
+                    } else {
+                        Log.w(SlaveActivity.class.getName(), "Data could not be sent. " +
+                                "Master = " + mBluetoothLogic.isMasterAvailable());
+                    }
                 }
+                return null;
             }
-        } else {
-            Util.connectedBeacon = null;
-
-            if (mBluetoothLogic == null) {
-                Log.w(SlaveActivity.class.getName(), "Bluetooth logic = " + mBluetoothLogic);
-            } else {
-
-                Log.w(SlaveActivity.class.getName(), "Data could not be sent. " +
-                        "Master = " + mBluetoothLogic.isConnectionAvailable());
-            }
-        }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
     public void onBackPressed() {
         //Back button of this activity; depending on the dev mode if the application
         //is going to be closed or only jumping back to the menu
-
 
         if (!Util.DEV_MODE) {
             Intent intent = new Intent(Intent.ACTION_MAIN);
@@ -155,8 +159,10 @@ public final class SlaveActivity extends Activity {
 
             Log.i(SlaveActivity.class.getName(), "Device trying to logout.");
             String logoutData = "Logout%" + Util.connectedBeacon + "%";
-            sendSensorData("Logout", logoutData);
-            mBluetoothLogic.close();
+            if(mBluetoothLogic != null && mBluetoothLogic.isMasterAvailable()) {
+                mBluetoothLogic.sendDataToMaster(logoutData);
+                mBluetoothLogic.close();
+            }
 
             Util.isLogin = false;
             Util.connectedBeacon = null;

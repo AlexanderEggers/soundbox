@@ -28,28 +28,28 @@ public final class BeaconSlaveLogic extends BeaconLogic {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
                 Beacon closestBeacon = null;
-                double shortestDistance = Double.MAX_VALUE;
+                long shortestDistance = Long.MAX_VALUE;
 
                 for (Beacon beacon : beacons) {
-                    double distance = beacon.getDistance();
+                    long distance = Math.round(beacon.getDistance());
                     if (distance <= Util.MIN_RANGE) {
-                        if(distance < shortestDistance) {
+                        if (distance < shortestDistance) {
                             closestBeacon = beacon;
                             shortestDistance = distance;
                         }
                     }
                 }
 
-                if(closestBeacon != null) {
-                    if(Util.connectedBeacon != null) {
-                        if(!closestBeacon.getBluetoothAddress().equals(Util.connectedBeacon)) {
+                if (closestBeacon != null) {
+                    if (Util.connectedBeacon != null) {
+                        if (!closestBeacon.getBluetoothAddress().equals(Util.connectedBeacon)) {
                             logout();
                             login(closestBeacon);
                         }
                     } else {
                         login(closestBeacon);
                     }
-                } else if(Util.connectedBeacon != null && !Util.isLoggingOut) {
+                } else if (Util.connectedBeacon != null && !Util.isLoggingOut) {
                     logout();
                 }
             }
@@ -60,7 +60,7 @@ public final class BeaconSlaveLogic extends BeaconLogic {
         Util.connectedBeacon = beacon.getBluetoothAddress();
         String loginData = "Login%" + beacon.getBluetoothAddress() + "%";
         Log.i(BeaconSlaveLogic.class.getName(), "Device is trying to login.");
-        ((SlaveActivity) mContext).sendSensorData("Login", loginData);
+        ((SlaveActivity) mContext).sendData("Login", loginData);
     }
 
     private void logout() {
@@ -68,6 +68,6 @@ public final class BeaconSlaveLogic extends BeaconLogic {
         Util.isLoggingOut = true;
         String logoutData = "Logout%" + Util.connectedBeacon + "%";
         Log.i(BeaconSlaveLogic.class.getName(), "Device is trying to logout.");
-        ((SlaveActivity) mContext).sendSensorData("Logout", logoutData);
+        ((SlaveActivity) mContext).sendData("Logout", logoutData);
     }
 }

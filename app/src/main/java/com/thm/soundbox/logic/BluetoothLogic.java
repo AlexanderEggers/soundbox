@@ -222,8 +222,8 @@ public final class BluetoothLogic {
         }
     }
 
-    public boolean isConnectionAvailable() {
-        return !mThreads.isEmpty();
+    public boolean isMasterAvailable() {
+        return !mThreads.isEmpty() && mMasterAddress != null;
     }
 
     public void sendDataToMaster(String data) {
@@ -247,6 +247,7 @@ public final class BluetoothLogic {
     public void close() {
         mKeepAcceptAlive = false;
         mClosing = true;
+        mMasterAddress = null;
 
         for (ConnectedThread thread : mThreads.values()) {
             thread.cancel();
