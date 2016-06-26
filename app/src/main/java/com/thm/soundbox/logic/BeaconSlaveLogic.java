@@ -17,7 +17,7 @@ public final class BeaconSlaveLogic extends BeaconLogic {
     @Override
     public void startLogic(Activity context) {
         super.startLogic(context);
-        mBeaconManager.setForegroundScanPeriod(500L);
+        mBeaconManager.setForegroundScanPeriod(1000L);
     }
 
     @Override

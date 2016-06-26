@@ -135,6 +135,10 @@ public final class MasterActivity extends AppCompatActivity {
         switch (identifier) {
             case "Login":
                 if (Util.beaconDeviceMap.get(beacon) == null && Util.beaconDeviceMap.containsKey(beacon)) {
+                    //Niki
+                    //int audioMode = Util.beaconModeMap.get(beacon);
+
+                    ///Niki
                     Util.beaconLastData.put(beacon, System.currentTimeMillis());
                     Util.beaconDeviceMap.put(beacon, device);
                     String color = Util.beaconColorMap.get(beacon);

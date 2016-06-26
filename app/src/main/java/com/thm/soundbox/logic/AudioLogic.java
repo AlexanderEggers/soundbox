@@ -33,7 +33,6 @@ public final class AudioLogic {
 
     public void loadPDPatch() throws IOException {
         File dir = mContext.getFilesDir();
-        System.out.println("bin drin");
         IoUtils.extractZipResource(mContext.getResources().openRawResource(R.raw.mosyosyo), dir, true);
         File pdPatch = new File(dir, "aaamosy.pd");
         PdBase.openPatch(pdPatch.getAbsolutePath());
@@ -54,13 +53,13 @@ public final class AudioLogic {
                 mAudioModeLogic.executeAudioMode2(valueX);
                 break;
             case Util.AUDIO_MODE_3:
-                mAudioModeLogic.executeAudioMode3(valueX, valueY, valueZ);
+                mAudioModeLogic.executeAudioMode3(valueX);
                 break;
             case Util.AUDIO_MODE_4:
-                mAudioModeLogic.executeAudioMode4(valueZ);
+                mAudioModeLogic.executeAudioMode4(valueX);
                 break;
             case Util.AUDIO_MODE_5:
-                mAudioModeLogic.executeAudioMode5(valueY, valueZ);
+                mAudioModeLogic.executeAudioMode5(valueX);
                 break;
         }
     }
