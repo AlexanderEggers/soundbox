@@ -44,7 +44,7 @@ public final class AudioLogic {
         //insert all audio controls here to initialize those - important part!!
     }
 
-    public void processAudioAcceleration(int audioMode, float valueX, float valueY, float valueZ) {
+    public void processAudio(int audioMode, float valueX, float valueY, float valueZ) {
         switch (audioMode) {
             case Util.AUDIO_MODE_1:
                 mAudioModeLogic.executeAudioMode1(valueX);
@@ -60,6 +60,46 @@ public final class AudioLogic {
                 break;
             case Util.AUDIO_MODE_5:
                 mAudioModeLogic.executeAudioMode5(valueX);
+                break;
+        }
+    }
+
+    public void enableAudio(int audioMode) {
+        switch (audioMode) {
+            case Util.AUDIO_MODE_1:
+
+                break;
+            case Util.AUDIO_MODE_2:
+
+                break;
+            case Util.AUDIO_MODE_3:
+
+                break;
+            case Util.AUDIO_MODE_4:
+
+                break;
+            case Util.AUDIO_MODE_5:
+
+                break;
+        }
+    }
+
+    public void disableAudio(int audioMode) {
+        switch (audioMode) {
+            case Util.AUDIO_MODE_1:
+
+                break;
+            case Util.AUDIO_MODE_2:
+
+                break;
+            case Util.AUDIO_MODE_3:
+
+                break;
+            case Util.AUDIO_MODE_4:
+
+                break;
+            case Util.AUDIO_MODE_5:
+
                 break;
         }
     }

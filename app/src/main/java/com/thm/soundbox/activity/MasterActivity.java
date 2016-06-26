@@ -88,6 +88,7 @@ public final class MasterActivity extends AppCompatActivity {
                                 String device = Util.beaconDeviceMap.get(beacon);
                                 Util.beaconDeviceMap.put(beacon, null);
                                 Log.i(MasterActivity.class.getName(), "Forcing to logout slave.");
+                                mAudioLogic.disableAudio(Util.beaconModeMap.get(beacon));
                                 mBluetoothLogic.sendDataToSlave(device, "LOGOUT_SLAVE%" + beacon + "%");
                                 Util.beaconLastData.put(beacon, 0L);
                                 mTotalDevices--;
@@ -135,14 +136,11 @@ public final class MasterActivity extends AppCompatActivity {
         switch (identifier) {
             case "Login":
                 if (Util.beaconDeviceMap.get(beacon) == null && Util.beaconDeviceMap.containsKey(beacon)) {
-                    //Niki
-                    //int audioMode = Util.beaconModeMap.get(beacon);
-
-                    ///Niki
                     Util.beaconLastData.put(beacon, System.currentTimeMillis());
                     Util.beaconDeviceMap.put(beacon, device);
                     String color = Util.beaconColorMap.get(beacon);
                     Boolean gravity = Util.beaconGravity.get(beacon);
+                    mAudioLogic.enableAudio(Util.beaconModeMap.get(beacon));
                     mBluetoothLogic.sendDataToSlave(device, "LOGIN_SLAVE%" + beacon + "%" + color + "%" + gravity + "%");
                     mTotalDevices++;
                     ((TextView) findViewById(R.id.textView8)).setText(
@@ -160,6 +158,7 @@ public final class MasterActivity extends AppCompatActivity {
                 if(Util.beaconDeviceMap.get(beacon) != null) {
                     Util.beaconDeviceMap.put(beacon, null);
                     Util.beaconLastData.put(beacon, 0L);
+                    mAudioLogic.disableAudio(Util.beaconModeMap.get(beacon));
                     mBluetoothLogic.sendDataToSlave(device, "LOGOUT_SLAVE%" + beacon + "%");
                     mTotalDevices--;
                     ((TextView) findViewById(R.id.textView8)).setText(
@@ -201,7 +200,7 @@ public final class MasterActivity extends AppCompatActivity {
                     ((TextView) findViewById(R.id.textView4)).setText(MessageFormat.format("Y: {0}", valueY));
                     ((TextView) findViewById(R.id.textView5)).setText(MessageFormat.format("Z: {0}", valueZ));
 
-                    mAudioLogic.processAudioAcceleration(audioMode, valueX, valueY, valueZ);
+                    mAudioLogic.processAudio(audioMode, valueX, valueY, valueZ);
                     ((TextView) findViewById(R.id.textView6)).setText(MessageFormat.format("Beacon: {0}", beacon));
                 } else {
                     Log.d(MasterActivity.class.getName(),
