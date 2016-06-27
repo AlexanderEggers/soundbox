@@ -24,7 +24,6 @@ public final class AudioModeLogic {
         //Gravity Wah-Effect
         double newVal = Math.sqrt(valueX * valueX + valueY * valueY + valueZ * valueZ);
         PdBase.sendFloat("instrument3mod", mapValue((float) newVal, 0, 0.95f));
-        PdBase.
     }
 
     //beacon4

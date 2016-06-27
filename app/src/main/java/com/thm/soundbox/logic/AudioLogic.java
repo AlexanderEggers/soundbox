@@ -53,7 +53,7 @@ public final class AudioLogic {
                 mAudioModeLogic.executeAudioMode2(valueX);
                 break;
             case Util.AUDIO_MODE_3:
-                mAudioModeLogic.executeAudioMode3(valueX);
+                mAudioModeLogic.executeAudioMode3(valueX, valueY, valueZ);
                 break;
             case Util.AUDIO_MODE_4:
                 mAudioModeLogic.executeAudioMode4(valueX);
@@ -67,19 +67,19 @@ public final class AudioLogic {
     public void enableAudio(int audioMode) {
         switch (audioMode) {
             case Util.AUDIO_MODE_1:
-
+                PdBase.sendFloat("instrument1volume", 1);
                 break;
             case Util.AUDIO_MODE_2:
-
+                PdBase.sendFloat("instrument2volume", 1);
                 break;
             case Util.AUDIO_MODE_3:
-
+                PdBase.sendFloat("instrument3volume", 1);
                 break;
             case Util.AUDIO_MODE_4:
-
+                PdBase.sendFloat("instrument4volume", 1);
                 break;
             case Util.AUDIO_MODE_5:
-
+               // PdBase.sendFloat("instrument5volume", 1);
                 break;
         }
     }
@@ -87,19 +87,19 @@ public final class AudioLogic {
     public void disableAudio(int audioMode) {
         switch (audioMode) {
             case Util.AUDIO_MODE_1:
-
+                PdBase.sendFloat("instrument1volume", 0);
                 break;
             case Util.AUDIO_MODE_2:
-
+                PdBase.sendFloat("instrument2volume", 0);
                 break;
             case Util.AUDIO_MODE_3:
-
+                PdBase.sendFloat("instrument3volume", 0);
                 break;
             case Util.AUDIO_MODE_4:
-
+                PdBase.sendFloat("instrument4volume", 0);
                 break;
             case Util.AUDIO_MODE_5:
-
+                //PdBase.sendFloat("instrument5volume", 0);
                 break;
         }
     }
